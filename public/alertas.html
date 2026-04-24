@@ -14,53 +14,57 @@
     <div class = "container">
 
         <div class = "sidebar">
-            <div class = "logo"> INMINENCIA </div>
+            <div class = "logo">INMINENCIA </div>
             <nav>
-                <p> Principal</p>
+                <p>Principal</p>
                 <ul>
-                    <li> Dashboard</li>
-                    <li> Alertas</li>
+                    <li><a href = "index.html">Dashboard</a></li>
+                    <li><a href = "alertas.html">Alertas</a></li>
                 </ul>
-                <p> Clientes</p>
+                <p>Clientes</p>
                 <ul>
-                    <li> Expedientes</li>
-                    <li> Contratos</li>
-                    <li> Operaciones</li>
+                    <li><a href = "expedientes.html">Expedientes</a></li>
+                    <li><a href = "contratos.html">Contratos</a></li>
+                    <li><a href = "operaciones.html">Operaciones</a></li>
                 </ul>
                 <p>Cumplimiento</p>
                 <ul>
-                    <li> Listas</li>
-                    <li> Reportes</li>
-                    <li> Canal interno</li>
+                    <li><a href = "listas.html">Listas</a></li>
+                    <li><a href = "reportes.html">Reportes</a></li>
+                    <li><a href = "canal-interno.html">Canal interno</a></li>
                 </ul>
             </nav>
         </div>
 
         <div class = "main">
             <header class = "top">
-                <h1> Sistema de monitoreo</h1>
-                <button class = "top-right">+ Nuevo cliente</button>
+                <h1>Sistema de Monitoreo</h1>
+                <button class = "top-right">Exportar</button>
             </header>
 
 
         <main class = "content">
-            <h2> Dashboard Principal</h2>
+            <h2>Alertas</h2>
 
             <div class = "dashboard-content">
                 <table class = "dashboard-table"> 
-                    <p class = "table-name"> Operaciones recientes</p>
+                    <p class = "table-name">Alertas activas</p>
                     <tr>
-                        <th> CLIENTE</th>
-                        <th> PRODUCTO</th>
-                        <th> MONTO</th>
-                        <th> FECHA</th>
+                        <th>TIPO</th>
+                        <th>CLIENTE</th>
+                        <th>MOTIVO</th>
+                        <th>GENERADA</th>
+                        <th>PRIORIDAD</th>
+                        <th>ESTATUS</th>
                     </tr>
 
                     <tr>
-                        <td> Juan Perez</td>
-                        <td> Tarjeta de crédito</td>
-                        <td> $5000</td>
-                        <td> 2024-06-01</td>
+                        <td>Acumulado</td>
+                        <td>Juan Perez</td>
+                        <td>Supera umbral mensual 3x</td>
+                        <td>17/04/2026 09:14</td>
+                        <td>Media</td>
+                        <td>Revisar</td>
                     </tr>
                 </table>
             </div>
