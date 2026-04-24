@@ -80,6 +80,11 @@ button:hover {
     padding: 5px;
 }
 
+.sidebar a {
+    text-decoration: none;
+    color: var(--secondary-text-color);
+}
+
 .main {
     flex: 1;
     padding: 20px;
