@@ -156,3 +156,43 @@ td {
     padding: 30px;
     border: 0;
 }
+
+.generated-date {
+    position: absolute;
+    right: 40px;
+    bottom: 30px;
+}
+
+.report-date {
+    margin-top: 5px;
+    font-size: 25px;
+}
+
+.list-table {
+    border-collapse: collapse;
+    border: 1px solid;
+    width: 100%;
+    margin-bottom: 100px;
+    padding: 15px;
+}
+
+.list-table th {
+    border: 0;
+}
+
+.side-tables-clientes {    
+    display: flex;
+    margin-left: -50px;
+    margin-right: -50px;
+    margin-bottom: 30px;
+    font-size: 15px;
+}
+
+.side-tables-clientes th {
+    border: 0;
+}
+
+.side-tables-clientes .mini-table {
+    border: 1px solid;
+    margin-top: 15px;
+}
