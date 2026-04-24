@@ -32,6 +32,10 @@ button {
     margin-left: 50px;
 }
 
+button:hover {
+    box-shadow: rgba(39, 37, 37, 0.544) 5px 5px 8px;
+}
+
 .top-right {
     position: absolute;
     right: 50px;
@@ -104,4 +108,28 @@ button {
 
 .dashboard-content { 
     margin-top: 50px;
+}
+
+.table-name {
+    font-size: 20px;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.dashboard-table {
+    border-collapse: collapse;
+    border: 1px solid;
+}
+
+th {
+    padding: 13px;
+    font-size: 20px;
+    border: 1px solid;
+}
+
+td {
+    padding: 20px;
+    text-align: center;
+    font-size: 18px;
+    border: 1px solid;
 }
