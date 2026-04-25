@@ -19,7 +19,7 @@ app.get('/', (req, res, next) => {
 
 app.get('/dashboard', (req, res, next) => {
 
-    res.render('index');
+    res.render('dashboard');
     }); 
 
 app.get('/clientes', (req, res, next) => {
@@ -47,14 +47,19 @@ app.get('/reportes', (req, res, next) => {
     res.render('reportes');
     });
 
-/*app.get('/login', (req, res, next) => {
-
-    res.render('login');
-    });
-
 app.get('/canal-interno', (req, res, next) => {
 
     res.render('canal-interno');
+    });
+
+app.get('/alertas', (req, res, next) => {
+
+    res.render('alertas');
+    });
+
+/*app.get('/login', (req, res, next) => {
+
+    res.render('login');
     });
 
 app.get('/kyc', (req, res, next) => {
