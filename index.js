@@ -19,8 +19,10 @@ app.get('/', (req, res, next) => {
 
 app.get('/dashboard', (req, res, next) => {
 
-    res.render('dashboard');
+    res.render('dashboard', {
+        buttonText: "+ Nuevo cliente"
     }); 
+});
 
 app.get('/clientes', (req, res, next) => {
 
@@ -34,27 +36,37 @@ app.get('/contratos', (req, res, next) => {
 
 app.get('/expedientes', (req, res, next) => {
 
-    res.render('expedientes');
+    res.render('expedientes', {
+        buttonText: "+ Nuevo cliente"
+    });
     });
 
 app.get('/listas', (req, res, next) => {
 
-    res.render('listas');
+    res.render('listas', {
+        buttonText: "Validar"
+    });
     });
 
 app.get('/reportes', (req, res, next) => {
 
-    res.render('reportes');
+    res.render('reportes', {
+        buttonText: "Exportar"
+    });
     });
 
 app.get('/canal-interno', (req, res, next) => {
 
-    res.render('canal-interno');
+    res.render('canal-interno', {
+        buttonText: "Evaluar reporte"
+    });
     });
 
 app.get('/alertas', (req, res, next) => {
 
-    res.render('alertas');
+    res.render('alertas', {
+        buttonText: "Exportar"
+    });
     });
 
 /*app.get('/login', (req, res, next) => {
