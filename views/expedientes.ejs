@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de monitoreo</title>
-    <link href="style.css" rel="stylesheet" />
-    
-  </head>
+<%- include('partials/head') %>
+
   <body>
 
     <div class = "container">
@@ -15,11 +10,8 @@
         <%- include('partials/sidebar') %>
 
         <div class = "main">
-            <header class = "top">
-                <h1>Sistema de monitoreo</h1>
-                <button class = "top-right">+ Nuevo cliente</button>
-            </header>
 
+            <%- include('partials/header') %>
 
         <main class = "content">
             <h2>Expedientes</h2>
@@ -64,6 +56,9 @@
             </div>
 
         </main>
+
+        <%- include('partials/footer') %>
+
       </div>
 
 </body>

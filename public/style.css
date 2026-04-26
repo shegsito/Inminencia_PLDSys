@@ -16,6 +16,8 @@ body {
     background-color: var(--background-color);
     font-family: var(--font-family);
     display: flex;
+    flex-direction: column;
+    height: 100%
 }
 
 .container {
@@ -92,6 +94,7 @@ button:hover {
     flex-direction: column;
     margin-left: 210px;
     margin-top: 20px;
+    flex: 1;
 }
 
 .top {
@@ -99,6 +102,10 @@ button:hover {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 40px;
+}
+
+.top h2 {
+    margin-left: 30px;
 }
 
 .logo {
@@ -109,6 +116,7 @@ button:hover {
 
 .content {
     margin-left: 30px;
+    flex: 1;
 }
 
 .dashboard-content { 
@@ -195,4 +203,9 @@ td {
 .side-tables-clientes .mini-table {
     border: 1px solid;
     margin-top: 15px;
+}
+
+footer { 
+    padding: 30px;
+    text-align: center;
 }
