@@ -20,54 +20,64 @@ app.get('/', (req, res, next) => {
 app.get('/dashboard', (req, res, next) => {
 
     res.render('dashboard', {
-        buttonText: "+ Nuevo cliente"
+        buttonText: "+ Nuevo cliente",
+        pageTitle: "Dashboard Principal"
     }); 
 });
 
 app.get('/clientes', (req, res, next) => {
 
-    res.render('clientes');
+    res.render('clientes', {
+        pageTitle: "Operacion Cliente"
+    });
     });
 
 app.get('/contratos', (req, res, next) => {
 
-    res.render('contratos');
+    res.render('contratos', {
+        pageTitle: "Contratos"
+    });
     });
 
 app.get('/expedientes', (req, res, next) => {
 
     res.render('expedientes', {
-        buttonText: "+ Nuevo cliente"
+        buttonText: "+ Nuevo cliente",
+        pageTitle: "Expedientes"
     });
     });
 
 app.get('/listas', (req, res, next) => {
 
     res.render('listas', {
-        buttonText: "Validar"
+        buttonText: "Validar",
+        pageTitle: "Listas PEP/LPB"
     });
     });
 
 app.get('/reportes', (req, res, next) => {
 
     res.render('reportes', {
-        buttonText: "Exportar"
+        buttonText: "Exportar",
+        pageTitle: "Reportes"
     });
     });
 
 app.get('/canal-interno', (req, res, next) => {
 
     res.render('canal-interno', {
-        buttonText: "Evaluar reporte"
+        buttonText: "Evaluar reporte",
+        pageTitle: "Canal Interno"
     });
     });
 
 app.get('/alertas', (req, res, next) => {
 
     res.render('alertas', {
-        buttonText: "Exportar"
+        buttonText: "Exportar",
+        pageTitle: "Alertas"
     });
-    });
+});
 
 /*app.get('/login', (req, res, next) => {
 
