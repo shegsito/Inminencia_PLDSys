@@ -1,3 +1,20 @@
+header {
+    display: flex;
+    margin-bottom: 40px;
+    flex-direction: column;
+}
+
+.top-row-header {
+    justify-content: space-between;
+    display: flex;
+    width: 100%;
+}
+
+.subtitle {
+    margin-top: 30px;
+    margin-left: 30px;
+}
+
 button {
     color: black;
     background-color: var(--secondary-color);
@@ -12,7 +29,7 @@ button:hover {
     box-shadow: rgba(39, 37, 37, 0.544) 5px 5px 8px;
 }
 
-.top-right {
+.top-right-button {
     position: absolute;
     right: 50px;
 }

@@ -15,17 +15,6 @@
     flex: 1;
 }
 
-.top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
-}
-
-.top h2 {
-    margin-left: 30px;
-}
-
 .dashboard-content { 
     margin-top: 50px;
 }
