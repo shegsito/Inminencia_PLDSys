@@ -89,7 +89,8 @@ app.get('/kyc', (req, res, next) => {
     res.render('kyc');
     });*/
 
+
 const server = http.createServer( (req, res) => {    
-    console.log(req.url);
+console.log(req.url);
 });
 app.listen(3001);
