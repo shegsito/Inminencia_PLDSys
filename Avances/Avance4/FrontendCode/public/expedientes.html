@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de monitoreo</title>
+    <link href="style.css" rel="stylesheet" />
+    
+  </head>
+  <body>
+
+    <div class = "container">
+
+        <div class = "sidebar">
+            <div class = "logo">INMINENCIA</div>
+            <nav>
+                <p>Principal</p>
+                <ul>
+                    <li><a href = "index.html">Dashboard</a></li>
+                    <li><a href = "alertas.html">Alertas</a></li>
+                </ul>
+                <p>Clientes</p>
+                <ul>
+                    <li><a href = "clientes.html">Clientes</a></li>
+                    <li><a href = "expedientes.html">Expedientes</a></li>
+                    <li><a href = "contratos.html">Contratos</a></li>
+                </ul>
+                <p>Cumplimiento</p>
+                <ul>
+                    <li><a href = "listas.html">Listas</a></li>
+                    <li><a href = "reportes.html">Reportes</a></li>
+                    <li><a href = "canal-interno.html">Canal interno</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class = "main">
+            <header class = "top">
+                <h1>Sistema de monitoreo</h1>
+                <button class = "top-right">+ Nuevo cliente</button>
+            </header>
+
+
+        <main class = "content">
+            <h2>Expedientes</h2>
+
+            <div class = "dashboard-content">
+                <table class = "dashboard-table"> 
+                    <p class = "table-name">Expedientes de clientes</p>
+                    <tr>
+                        <th>NOMBRE</th>
+                        <th>RFC</th>
+                        <th>PRODUCTOS</th>
+                        <th>RIESGO</th>
+                        <th>PEP/LPB</th>
+                        <th>EXPEDIENTE</th>
+                    </tr>
+
+                    <tr>
+                        <td>Juan Perez</td>
+                        <td>MERR800101XXX</td>
+                        <td>credito, factoraje</td>
+                        <td>Baja</td>
+                        <td>Validado</td>
+                        <td>Completo</td>
+                    </tr>
+                    <tr>
+                        <td>Ana Gonzalez</td>
+                        <td>GOAA910315XXX</td>
+                        <td>Factoraje</td>
+                        <td>Media</td>
+                        <td>Validado</td>
+                        <td>Incompleto</td>
+                    </tr>
+                    <tr>
+                        <td>Carlos Ramirez</td>
+                        <td>LOLJ760822XXX</td>
+                        <td>Disposicion</td>
+                        <td>Alta</td>
+                        <td>Alerta Activa</td>
+                        <td>Incompleto</td>
+                    </tr>
+                </table>
+            </div>
+
+        </main>
+      </div>
+
+</body>
+</html>
