@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<%- include('partials/head') %>
+
+  <body>
+
+    <div class = "entire-container">
+
+        <%- include('partials/sidebar') %>
+
+        <div class = "right-container">
+
+            <%- include('partials/header') %>
+
+        <div class = "primary-content">
+
+                <table class = "dashboard-table"> 
+                    <p class = "table-name">Contratos por cliente</p>
+                    <tr>
+                        <th>CLIENTE</th>
+                        <th>PRODUCTO</th>
+                        <th>MONTO</th>
+                        <th>VIGENCIA</th>
+                        <th>ESTATUS</th>
+                    </tr>
+
+                    <tr>
+                        <td>Mateo Garcia</td>
+                        <td>Tarjeta de crédito</td>
+                        <td>$5000</td>
+                        <td>Ene-Dic 2026</td>
+                        <td>Vigente</td>
+                    </tr>
+                </table>
+
+        </div>
+
+        <%- include('partials/footer') %>
+
+      </div>
+
+</body>
+</html>

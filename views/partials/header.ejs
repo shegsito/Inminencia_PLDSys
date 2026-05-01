@@ -1,0 +1,17 @@
+<header>
+
+    <div class = "top-row-header">
+        <h1>Sistema de monitoreo</h1>
+
+        <% if (typeof buttonText !== 'undefined') { %>
+            <button class = "top-right-button"><%= buttonText %>
+            </button>
+        <% }  %>
+
+    </div>
+    
+    <% if (typeof pageTitle !== 'undefined') { %>
+        <h2 class = "subtitle"><%= pageTitle %></h2>
+    <% } %>
+
+</header>
