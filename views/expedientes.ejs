@@ -14,43 +14,8 @@
             <%- include('partials/header') %>
 
         <div class = "primary-content">
-
-                <table class = "dashboard-table"> 
-                    <p class = "table-name">Expedientes de clientes</p>
-                    <tr>
-                        <th>NOMBRE</th>
-                        <th>RFC</th>
-                        <th>PRODUCTOS</th>
-                        <th>RIESGO</th>
-                        <th>PEP/LPB</th>
-                        <th>EXPEDIENTE</th>
-                    </tr>
-
-                    <tr>
-                        <td>Juan Perez</td>
-                        <td>MERR800101XXX</td>
-                        <td>credito, factoraje</td>
-                        <td>Baja</td>
-                        <td>Validado</td>
-                        <td>Completo</td>
-                    </tr>
-                    <tr>
-                        <td>Ana Gonzalez</td>
-                        <td>GOAA910315XXX</td>
-                        <td>Factoraje</td>
-                        <td>Media</td>
-                        <td>Validado</td>
-                        <td>Incompleto</td>
-                    </tr>
-                    <tr>
-                        <td>Carlos Ramirez</td>
-                        <td>LOLJ760822XXX</td>
-                        <td>Disposicion</td>
-                        <td>Alta</td>
-                        <td>Alerta Activa</td>
-                        <td>Incompleto</td>
-                    </tr>
-                </table>
+            
+            <div id = "test-table"></div>
 
         </div>
 
@@ -59,6 +24,8 @@
       <%- include('partials/footer') %>
 
     </div>
+
+    <%- include('partials/scripts/expediente-table') %>
 
 </body>
 </html>
