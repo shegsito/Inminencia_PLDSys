@@ -18,70 +18,56 @@
                 <div class = "side-tables-clientes">
                     <table class = mini-table>
                         <tr>
-                            <th>Luis Alfonso Perez Rodriguez</th>
+                            <th><%= cliente ? cliente.nombre_completo : 'Sin nombre registrado' %></th>
                         </tr>
-
                         <tr>
                             <td>Riesgo:</td>
-                            <td>bajo</td>
+                            <td><%= cliente ? cliente.nivel_riesgo : 'N/A' %></td>
                         </tr>
                         <tr>
                             <td>Expediente:</td>
-                            <td>activo</td>
+                            <td><%= cliente ? cliente.estatus_expediente : 'N/A' %></td>
                         </tr>
                         <tr>
-                            <td>Cliente desde</td>
-                            <td>12 enero 2024</td>
+                            <td>Cliente desde:</td>
+                            <td><%= cliente && cliente.fecha_registro ? new Date(cliente.fecha_registro).toLocaleDateString() : 'N/A' %></td>
                         </tr>
                         <tr>
-                            <td>Correo</td>
-                            <td>luis.afp@gmail.com</td>
+                            <td>Correo:</td>
+                            <td><%= cliente ? cliente.correo : 'N/A' %></td>
                         </tr>
                         <tr>
-                            <td>Teléfono</td>
-                            <td>+52 442 412 1213</td>
+                            <td>Teléfono:</td>
+                            <td><%= cliente ? cliente.telefono : 'N/A' %></td>
                         </tr>
                         <tr>
-                            <td>Tipo de cliente</td>
-                            <td>Fisico</td>
+                            <td>RFC:</td>
+                            <td><%= cliente ? cliente.rfc : 'N/A' %></td>
                         </tr>
                     </table>
                     <table class = "mini-table">
-                        
                         <tr>
-                            <th>FOLIO</th>
-                            <th>FECHA</th>
-                            <th>PRODUCTO</th>
-                            <th>MONTO</th>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Producto</th>
+                            <th>Monto</th>
+                            <th>Riesgo</th>
                         </tr>
-                        <tr>
-                            <td>OP-1XXX</td>
-                            <td>05/04/2026</td>
-                            <td>Crédito personal</td>
-                            <td>$45,000</td>
-                            <td>Baja</td>
-                        </tr>
-                        <tr>
-                            <td>OP-2XXX</td>
-                            <td>05/04/2026</td>
-                            <td>Factoraje</td>
-                            <td>$45,000</td>
-                            <td>Baja</td>
-                        </tr>
-                        <tr>
-                            <td>OP-3XXX</td>
-                            <td>05/04/2026</td>
-                            <td>Factoraje</td>
-                            <td>$45,000</td>
-                            <td>Baja</td>
-                        </tr>
-                        <tr>
-                            <td>OP-4XXX</td>
-                            <td>05/04/2026</td>
-                            <td>Fatoraje</td>
-                            <td>$900,000</td>
-                            <td>Alto</td>
-                        </tr>
+                        <% if (typeof contratos !== 'undefined' && contratos.length > 0) { %>
+                            <% contratos.forEach(contrato => { %>
+                                <tr>
+                                    <td><%= contrato.IDContrato %></td>
+                                    <td><%= new Date(contrato.fecha_apertura).toLocaleDateString() %></td>
+                                    <td><%= contrato.tipo_producto %></td>
+                                    <td>$<%= contrato.monto_limite.toLocaleString() %></td>
+                                    <td><%= contrato.nivel_riesgo %></td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="5" style="text-align: center;">No hay contratos registrados.</td>
+                            </tr>
+                        <% } %>
                     </table>
                 </div>
                 <br>
@@ -89,37 +75,31 @@
                 <table class = "dashboard-table"> 
                     <p class = "table-name">Documentos del expediente</p>
                     <tr>
-                        <td>Identificacion oficial</td>
-                        <td>Cargado 05/02/26</td>
-                        <td>VIGENTE</td>
+                        <th>Tipo de Documento</th>
+                        <th>Fecha de Carga</th>
+                        <th>Estatus</th>
                     </tr>
-                    <tr>
-                        <td>Prueba de domicilio</td>
-                        <td>Cargado 05/02/26</td>
-                        <td>VIGENTE</td>
-                    </tr>
-                    <tr>
-                        <td>RFC</td>
-                        <td>Cargado 05/02/26</td>
-                        <td>VIGENTE</td>
-                    </tr>
-                    <tr>
-                        <td>CURP</td>
-                        <td>Cargado 05/02/26</td>
-                        <td>VIGENTE</td>
-                    </tr>
-                    <tr>
-                        <td>Documentacion corporativa/ personal</td>
-                        <td>Cargado 05/02/26</td>
-                        <td>VIGENTE</td>
-                    </tr>
+                    
+                    <% if (typeof documentos !== 'undefined' && documentos.length > 0) { %>
+                        <% documentos.forEach(doc => { %>
+                            <tr>
+                                <td><%= doc.tipo_documento %></td>
+                                <td>Cargado <%= new Date(doc.fecha_carga).toLocaleDateString() %></td>
+                                
+                                <% let textColor = doc.estatus === 'VIGENTE' ? 'green' : 'red'; %>
+                                <td style="color: <%= textColor %>;">
+                                    <%= doc.estatus %>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="3" style="text-align: center;">Aún no se han cargado documentos.</td>
+                        </tr>
+                    <% } %>
                 </table>
-
         </div>
-
         <%- include('partials/footer') %>
-
       </div>
-
 </body>
 </html>
