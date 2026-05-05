@@ -1,14 +1,15 @@
-const express  = require('express');
-const router   = express.Router();
+const express = require('express');
+const router = express.Router();
 
-router.use('/dashboard',     require('./dashboard'));
-router.use('/clientes',      require('./clientes'));
-router.use('/contratos',     require('./contratos'));
-router.use('/expedientes',   require('./expedientes'));
-router.use('/listas',        require('./listas'));
-router.use('/reportes',      require('./reportes'));
-router.use('/canal-interno', require('./canalInterno'));
-router.use('/alertas',       require('./alertas'));
+router.use('/dashboard', require('./dashboard.routes'));
+router.use('/clientes', require('./clientes.routes'));
+router.use('/contratos', require('./contratos.routes'));
+router.use('/expedientes', require('./expedientes.routes'));
+router.use('/listas', require('./listas.routes'));
+router.use('/reportes', require('./reportes.routes'));
+router.use('/canal-interno', require('./canalInterno.routes'));
+router.use('/alertas', require('./alertas.routes'));
+router.use('usuarios', require('./usuarios.routes'));
 
 router.get('/kyc', (req, res, next) => {
 
