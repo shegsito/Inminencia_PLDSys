@@ -1,3 +1,7 @@
 exports.index = (req, res) => {
-    res.render('expedientes', { pageTitle: 'Expedientes', buttonText: '+ Nuevo cliente' });
+    res.render('expedientes', { 
+        pageTitle: 'Expedientes', 
+        buttonText: '+ Nuevo cliente', 
+        buttonLink: '/kyc'
+    });
 };

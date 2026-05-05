@@ -10,4 +10,16 @@ router.use('/reportes',      require('./reportes'));
 router.use('/canal-interno', require('./canalInterno'));
 router.use('/alertas',       require('./alertas'));
 
+router.get('/kyc', (req, res, next) => {
+
+    res.render('forms/kyc-form', {
+        pageTitle: "Nuevo cliente"
+    });
+});
+
+router.post('/new-client', (req, res, next) => {
+
+    res.redirect('/dashboard');
+});
+
 module.exports = router;

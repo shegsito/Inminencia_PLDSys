@@ -4,9 +4,16 @@
         <h1>Sistema de monitoreo</h1>
 
         <% if (typeof buttonText !== 'undefined') { %>
-            <button class = "top-right-button"><%= buttonText %>
-            </button>
-        <% }  %>
+            <% if (typeof buttonLink !== 'undefined') { %>
+                <a href = "<%= buttonLink %>"> 
+                    <button class = "top-right-button"><%= buttonText %>
+                    </button>
+                </a>
+            <% } else { %>
+                <button class = "top-right-button"><%= buttonText %>
+                    </button>
+            <% }  %>
+        <% } %>
 
     </div>
     
