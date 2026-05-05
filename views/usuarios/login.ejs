@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<%- include('partials/head') %>
+
+  <body>
+
+    <div class = "entire-container">
+
+        <div class = "primary-content">
+
+            <form action="/usuarios/login" method="POST">
+                <h2>Iniciar sesion</h2>
+                
+                
+                <div class="form-group">
+                    <label for="username">Usuario</label>
+                    <input type="text" name="username" id="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Contrasena</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">Entrar</button>
+            
+            </form>
+
+        </div>
+
+    </div>
+</body>
+</html>
