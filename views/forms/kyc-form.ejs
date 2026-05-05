@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<%- include('../partials/head') %>
+
+  <body>
+
+    <div class = "entire-container">
+
+        <div class = "primary-content">
+            <div class = "client-form">
+            <%- include('../partials/header') %>
+
+            <form method="POST" action="/new-client">
+                <label for="fname">Nombre completo:</label>
+                <input type="text" name="fname" placeholder="Nombre completo"><br>
+                <br>
+
+                <label for="first-lname">Primer apellido:</label>
+                <input type="text" name="first-lname" placeholder="Apellido paterno"><br>
+                <br>
+
+                <label for="second-lname">Segundo apellido:</label>
+                <input type="text" name="second-lname" placeholder="Apellido materno"><br>
+                <br>
+               
+                <label for="rfc">Constancia fiscal (RFC):</label>
+                <input type="text" name="rfc" placeholder="RFC"><br>
+                <br>
+
+                <label for="curp">CURP:</label>
+                <input type="text" name="curp" placeholder="CURP"><br>
+                <br>
+
+                <label for="address">Domicilio actual:</label>
+                <input type="text" name="address" placeholder="Domicilio"><br>
+                <br>
+
+                <label for="entity">Tipo entidad:</label>
+                <select name="entity" placeholder="Seleccione entidad">
+                    <option value="">Seleccionar entidad</option>
+                    <option value="personal">Personal</option>
+                    <option value="corporativa">Corporativa</option>
+                </select><br>
+                <br>
+                
+                <input type="submit" value="Submit">
+            </form>
+            </div>
+
+        </div>
+
+      </div>
+</body>
+</html>
