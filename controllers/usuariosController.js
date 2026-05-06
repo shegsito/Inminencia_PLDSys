@@ -7,24 +7,27 @@ module.exports.render_login = async (req, res) =>{
 
 module.exports.do_login = async (req, res) =>{
         try {
+        const { email, password } = req.body;
         const usuario = await model.User.findByEmail(req.body.email);
         //checking for existing user
-        if (!email) {
+        console.log("Usuario found:", usuario);
+        
+        if (!usuario) {
             return res.redirect('/usuarios/login');
         }
 
         //verify password
-        const doMatch = await bcrypt.compare(req.body.password, usuario.password);
+        const doMatch = await bcrypt.compare(password, usuario.password);
         if (!doMatch) {
             return res.redirect('/usuarios/login');
         }
 
         //load user permissions
-        const permisos = await model.User.getPermisos(usuario.email);
+        //const permisos = await model.User.getPermisos(usuario.email);
         req.session.email = usuario.email;
         req.session.rol = usuario.rol;
         req.session.isLoggedIn = true;
-        req.session.permisos = permisos; 
+        req.session.permisos = usuario.permisos; 
 
         //redirection based on role
         switch (usuario.rol) {
@@ -32,13 +35,13 @@ module.exports.do_login = async (req, res) =>{
                 return res.redirect ('/admin/dashboard');
 
             case 'oficial':
-                return res.redirect ('/oficial/dashboard');
+                return res.redirect ('/dashboard');
 
             case 'operador':
                 return res.redirect ('/operador/dashboard');
 
             case 'cliente':
-                return res.redirect ('/forms/kyc-form');
+                return res.redirect ('/kyc');
         }
 
     } catch (e) {
@@ -47,9 +50,9 @@ module.exports.do_login = async (req, res) =>{
     }
 };
 
-exports.get_logged = async (req, res) => {
+/*exports.get_logged = async (req, res) => {
     const email = await model.User.findByEmail(req.session.email);
     if (!email) return res.redirect('/usuarios/login');
     res.render('usuarios/logged', { user: email });
-};
+};*/
 

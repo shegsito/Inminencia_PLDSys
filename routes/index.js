@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
 
-router.use('/dashboard', require('./dashboard.routes'));
-router.use('/clientes', require('./clientes.routes'));
-router.use('/contratos', require('./contratos.routes'));
-router.use('/expedientes', require('./expedientes.routes'));
-router.use('/listas', require('./listas.routes'));
-router.use('/reportes', require('./reportes.routes'));
-router.use('/canal-interno', require('./canalInterno.routes'));
-router.use('/alertas', require('./alertas.routes'));
-router.use('/usuarios', require('./usuarios.routes'));
+router.use('/dashboard', require('./dashboardRoutes'));
+router.use('/clientes', require('./clientesRoutes'));
+router.use('/contratos', require('./contratosRoutes'));
+router.use('/expedientes', require('./expedientesRoutes'));
+router.use('/listas', require('./listasRoutes'));
+router.use('/reportes', require('./reportesRoutes'));
+router.use('/canal-interno', require('./canalInternoRoutes'));
+router.use('/alertas', require('./alertasRoutes'));
+router.use('/usuarios', require('./usuariosRoutes'));
 
 router.get('/kyc', (req, res, next) => {
 
