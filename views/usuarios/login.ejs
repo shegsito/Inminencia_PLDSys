@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
   
-<%- include('partials/head') %>
+<%- include('../partials/head') %>
 
   <body>
 
     <div class = "entire-container">
-
-        <div class = "primary-content">
-
-            <form action="/usuarios/login" method="POST">
-                <h2>Iniciar sesion</h2>
+        
+        <div class = "login-container">
+            
+            <div class="login-card">
+                <h1>LOG IN</h1>
+                <form action="/usuarios/login" method="POST"></form>
                 
-                
-                <div class="form-group">
-                    <label for="username">Usuario</label>
-                    <input type="email" name="email" id="email" required>
+                <div class="input-group">
+                    <label for="email">Usuario:</label>
+                    <input type="email" id="email" name="email" required>
                 </div>
                 
-                <div class="form-group">
-                    <label for="password">Contrasena</label>
-                    <input type="password" name="password" id="password" required>
+                <div class="input-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required>
                 </div>
                 
-                <button type="submit" class="btn-primary">Entrar</button>
+                <input type="button" value="Iniciar">
             
             </form>
+        
+            </div>
 
         </div>
-
+    
     </div>
 </body>
 </html>

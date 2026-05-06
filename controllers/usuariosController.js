@@ -1,11 +1,11 @@
 const model = require("../models/usuariosModel.js")
 const bcrypt = require('bcrypt');
 
-module.exports.render_login = async(req,res) =>{
+module.exports.render_login = async (req, res) =>{
     res.render("usuarios/login", { registro: false });
 }
 
-module.exports.do_login = async(req,res) =>{
+module.exports.do_login = async (req, res) =>{
         try {
         const usuario = await model.User.findByEmail(req.body.email);
         //checking for existing user
@@ -24,7 +24,7 @@ module.exports.do_login = async(req,res) =>{
         req.session.email = usuario.email;
         req.session.rol = usuario.rol;
         req.session.isLoggedIn = true;
-        req.session.permisos   = permisos; 
+        req.session.permisos = permisos; 
 
         //redirection based on role
         switch (usuario.rol) {

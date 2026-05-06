@@ -9,7 +9,7 @@ router.use('/listas', require('./listas.routes'));
 router.use('/reportes', require('./reportes.routes'));
 router.use('/canal-interno', require('./canalInterno.routes'));
 router.use('/alertas', require('./alertas.routes'));
-router.use('usuarios', require('./usuarios.routes'));
+router.use('/usuarios', require('./usuarios.routes'));
 
 router.get('/kyc', (req, res, next) => {
 
