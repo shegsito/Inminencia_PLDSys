@@ -11,6 +11,9 @@ router.use('/canal-interno', require('./canalInternoRoutes'));
 router.use('/alertas', require('./alertasRoutes'));
 router.use('/usuarios', require('./usuariosRoutes'));
 
+router.use('/admin', require('./adminRoutes'));
+router.use('/operador', require('./operadorRoutes'));
+
 router.get('/kyc', (req, res, next) => {
 
     res.render('forms/kyc-form', {
