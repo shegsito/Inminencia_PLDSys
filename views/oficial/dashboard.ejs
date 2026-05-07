@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<%- include('../partials/head') %>
+
+  <body>
+
+    <div class = "entire-container">
+
+        <%- include('../partials/sidebar') %>
+
+        <div class = "right-container">
+
+            <%- include('../partials/header') %>
+
+        <div class = "primary-content">
+
+                <div class = "side-tables">
+                    <table class = mini-table>
+                        <tr>
+                            <th>Alertas recientes</th>
+                            <th>Prioridad</th>
+                        </tr>
+                        <tr>
+                            <td>Acumulado inusual</td>
+                            <td>Alta</td>
+                        </tr>
+                        <tr>
+                            <td>Transferencia sospechosa</td>
+                            <td>Baja</td>
+                        </tr>
+                        <tr>
+                            <td>Umbral excedido</td>
+                            <td>Media</td>
+                        </tr>
+                    </table>
+                    <table class = "mini-table">
+                        <tr>
+                            <th>Clientes recientes</th>
+                            <th>Riesgo</th>
+                        </tr>
+                        <tr>
+                            <td>Grezia Trujillo</td>
+                            <td>Alto</td>
+                        </tr>
+                        <tr>
+                            <td>German Moncada</td>
+                            <td>Medio</td>
+                        </tr>
+                        <tr>
+                            <td>Oscar Lopez</td>
+                            <td>Medio</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <table class = "dashboard-table"> 
+                    <p class = "table-name">Operaciones recientes</p>
+                    <tr>
+                        <th>CLIENTE</th>
+                        <th>PRODUCTO</th>
+                        <th>MONTO</th>
+                        <th>FECHA</th>
+                    </tr>
+
+                    <tr>
+                        <td>Juan Perez</td>
+                        <td>Factoraje</td>
+                        <td>$5000</td>
+                        <td>05/04/26</td>
+                    </tr>
+                    <tr>
+                        <td>Maria Lopez</td>
+                        <td>Crédito personal</td>
+                        <td>$40,000</td>
+                        <td>05/04/26</td>
+                    </tr>
+                </table>
+
+        </div>
+
+      </div>
+
+      <%- include('../partials/footer') %>
+
+      </div>
+</body>
+</html>
