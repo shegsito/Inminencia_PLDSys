@@ -9,16 +9,15 @@ router.use('/listas',        require('./listas'));
 router.use('/reportes',      require('./reportes'));
 router.use('/canal-interno', require('./canalInterno'));
 router.use('/alertas',       require('./alertas'));
+router.use('/api/clientes',   require('./api/clientes'));
+router.use('/api/expediente', require('./api/expedientes'));
 
-router.get('/kyc', (req, res, next) => {
-
-    res.render('forms/kyc-form', {
-        pageTitle: "Nuevo cliente"
-    });
+router.get('/kyc', (req, res) => {
+    res.render('forms/kyc-form', { pageTitle: "Nuevo cliente" });
 });
 
-router.post('/new-client', (req, res, next) => {
 
+router.post('/new-client', (req, res) => {
     res.redirect('/dashboard');
 });
 
