@@ -1,5 +1,4 @@
 
-
 .sidebar {
     background-color: var(--primary-color);
     color: var(--secondary-text-color);
@@ -12,7 +11,6 @@
     padding: 13px;
     display: flex;
     flex-direction: column;
-
 }
 
 .sidebar ul {
