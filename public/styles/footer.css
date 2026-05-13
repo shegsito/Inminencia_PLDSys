@@ -1,0 +1,28 @@
+.footer-style{ 
+    margin-left: 100px;
+    width: 100%
+}
+
+footer { 
+    text-align: center;
+    margin-top: auto;
+    background-color: rgb(235, 226, 226);
+    font-size: 16px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.top-bar {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 20px
+}
+
+.bottom-bar {
+    padding: 20px;
+}
+
+.bottom-bar p {
+    line-height: 1.8;
+}

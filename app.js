@@ -1,0 +1,26 @@
+require('dotenv').config();
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
+const app = express();
+const session = require('express-session');
+
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+    secret: 'inminencia-secret',
+    resave: false,
+    saveUninitialized: false,
+}));
+
+app.get('/', (req, res) => res.redirect('/usuarios/login'));
+
+app.use(require('./routes'));
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
