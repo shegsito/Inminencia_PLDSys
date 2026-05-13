@@ -19,7 +19,7 @@ const DocumentoModel = {
         const query = `
             INSERT INTO documento
                 (idexpediente, cargado_por, tipo_doc, ruta_archivo, formato, hash_int)
-            VALUES ($1, $2, $3, $4, truen NOW(), $5, $6)
+            VALUES ($1, $2, $3, $4, true, NOW(), $5, $6)
             RETURNING iddocumento
         `;
         const res = await client.query(query, [idexpediente, cargado_por, tipo_doc, ruta_archivo, formato, hash_int]);
