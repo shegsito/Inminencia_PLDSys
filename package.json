@@ -9,21 +9,15 @@
     "dev": "nodemon app.js"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "bcryptjs": "^3.0.3",
-=======
     "bcrypt": "^6.0.0",
->>>>>>> feature/login
+    "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.2",
     "dotenv": "^17.4.2",
     "ejs": "^5.0.2",
     "express": "^5.2.1",
     "express-ejs-layouts": "^2.5.1",
-<<<<<<< HEAD
-    "multer": "^2.1.1",
-=======
     "express-session": "^1.19.0",
->>>>>>> feature/login
+    "multer": "^2.1.1",
     "pg": "^8.20.0"
   },
   "devDependencies": {
