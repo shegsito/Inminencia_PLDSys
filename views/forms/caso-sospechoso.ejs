@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<%- include('../partials/head') %>
+
+  <body>
+
+    <div class = "entire-container">
+
+        <div class = "primary-content">
+            <%- include('../partials/header') %>
+            <div class = "queja-form">
+
+            <form method="POST" action="/operador/reportar" enctype="multipart/form-data">
+
+                <label for="queja-desc">Describir con más detalle posible:</label>
+                <textarea name="queja-desc" rows="4" placeholder="Descripción de caso..."></textarea>
+
+                <label for="evidencia">Adjuntar evidencia</label>
+                <input type="file" name="evidencia">
+                
+                <button type="submit" value="Submit">Enviar Reporte</button>
+            </form>
+            </div>
+
+        </div>
+
+      </div>
+</body>
+</html>

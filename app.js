@@ -18,7 +18,7 @@ app.use(session({
     saveUninitialized: false,
 }));
 
-app.get('/', (req, res) => res.redirect('/dashboard'));
+app.get('/', (req, res) => res.redirect('/usuarios/login'));
 
 app.use(require('./routes'));
 
