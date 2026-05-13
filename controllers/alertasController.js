@@ -1,3 +1,6 @@
 exports.index = (req, res) => {
-    res.render('alertas', { pageTitle: 'Alertas', buttonText: 'Exportar' });
+    res.render('alertas', { 
+        pageTitle: 'Alertas', 
+        buttonText: 'Exportar',
+     });
 };

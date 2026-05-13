@@ -1,6 +1,6 @@
 const express    = require('express');
 const router     = express.Router();
-const controller = require('../controllers/listasController');
+const controller = require('../controllers/oficial/canalInternoController');
 
 router.get('/', controller.index);
 

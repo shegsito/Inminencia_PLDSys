@@ -1,5 +1,5 @@
 exports.index = (req, res) => {
-    res.render('expedientes', { 
+    res.render('oficial/expedientes', { 
         pageTitle: 'Expedientes', 
         buttonText: '+ Nuevo cliente', 
         buttonLink: '/kyc'

@@ -1,6 +1,6 @@
 const express    = require('express');
 const router     = express.Router();
-const controller = require('../controllers/clientesController');
+const controller = require('../controllers/oficial/alertasController');
 
 router.get('/', controller.index);
 
