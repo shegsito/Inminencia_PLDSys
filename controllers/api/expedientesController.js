@@ -1,4 +1,9 @@
+/*const crypto = require('crypto');
+const fs = require('fs');
+const pool = require('../../config/db');
+const expedienteModel = req
 
+*/
 
 const crypto         = require('crypto');
 const fs             = require('fs');
