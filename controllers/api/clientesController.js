@@ -7,7 +7,7 @@ const ExpedienteModel = require('../../models/expedienteModel');
 // here I implemented a regex to validate a RFC, CURP and EMAIL, this can handle correctly the format input of those atributes
 
 // 3-4 alphabets, 6 numbers, 3 alphabets/numbers
-const RFC_REGEX = /^[A-Z]{3-4}[0-9]{6}[A-Z0-9]{3}$/;
+const RFC_REGEX = /^[A-Z]{3,4}[0-9]{6}[A-Z0-9]{3}$/;
 
 //  4 alphabets, 6 numbers, hombre/mujer (HM), 5 alphabets, 2 alphabets/numbers 
 const CURP_REGEX = /^[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[A-Z0-9]{2}$/;
@@ -18,7 +18,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // validate function to advertise mandatory fills to the user
 function validar(body){
     const errores = [];
-    const { nombre_completo, rfc, tipo_persona, domicilio, email_personal, telefono, email_institucional} = body;
+    const { nombre_completo, rfc, curp, tipo_persona, domicilio, email_personal, telefono, email_institucional} = body;
 
     if(!nombre_completo?.trim()) errores.push ("nombre completo es obligatorio");
     if(!domicilio?.trim()) errores.push('domicilio es obligatorio');
@@ -27,7 +27,7 @@ function validar(body){
     // trim() function to eliminate blank spaces in a string
     // validate the RFC 
     if(!rfc?.trim()) errores.push('rfc es obligatorio');
-    else if(!RFC_REGEX.test(rfc.trim())) errores.push("RFC inválido");
+    else if(!RFC_REGEX.test(rfc.trim().toUpperCase())) errores.push("RFC inválido");
 
     // validate the email's inputs
     if (!email_personal?.trim()) errores.push('email_personal es obligatorio');
@@ -38,8 +38,8 @@ function validar(body){
 
     //  validate CURP in persona fisica
     if(tipo_persona == 'fisica'){
-        if (!curp?.trim()) errores.push('curp es obligatorio para persona física')
-            else if (!CURP_REGEX.test(curp.trim())) errores.push('CURP inválido');
+        if (!curp?.trim()) errores.push('curp es obligatorio para persona física');
+            else if (!CURP_REGEX.test(curp.trim().toUpperCase())) errores.push('CURP inválido');
     }
 
     return errores;
@@ -93,10 +93,11 @@ exports.registrar = async (req, res) => {
             idcliente,
             idusuario,
             nombre_completo: nombre_completo.trim(),
-            rfc: rfc.trim().toUpperCase,
+            rfc: rfc.trim().toUpperCase(),
+            curp: curp?.trim().toUpperCase() || null,
             domicilio: domicilio.trim(),
             email_personal: email_personal.trim(),
-            email_institucional: email_institucional?.trim()|| null,
+            email_institucional: email_institucional?.trim() || null,
             telefono: telefono.trim(),
             tipo_persona,
         });
@@ -105,8 +106,8 @@ exports.registrar = async (req, res) => {
 
         // insert into bitacroa the action of registerin a client
         await dbClient.query(
-             `INSERT INTO bitacora (idusuario, accion, entidad_afectada, id_entidad, ip_origen,fecha) 
-              VALUES ($1, $2, $3, $4, $5, NOW())` ,
+             `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
+              VALUES ($1, $2, $3, $4, $5, NOW())`,
               [idusuario, 'CREAR_CLIENTE', 'cliente', idcliente, req.ip]
         );
 

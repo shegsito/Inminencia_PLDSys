@@ -262,7 +262,7 @@
 
       const formData = new FormData();
       formData.append('archivo',  file);
-      formData.append('tipo_doc', tipo);
+      formData.append('tipo_documento', tipo);
 
       try {
         const resp = await fetch(`/api/expediente/${sessionExpedId}/documentos`, {
