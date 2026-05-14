@@ -1,5 +1,5 @@
-const model = require("../models/usuariosModel.js")
-const bcrypt = require('bcrypt');
+const UsuarioModel = require('../models/usuarioModel');
+const bcrypt = require('bcryptjs');
 
 module.exports.render_login = async (req, res) =>{
     res.render("usuarios/login", { registro: false });
@@ -8,7 +8,7 @@ module.exports.render_login = async (req, res) =>{
 module.exports.do_login = async (req, res) =>{
         try {
         const { email, password } = req.body;
-        const usuario = await model.User.findByEmail(req.body.email);
+        const usuario = await UsuarioModel.findByEmail(req.body.email);
         //checking for existing user
         console.log("Usuario found:", usuario);
         
@@ -35,13 +35,13 @@ module.exports.do_login = async (req, res) =>{
                 return res.redirect ('/admin/dashboard');
 
             case 'oficial':
-                return res.redirect ('/dashboard');
+                return res.redirect ('/oficial/dashboard');
 
             case 'operador':
                 return res.redirect ('/operador/dashboard');
 
             case 'cliente':
-                return res.redirect ('/kyc');
+                return res.redirect ('/oficial/kyc');
         }
 
     } catch (e) {
