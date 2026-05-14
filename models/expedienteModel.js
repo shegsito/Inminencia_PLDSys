@@ -34,7 +34,7 @@ const ExpedienteModel = {
         const requeridos = DOCS_REQUERIDOS[tipo_persona] ?? DOCS_REQUERIDOS.fisica;
 
         const res = await client.query(
-            `SELECT ARRAY_AGG(tipo_doc) AS tipos
+            `SELECT ARRAY_AGG(tipo_documento) AS tipos
              FROM documento
              WHERE idexpediente = $1 AND vigente = true`,
             [idexpediente]

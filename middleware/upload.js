@@ -3,9 +3,6 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { ALL } = require('dns');
-const Module = require('module');
-
 const ALLOWED_TYPE = ['image/jpeg', 'image/png', 'application/pdf'];
 const MAX_SIZE = 5 * 1024 * 1024; // that's 5mb max per document
 
