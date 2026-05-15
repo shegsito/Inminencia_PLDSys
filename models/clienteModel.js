@@ -67,4 +67,44 @@ const ClienteModel = {
     },
 };
 
+
+// ------------------ RF 04 , 05
+
+// actualizing the editable rows from a client
+actualizarDatos: async (client, idcliente, campos) => {
+    const columnas = Object.keys(campos);
+    const filas = Object.values(campos);
+
+    // generate columns by reading each element and asigning $1, $2 ...
+    // this takes the array of column names that the user edited before, removing the need to write a consult for wach case
+    const setClause = columnas.map((col, i) => `"${col}" = $${i + 1}`).join(',');
+
+    const query = `
+        UPDATE "CLIENTE"
+        SET ${setClause}
+        WHERE "IDCliente" = $${columnas.length + 1}
+    `;
+
+    await client.query(query, [...valores, idcliente]);
+};
+
+// Register each modified row in MODIFICACION_EXPEDIENTE
+
+// CHECK THE DB COLUMNS, THEY MAY SEEM TO BE BAD WRITTEN (i was sleepy srry)
+registrarModificacion: async (client, { idExpediente, idUsuario, campo, valoranterior, valornuevo, justificacion}) => {
+    const query = `
+        INSERT into "modificacion_expediente"
+            ("IDExpediente", "IDUsuario", "campo_modif",
+            "valor_anterior", "valor_nuevo", "justifacion", "fecha")
+            VALUES ($1, $2, $3, $4, $5, $6, NOW())
+    `;
+
+    await client.query(query[
+        idExpediente, idUsuario, campo, valoranterior,
+        valornuevo, justificacion
+    ]);
+}
+
+// both funvtions recieve client as the first parameter, this is because the pool 
+// has to open the same transaction and pass it to both functions, so them stay at the same conection
 module.exports = ClienteModel;

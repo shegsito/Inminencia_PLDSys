@@ -33,3 +33,4 @@ exports.index = async (req, res) => {
         res.status(500).send('Error al obtener los datos del cliente');
     }
 };
+
