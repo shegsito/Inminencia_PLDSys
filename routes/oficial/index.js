@@ -22,4 +22,8 @@ router.get('/reportes',      reportes.index);
 router.get('/kyc',           (req, res) => res.render('oficial/forms/kyc-form', { pageTitle: 'Nuevo cliente' }));
 router.post('/new-client',   (req, res) => res.redirect('/oficial/dashboard'));
 
+//return the data
+router.get('/api/operaciones/count', operaciones.count);
+router.get('/api/operaciones/data', operaciones.operaciones);
+
 module.exports = router;
