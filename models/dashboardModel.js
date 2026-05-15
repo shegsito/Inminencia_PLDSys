@@ -11,12 +11,11 @@ exports.fetchAllAlertas = async () => {
     const sql = `
         SELECT motivo, prioridad
         FROM alerta
-        WHERE prioridad IN ('Alta')
+        WHERE prioridad IN ('alta')
     `;
     const { rows } = await pool.query(sql);
     return rows;
 };
-
 
 //queries for clientes table
 exports.countClientes = async () => {
@@ -33,15 +32,12 @@ exports.fetchAllClientes = async () => {
     return rows;
 };
 
-
-
 //queries for operaciones table
 exports.countOperaciones = async () => {
     const { rows } = await pool.query('SELECT COUNT(*)::int AS total FROM operacion');
     return rows[0].total;
 };
 
-//fetch records
 exports.fetchAllOperaciones = async () => {
     const sql = `
         SELECT c.nombre_cliente, op.tipo_operacion, op.monto, op.fecha

@@ -4,58 +4,16 @@ const clientesRecientes = document.getElementById("clientes-recientes");
 const operacionesRecientes = document.getElementById("operaciones-recientes");
 
 window.addEventListener("load", () => {
-    gridTable = new gridjs.Grid({
+
+    const alertasGrid = new gridjs.Grid({
         columns: ["Alertas recientes", "Prioridad"],
         sort: true,
         pagination: false,
         server: {
-            url: '/api/operaciones/data',
-            then: data => data.map(
-                motivo, prioridad
-            )
-        },
-        
-        style: {
-            table: {
-                'font-family': 'Cambria, serif'
-            },
-        th: {
-                'background-color': '#4d0100',
-                'color': 'white'
-        }
-    }
-}).render(alertasRecientes);
-
-gridTable = new gridjs.Grid({
-        columns: ["Clientes recientes", "Riesgo"],
-        sort: true,
-        pagination: false,
-        server: {
-            url: '/api/operaciones/data',
-            then: data => data.map(
-                nombre_cliente, nivel_riesgo
-            )
-        },
-        
-        style: {
-            table: {
-                'font-family': 'Cambria, serif'
-            },
-        th: {
-                'background-color': '#4d0100',
-                'color': 'white'
-        }
-    }
-}).render(clientesRecientes);
-
-gridTable = new gridjs.Grid({
-        columns: ["Cliente", "Producto", "Monto", "Fecha"],
-        sort: true,
-        pagination: false,
-        server: {
-            url: '/api/operaciones/data',
-            then: data => data.map(op => [
-                op.nombre_cliente, op.tipo_operacion, op.monto, op.fecha
+            url: '/oficial/dashboard/api/alertasDataDashboard',
+            then: data => data.map(alerta => [
+                alerta.motivo, 
+                alerta.prioridad
             ])
         },
         
@@ -63,10 +21,58 @@ gridTable = new gridjs.Grid({
             table: {
                 'font-family': 'Cambria, serif'
             },
-        th: {
+            th: {
                 'background-color': '#4d0100',
                 'color': 'white'
+            }
         }
-    }
+}).render(alertasRecientes);
+
+const clientesGrid = new gridjs.Grid({
+        columns: ["Clientes recientes", "Riesgo"],
+        sort: true,
+        pagination: false,
+        server: {
+            url: '/oficial/dashboard/api/clientesDataDashboard',
+            then: data => data.map(cliente => [
+                cliente.nombre_cliente, 
+                cliente.nivel_riesgo
+            ])
+        },
+        
+        style: {
+            table: {
+                'font-family': 'Cambria, serif'
+            },
+            th: {
+                'background-color': '#4d0100',
+                'color': 'white'
+            }
+        }
+}).render(clientesRecientes);
+
+const operacionesGrid = new gridjs.Grid({
+        columns: ["Cliente", "Producto", "Monto", "Fecha"],
+        sort: true,
+        pagination: false,
+        server: {
+            url: '/oficial/dashboard/api/operacionesDataDashboard',
+            then: data => data.map(op => [
+                op.nombre_cliente, 
+                op.tipo_operacion, 
+                op.monto, 
+                op.fecha
+            ])
+        },
+        
+        style: {
+            table: {
+                'font-family': 'Cambria, serif'
+            },
+            th: {
+                'background-color': '#4d0100',
+                'color': 'white'
+            }
+        }
 }).render(operacionesRecientes);
 });

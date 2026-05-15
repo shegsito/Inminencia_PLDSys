@@ -14,9 +14,14 @@ window.addEventListener("load", () => {
         sort: true,
         pagination: true,
         server: {
-            url: '/api/operaciones/data',
+            url: '/oficial/operaciones/operacionesData',
             then: data => data.map(op => [
-                op.nombre_cliente, op.idoperacion, op.tipo_operacion, op.monto, op.fecha, op.estatus
+                op.nombre_cliente, 
+                op.idoperacion, 
+                op.tipo_operacion, 
+                op.monto, 
+                op.fecha, 
+                op.estatus
             ])
         },
         

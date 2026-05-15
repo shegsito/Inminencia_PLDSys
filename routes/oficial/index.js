@@ -23,13 +23,10 @@ router.get('/kyc',           (req, res) => res.render('oficial/forms/kyc-form', 
 router.post('/new-client',   (req, res) => res.redirect('/oficial/dashboard'));
 
 //return the data
-router.get('/api/operaciones/count', operaciones.count);
-router.get('/api/operaciones/data', operaciones.operaciones);
-router.get('/api/alertasDashboard/count', dashboard.countAlertas);
-router.get('/api/alertasDashboard/data', dashboard.alertas);
-router.get('/api/clientesDashboard/count', dashboard.countClientes);
-router.get('/api/clientesDashboard/data', dashboard.clientes);
-router.get('/api/operacionesDashboard/count', dashboard.countOperaciones);
-router.get('/api/operacionesDashboard/data', dashboard.operaciones);
+router.get('/operaciones/operacionesCount', operaciones.count);
+router.get('/operaciones/operacionesData', operaciones.operaciones);
+router.get('/dashboard/api/alertasDataDashboard', dashboard.alertas);
+router.get('/dashboard/api/clientesDataDashboard', dashboard.clientes);
+router.get('/dashboard/api/operacionesDataDashboard', dashboard.operaciones);
 
 module.exports = router;

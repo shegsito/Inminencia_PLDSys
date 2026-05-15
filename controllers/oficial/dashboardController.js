@@ -1,4 +1,4 @@
-const model = require('../../models/operacionesModel');
+const model = require('../../models/dashboardModel');
 
 exports.index = (req, res) => {
     res.render('oficial/dashboard', {
@@ -9,14 +9,14 @@ exports.index = (req, res) => {
 };
 
 module.exports.countAlertas = async (req, res) => {
-    const resultados = await model.count();
+    const resultados = await model.countAlertas();
     res.status(200).json({ total : resultados });
 };
 
 exports.alertas = async (req, res) => {
     try {
         let data;
-        data = await model.fetchAll();
+        data = await model.fetchAllAlertas();
 
         res.status(200).json(data);
 
@@ -27,14 +27,14 @@ exports.alertas = async (req, res) => {
 };
 
 module.exports.countClientes = async (req, res) => {
-    const resultados = await model.count();
+    const resultados = await model.countClientes();
     res.status(200).json({ total : resultados });
 };
 
 exports.clientes = async (req, res) => {
     try {
         let data;
-        data = await model.fetchAll();
+        data = await model.fetchAllClientes();
 
         res.status(200).json(data);
 
@@ -45,14 +45,14 @@ exports.clientes = async (req, res) => {
 };
 
 module.exports.countOperaciones = async (req, res) => {
-    const resultados = await model.count();
+    const resultados = await model.countOperaciones();
     res.status(200).json({ total : resultados });
 };
 
 exports.operaciones = async (req, res) => {
     try {
         let data;
-        data = await model.fetchAll();
+        data = await model.fetchAllOperaciones();
 
         res.status(200).json(data);
 
