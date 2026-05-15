@@ -1,4 +1,4 @@
-const model = require('../models/operacionesModel.js');
+const model = require('../../models/operacionesModel');
 
 exports.index = (req, res) => {
     res.render('oficial/operaciones', { 
