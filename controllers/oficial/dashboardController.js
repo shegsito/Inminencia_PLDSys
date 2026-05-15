@@ -26,3 +26,38 @@ exports.alertas = async (req, res) => {
     }
 };
 
+module.exports.countClientes = async (req, res) => {
+    const resultados = await model.count();
+    res.status(200).json({ total : resultados });
+};
+
+exports.clientes = async (req, res) => {
+    try {
+        let data;
+        data = await model.fetchAll();
+
+        res.status(200).json(data);
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send('Error al obtener clientes recientes');
+    }
+};
+
+module.exports.countOperaciones = async (req, res) => {
+    const resultados = await model.count();
+    res.status(200).json({ total : resultados });
+};
+
+exports.operaciones = async (req, res) => {
+    try {
+        let data;
+        data = await model.fetchAll();
+
+        res.status(200).json(data);
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send('Error al obtener clientes recientes');
+    }
+};

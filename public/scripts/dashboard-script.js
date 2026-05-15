@@ -7,12 +7,12 @@ window.addEventListener("load", () => {
     gridTable = new gridjs.Grid({
         columns: ["Alertas recientes", "Prioridad"],
         sort: true,
-        pagination: true,
+        pagination: false,
         server: {
             url: '/api/operaciones/data',
-            then: data => data.map(op => [
-                op.nombre_cliente, op.idoperacion, op.tipo_operacion, op.monto, op.fecha, op.estatus
-            ])
+            then: data => data.map(
+                motivo, prioridad
+            )
         },
         
         style: {
@@ -29,12 +29,12 @@ window.addEventListener("load", () => {
 gridTable = new gridjs.Grid({
         columns: ["Clientes recientes", "Riesgo"],
         sort: true,
-        pagination: true,
+        pagination: false,
         server: {
             url: '/api/operaciones/data',
-            then: data => data.map(op => [
-                op.nombre_cliente, op.idoperacion, op.tipo_operacion, op.monto, op.fecha, op.estatus
-            ])
+            then: data => data.map(
+                nombre_cliente, nivel_riesgo
+            )
         },
         
         style: {
@@ -49,13 +49,13 @@ gridTable = new gridjs.Grid({
 }).render(clientesRecientes);
 
 gridTable = new gridjs.Grid({
-        columns: ["CLIENTE", "PRODUCTO", "MONTO", "FECHA"],
+        columns: ["Cliente", "Producto", "Monto", "Fecha"],
         sort: true,
-        pagination: true,
+        pagination: false,
         server: {
             url: '/api/operaciones/data',
             then: data => data.map(op => [
-                op.nombre_cliente, op.idoperacion, op.tipo_operacion, op.monto, op.fecha, op.estatus
+                op.nombre_cliente, op.tipo_operacion, op.monto, op.fecha
             ])
         },
         

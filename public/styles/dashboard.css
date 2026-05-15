@@ -1,0 +1,9 @@
+.dashboard-cards-top {
+    display: flex;
+    gap: 30px;
+}
+
+.dashboard-cards-bottom {
+    margin-top: 70px;
+    flex-direction: column;    
+}

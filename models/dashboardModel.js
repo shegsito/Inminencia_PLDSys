@@ -7,7 +7,6 @@ exports.countAlertas = async () => {
     return rows[0].total;
 };
 
-//fetch records
 exports.fetchAllAlertas = async () => {
     const sql = `
         SELECT motivo, prioridad
@@ -25,7 +24,6 @@ exports.countClientes = async () => {
     return rows[0].total;
 };
 
-//fetch records
 exports.fetchAllClientes = async () => {
     const sql = `
         SELECT nombre_cliente, nivel_riesgo

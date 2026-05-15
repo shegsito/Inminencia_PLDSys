@@ -25,5 +25,11 @@ router.post('/new-client',   (req, res) => res.redirect('/oficial/dashboard'));
 //return the data
 router.get('/api/operaciones/count', operaciones.count);
 router.get('/api/operaciones/data', operaciones.operaciones);
+router.get('/api/alertasDashboard/count', dashboard.countAlertas);
+router.get('/api/alertasDashboard/data', dashboard.alertas);
+router.get('/api/clientesDashboard/count', dashboard.countClientes);
+router.get('/api/clientesDashboard/data', dashboard.clientes);
+router.get('/api/operacionesDashboard/count', dashboard.countOperaciones);
+router.get('/api/operacionesDashboard/data', dashboard.operaciones);
 
 module.exports = router;
