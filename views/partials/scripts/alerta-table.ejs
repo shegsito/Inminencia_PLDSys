@@ -2,17 +2,21 @@
     window.addEventListener("load", () => {
   gridTable = new gridjs.Grid({
     columns: ["TIPO", "CLIENTE", "MOTIVO", "GENERADA", "PRIORIDAD", "ESTATUS"],
-    data: [
-      ["Acumulado", "Juan Perez", "Supera umbral mensual 3x", "04/15/2026", "Alta", "Revisar"],
-      ["Lista", "Maria Lopez", "Posible coincidencia", "04/14/2026", "Media", "Revisar"],
-      ["Acumulado", "Carlos Sanchez", "Supera umbral mensual 3x", "04/13/2026", "Alta", "Revisar"],
-      ["Lista", "Ana Gomez", "Posible coincidencia", "04/12/2026", "Baja", "Revisar"],
-      ["Lista", "Luis Ramirez", "Posible coincidencia", "04/11/2026", "Media", "Revisar"]
-    ],
     search: true,
     sort: true,
     pagination: {
       limit: 5
+    },
+    server: {
+      url: "/oficial/alertas/api/alertasData",
+      then: data => data.map(alerta => [ 
+                    alerta.tipo || 'N/A', 
+                    alerta.nombre_cliente || 'N/A', 
+                    alerta.motivo || 'N/A', 
+                    alerta.generada_en ? new Date(alerta.generada_en).toLocaleDateString() : 'N/A', 
+                    alerta.prioridad || 'N/A', 
+                    alerta.estatus || 'N/A'
+                ])
     },
     style: {
       table: {
