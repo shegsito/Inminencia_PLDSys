@@ -19,8 +19,16 @@ router.get('/operaciones',   operaciones.index);
 router.get('/listas',        listas.index);
 router.get('/reportes',      reportes.index);
 
-router.get('/kyc',           (req, res) => res.render('oficial/forms/kyc-form', { pageTitle: 'Nuevo cliente' }));
-router.post('/new-client',   (req, res) => res.redirect('/oficial/dashboard'));
+router.get('/kyc', (req, res) => 
+    res.render('oficial/forms/kyc-form', { 
+        pageTitle: 'Nuevo cliente' }));
+router.post('/new-client', (req, res) => 
+    res.redirect('/oficial/dashboard'));
+router.get('/registrar-operacion', (req, res) =>
+    res.render('oficial/forms/nueva-operacion-form', {
+        pageTitle: 'Nueva Operacion' }));
+router.post('/new-operacion', (req, res) =>
+    res.redirect('oficial/operaciones'));
 
 //return the data
 router.get('/operaciones/operacionesCount', operaciones.count);
