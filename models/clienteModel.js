@@ -108,8 +108,10 @@ registrarModificacion: async (client, { idExpediente, idUsuario, campo, valorant
 // both funvtions recieve client as the first parameter, this is because the pool 
 // has to open the same transaction and pass it to both functions, so them stay at the same conection
 
-getAll: async() => {
-    const res = await pool.query('SELECT from "CLIENTES" ORDER BY "nombre_completo" ');
+getAll: async () => {
+    const res = await pool.query(
+        'SELECT from "CLIENTES" ORDER BY "nombre_completo" '
+    );
     return res.rows;
 },
 

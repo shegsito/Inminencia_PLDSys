@@ -9,6 +9,7 @@ const contratos    = require('../../controllers/oficial/contratosController');
 const operaciones  = require('../../controllers/oficial/operacionesController');
 const listas       = require('../../controllers/oficial/listasController');
 const reportes     = require('../../controllers/oficial/reportesController');
+const { verificarRol } = require('../../middleware/auth');
 
 router.get('/dashboard',     dashboard.index);
 router.get('/clientes',      clientes.index);
@@ -26,4 +27,6 @@ router.post('/new-client',   (req, res) => res.redirect('/oficial/dashboard'));
 router.get('/api/operaciones/count', operaciones.count);
 router.get('/api/operaciones/data', operaciones.operaciones);
 
+router.get('/clientes/:id',   clientes.getCliente);
+router.put('/clientes/:id',    clientes.actualizarCliente);
 module.exports = router;

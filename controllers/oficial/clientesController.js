@@ -120,8 +120,9 @@ exports.actualizarCliente = async (req, res) => {
         await ClienteModel.actualizarDatos(client, id, camposActualizar);
 
         // register it into log (bitacora)
-        await ClienteModel.logAction(idUsuario,
-            `Actualizó datos del cliente ${id}: ${Object.keys(cambios).join(', ')}`
+        await client.query(
+            `INSERT INTO "BITACORA" ("IDUsuario", "accion", "fecha") VALUES ($1, $2, NOW())`,
+            [idUsuario, `Actualizó datos del cliente ${id}: ${Object.keys(cambios).join(', ')}`]
         );
 
         await client.query('COMMIT');
