@@ -19,28 +19,40 @@
 
             <div class="operacion-fields">
               <p class="form-section-title">Datos de operación</p>
-              <div class="operacion-group">
 
+              <!-- nombre y producto -->
+              <div class="operacion-row" id="row-data">
+              <div class="operacion-group">
                 <label for="nombre_completo">Nombre Completo</label>
                 <input type="text" id="nombre_completo" name="nombre_completo"
-                       placeholder="Escriba el nombre completo del cliente">
+                       placeholder="Nombre completo del cliente">
               </div>
+
+              <div class="operacion-group">
+                  <label for="contrato">Tipo de producto</label>
+                  <select id="contrato" name="contrato">
+                    <option value="pago">Crédito personal</option>
+                    <option value="disposicion">Crédito cuenta corriente</option>
+                    <option value="desembolso">Factoraje</option>
+                  </select>
+                </div>
+                </div>
 
               <!-- tipo y monto -->
               <div class="operacion-row" id="row-data">
 
                 <div class="operacion-group">
-                  <label for="tipo">Tipo de operacion</label>
+                  <label for="tipo">Tipo de operación</label>
                   <select id="tipo" name="tipo">
                     <option value="pago">Pago</option>
-                    <option value="disposicion">Disposicion</option>
+                    <option value="disposicion">Disposición</option>
                     <option value="desembolso">Desembolso</option>
                   </select>
                 </div>
 
                 <div class="operacion-group">
                   <label for="monto">Monto</label>
-                  <input type="number" id="monto" name="monto" step="0.01"
+                  <input type="number" id="monto" name="monto" step="0.01" min="0"
                          placeholder="Escriba el monto total">
                 </div>
               </div>
@@ -48,7 +60,7 @@
               <div class="operacion-feedback" id="operacion-feedback"></div>
 
               <button type="submit" class="operacion-submit-btn" id="operacion-submit">
-                Registrar Operacion
+                Registrar Operación
               </button>
 
             </div>
