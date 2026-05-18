@@ -14,7 +14,7 @@
 
       <div class="primary-content">
         
-        <form id="operacion-form">
+        <form action="/oficial/new-operacion" method="POST" id="operacion-form">
           <div class="operacion-wrapper">
 
             <div class="operacion-fields">
@@ -40,7 +40,7 @@
 
                 <div class="operacion-group">
                   <label for="monto">Monto</label>
-                  <input type="number" id="monto" name="monto"
+                  <input type="number" id="monto" name="monto" step="0.01"
                          placeholder="Escriba el monto total">
                 </div>
               </div>

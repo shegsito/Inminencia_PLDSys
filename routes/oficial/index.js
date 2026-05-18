@@ -27,8 +27,7 @@ router.post('/new-client', (req, res) =>
 router.get('/registrar-operacion', (req, res) =>
     res.render('oficial/forms/nueva-operacion-form', {
         pageTitle: 'Nueva Operacion' }));
-router.post('/new-operacion', (req, res) =>
-    res.redirect('oficial/operaciones'));
+router.post('/new-operacion', operaciones.registrarOperacion);
 
 //return the data
 router.get('/operaciones/operacionesCount', operaciones.count);

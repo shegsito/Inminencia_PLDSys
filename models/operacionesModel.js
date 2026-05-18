@@ -30,3 +30,22 @@ exports.findByNameOrFolio = async (input) => {
     const { rows } = await pool.query(sql, [`%${input}%`]);
     return rows;
 };
+
+//queries for new operation register form
+exports.findCliente = async (name) => {
+    const sql = `SELECT idcliente 
+                 FROM cliente
+                 WHERE nombre_cliente ILIKE $1`
+                 ;
+    const res = await pool.query(sql, [name]);
+    return res.rows [0];
+};
+
+exports.createOperacion = async (idcliente, tipo, monto) => {
+    const sql = `INSERT INTO operacion (idcliente, tipo_operacion, monto, fecha)
+                 VALUES ($1, $2, $3, NOW())
+                 RETURNING *`
+                 ;
+    const res = await pool.query(sql, [idcliente, tipo, monto]);
+    return res.rows [0];
+};
