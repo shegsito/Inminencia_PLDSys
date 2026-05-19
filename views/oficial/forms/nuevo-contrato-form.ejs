@@ -14,11 +14,11 @@
 
       <div class="primary-content">
         
-        <form action="/oficial/new-operacion" method="POST" id="new-form">
+        <form action="/oficial/new-contrato" method="POST" id="new-form">
           <div class="form-wrapper">
 
             <div class="form-fields">
-              <p class="form-section-title">Datos de operación</p>
+              <p class="form-section-title">Datos de contrato</p>
 
               <!-- nombre y producto -->
               <div class="form-row" id="row-data">
@@ -35,36 +35,52 @@
                     <option value="credito_corriente">Crédito cuenta corriente</option>
                   </select>
                 </div>
-                </div>
+              </div>
 
-              <!-- tipo y monto -->
+              <!-- fecha inicio y fin -->
               <div class="form-row" id="row-data">
 
                 <div class="form-group">
-                  <label for="tipo">Tipo de operación</label>
-                  <select id="tipo" name="tipo">
-                    <option value="pago">Pago</option>
-                    <option value="disposicion">Disposición</option>
-                    <option value="desembolso">Desembolso</option>
-                  </select>
+                  <label for="fecha_init">Fecha inicio</label>
+                  <input type="date" id="fecha_init" name="fecha_init">
                 </div>
+
+                <div class="form-group">
+                  <label for="fecha_fin">Fecha fin</label>
+                  <input type="date" id="fecha_fin" name="fecha_fin">
+                </div>
+              </div>
+
+              <!-- Monto y estatus -->
+              <div class="form-row" id="row-data">
 
                 <div class="form-group">
                   <label for="monto">Monto</label>
                   <input type="number" id="monto" name="monto" step="0.01" min="0"
                          placeholder="Escriba el monto total">
                 </div>
-              </div>
+
+                <div class="form-group">
+                  <label for="estatus">Estatus</label>
+                  <select id="estatus" name="estatus">
+                    <option value="vigente">Vigente</option>
+                    <option value="vencido">Vencido</option>
+                    <option value="cancelado">Cancelado</option>
+                    <option value="en_revision">En revisión</option>
+                  </select>
+                </div>
+
+              </div>              
 
               <div class="form-feedback" id="form-feedback"></div>
 
               <button type="submit" class="form-submit-btn" id="form-submit">
-                Registrar Operación
+                Registrar Contrato
               </button>
 
             </div>
 
-          </div><!-- /operacion-wrapper -->
+          </div><!-- /contrato-wrapper -->
         </form>
 
         </div>

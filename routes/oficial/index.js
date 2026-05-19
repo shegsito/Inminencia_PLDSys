@@ -28,6 +28,10 @@ router.get('/registrar-operacion', (req, res) =>
     res.render('oficial/forms/nueva-operacion-form', {
         pageTitle: 'Nueva Operacion' }));
 router.post('/new-operacion', operaciones.registrarOperacion);
+router.get('/registrar-contrato', (req, res) =>
+    res.render('oficial/forms/nuevo-contrato-form', {
+        pageTitle: 'Nuevo contrato' }));
+//router.post('/new-operacion', contratos.registrarContrato);
 
 //return the data
 router.get('/operaciones/operacionesCount', operaciones.count);
