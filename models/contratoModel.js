@@ -10,11 +10,11 @@ exports.findCliente = async (name) => {
 };
 
 //creating new contrato and inserting into table query
-exports.createContrato = async (idcliente, tipo, monto, fecha_init, fecha_fin, estatus) => {
-    const sql = `INSERT INTO contrato (idcliente, tipo_producto, monto, fecha_inicio, fecha_fin, estatus)
-                 VALUES ($1, $2, $3, $4, $5, NOW())
+exports.createContrato = async (idcliente, tipo, fecha_init, fecha_fin, monto, estatus) => {
+    const sql = `INSERT INTO contrato (idcliente, tipo_producto, fecha_inicio, fecha_fin, monto, estatus)
+                 VALUES ($1, $2, $3, $4, $5, $6)
                  RETURNING *`
                  ;
-    const res = await pool.query(sql, [idcliente, tipo, monto, fecha_init, fecha_fin, estatus]);
+    const res = await pool.query(sql, [idcliente, tipo, fecha_init, fecha_fin, monto, estatus]);
     return res.rows [0];
 };
