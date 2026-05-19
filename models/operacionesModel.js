@@ -41,20 +41,20 @@ exports.findCliente = async (name) => {
     return res.rows [0];
 };
 
-/*exports.findContrato = async (product) => {
+exports.findContrato = async (product) => {
     const sql = `SELECT idcontrato 
                  FROM contrato
                  WHERE tipo_producto ILIKE $1`
                  ;
     const res = await pool.query(sql, [product]);
     return res.rows [0];
-};*/
+};
 
-exports.createOperacion = async (idcliente, tipo, monto) => {
-    const sql = `INSERT INTO operacion (idcliente, tipo_operacion, monto, fecha)
-                 VALUES ($1, $2, $3, NOW())
+exports.createOperacion = async (idcliente, idcontrato, tipo, monto) => {
+    const sql = `INSERT INTO operacion (idcliente, idcontrato, tipo_operacion, monto, fecha)
+                 VALUES ($1, $2, $3, $4, NOW())
                  RETURNING *`
                  ;
-    const res = await pool.query(sql, [idcliente, tipo, monto]);
+    const res = await pool.query(sql, [idcliente, idcontrato, tipo, monto]);
     return res.rows [0];
 };
