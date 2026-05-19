@@ -31,7 +31,7 @@ router.post('/new-operacion', operaciones.registrarOperacion);
 router.get('/registrar-contrato', (req, res) =>
     res.render('oficial/forms/nuevo-contrato-form', {
         pageTitle: 'Nuevo contrato' }));
-//router.post('/new-operacion', contratos.registrarContrato);
+router.post('/new-contrato', contratos.registrarContrato);
 
 //return the data
 router.get('/operaciones/operacionesCount', operaciones.count);
