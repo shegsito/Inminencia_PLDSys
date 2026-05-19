@@ -9,9 +9,9 @@ exports.count = async () => {
 //fetch records
 exports.fetchAll = async () => {
     const sql = `
-        SELECT c.nombre_cliente, co.tipo_producto, co.monto, co.vigencia, co.estatus
+        SELECT c.nombre_cliente, co.tipo_producto, co.monto, co.estatus
         FROM contrato co
-        JOIN cliente c ON c.idcliente = op.idcliente
+        JOIN cliente c ON c.idcliente = co.idcliente
     `;
     const { rows } = await pool.query(sql);
     return rows;
@@ -19,7 +19,7 @@ exports.fetchAll = async () => {
 
 //configure search bar
 exports.findByNameOrFolio = async (input) => {
-    const sql = `SELECT c.nombre_cliente, co.tipo_producto, co.monto, co.vigencia, co.estatus
+    const sql = `SELECT c.nombre_cliente, co.tipo_producto, co.monto, co.estatus
                  FROM contrato co
                  JOIN cliente c ON c.idcliente = co.idcliente
                  WHERE c.nombre_cliente ILIKE $1 OR co.tipo_producto::text ILIKE $1`

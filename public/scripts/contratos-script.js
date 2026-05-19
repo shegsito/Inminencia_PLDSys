@@ -4,7 +4,7 @@ const testTable = document.getElementById("test-table");
 
 window.addEventListener("load", () => {
     gridTable = new gridjs.Grid({
-        columns: ["NOMBRE", "PRODUCTOS", "MONTO", "VIGENCIA", "ESTATUS"],
+        columns: ["NOMBRE", "PRODUCTOS", "MONTO", "ESTATUS"],
         search: {
             enabled: true,
             server: {
@@ -14,12 +14,11 @@ window.addEventListener("load", () => {
         sort: true,
         pagination: true,
         server: {
-            url: '/oficial/operaciones/operacionesData',
+            url: '/oficial/contratos/contratosData',
             then: data => data.map(co => [
                 co.nombre_cliente,
-                op.tipo_operacion, 
-                op.monto, 
-                co.vigencia, 
+                co.tipo_producto, 
+                co.monto,
                 co.estatus
             ])
         },
