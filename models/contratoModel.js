@@ -1,5 +1,33 @@
 const pool = require('../config/db');
 
+//count how many
+exports.count = async () => {
+    const { rows } = await pool.query('SELECT COUNT(*)::int AS total FROM contrato');
+    return rows[0].total;
+};
+
+//fetch records
+exports.fetchAll = async () => {
+    const sql = `
+        SELECT c.nombre_cliente, co.tipo_producto, co.monto, co.estatus
+        FROM contrato co
+        JOIN cliente c ON c.idcliente = co.idcliente
+    `;
+    const { rows } = await pool.query(sql);
+    return rows;
+};
+
+//configure search bar
+exports.findByNameOrFolio = async (input) => {
+    const sql = `SELECT c.nombre_cliente, co.tipo_producto, co.monto, co.estatus
+                 FROM contrato co
+                 JOIN cliente c ON c.idcliente = co.idcliente
+                 WHERE c.nombre_cliente ILIKE $1 OR co.tipo_producto::text ILIKE $1`
+                 ;
+    const { rows } = await pool.query(sql, [`%${input}%`]);
+    return rows;
+};
+
 exports.findCliente = async (name) => {
     const sql = `SELECT idcliente 
                  FROM cliente

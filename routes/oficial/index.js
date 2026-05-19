@@ -40,5 +40,7 @@ router.get('/dashboard/api/alertasDataDashboard', dashboard.alertas);
 router.get('/dashboard/api/clientesDataDashboard', dashboard.clientes);
 router.get('/dashboard/api/operacionesDataDashboard', dashboard.operaciones);
 router.get(`/alertas/api/alertasData`, alertas.getAlertasData);
+router.get('/contratos/contratosCount', contratos.count);
+router.get('/contratos/contratosData', contratos.contratos);
 
 module.exports = router;
