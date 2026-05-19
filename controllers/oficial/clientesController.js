@@ -1,19 +1,17 @@
-// i (sheg) reworked this controller...
-
 const pool = require('../../config/db');
 const ClienteModel = require('../../models/clienteModel');
 const ExpedienteModel = require('../../models/expedienteModel');
 
-// -------------- RF-05 consulting expedient and client data 
+// -------------- RF-05 consulting expedient and client data
 
 // GET /oficial/clientes
 exports.index = async (req, res) => {
     try {
-        const clientes = await ClienteModel.getAll(); // get all clients 
+        const clientes = await ClienteModel.getAll(); // get all clients
 
         res.render('oficial/clientes', {
             pageTitle: 'Clientes',
-            clientes
+            clientes,
         });
     } catch (e) {
         console.error('Error al obtener clientes:', e);
@@ -23,21 +21,24 @@ exports.index = async (req, res) => {
 
 // GET /oficial/clientes/:id
 exports.getCliente = async (req, res) => {
-    try{
+    try {
         const { id } = req.params;
 
         const cliente = await ClienteModel.getById(id);
-        if (!cliente) return res.status(400).send('CLiente no encontrado');
+        if (!cliente) return res.status(404).send('Cliente no encontrado');
 
         const expediente = await ExpedienteModel.getByCliente(id);
-        
-        // to prevent an error while searching for expedient, just look fot it if exists. If not return false
-        const documentos = expediente ? await ExpedienteModel.getDocumentos(expediente.IDExpediente) : [];
 
-        // try checking this part, it may be wrong
-        await ClienteModel.logAction(
-            req.usuario.IDUsuario,
-            `Consultó expediente del cliente ${id}`
+        // to prevent an error while searching for expedient, just look for it if exists. If not return []
+        const documentos = expediente
+            ? await ExpedienteModel.getDocumentos(expediente.idexpediente)
+            : [];
+
+        // log the consultation in bitacora (uses pool directly — read-only, no transaction needed)
+        await pool.query(
+            `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
+             VALUES ($1, $2, $3, $4, $5, NOW())`,
+            [req.usuario?.id || null, `Consultó expediente del cliente ${id}`, 'cliente', id, req.ip]
         );
 
         res.render('oficial/forms/kyc-form', {
@@ -45,7 +46,8 @@ exports.getCliente = async (req, res) => {
             cliente,
             expediente,
             documentos,
-            modoEdicion: false // the view uses this to know if show the editable rows
+            modoEdicion: false, // the view uses this to know whether to show editable fields
+            usuario: req.usuario,
         });
     } catch (e) {
         console.error('Error al obtener cliente:', e);
@@ -53,82 +55,95 @@ exports.getCliente = async (req, res) => {
     }
 };
 
-// --------------RF-04 update client data and expedient
+// -------------- RF-04 update client data and expedient
 
 exports.actualizarCliente = async (req, res) => {
     const { id } = req.params;
     const { justificacion, ...datosFrontend } = req.body;
-    const idUsuario = req.usuario.IDUsuario;
-    
+    const idusuario = req.usuario.id;
+
+    // RN-03: justificación obligatoria — system does not allow saving without it
+    if (!justificacion?.trim()) {
+        return res.status(400).json({ error: 'La justificación es obligatoria (RN-03)' });
+    }
+
+    // Map: form field name → actual DB column name
     // Rows that the Oficial can edit
-    const camposEditables = [
-        'nombre_completo', 'domicilio', 'telefono',
-        'email_personal' , 'email_institucional'
-    ];
+    const camposEditables = {
+        nombre_completo:     'nombre_cliente',
+        domicilio:           'domicilio',
+        telefono:            'telefono',
+        email_personal:      'email',
+        email_institucional: 'email_institucional',
+    };
 
     const client = await pool.connect();
-
     try {
-        // getting data from DB
+        // getting current data from DB
         const clienteActual = await ClienteModel.getById(id);
-        if (!clienteActual) return res.status(404).json({ error: 'Cliente no encontrado'});
+        if (!clienteActual) return res.status(404).json({ error: 'Cliente no encontrado' });
 
         const expediente = await ExpedienteModel.getByCliente(id);
 
-        // comparing row by row
-        const cambios = {}; // array for storing changes
-        for (const campo of camposEditables) {
+        // comparing field by field
+        const cambios = {}; // object for storing detected changes
+        for (const [campoForm, campoDB] of Object.entries(camposEditables)) {
 
-            // 1. Converting data to string, to avoid returning indefined data
-            // 2. ??'' this converts the null or ondefined into void text ' '
-            // 3. and trim just erases the blank spaces...
-            const anterior = String(clienteActual[campo] ?? '').trim();
-            const nuevo = String(datosFrontend[campo] ?? '').trim();
+            // String() + ?? '' converts null/undefined to empty string
+            // trim() removes surrounding whitespace before comparing
+            const anterior = String(clienteActual[campoDB] ?? '').trim();
+            const nuevo    = String(datosFrontend[campoForm] ?? '').trim();
 
-            // if the rows are different, it stores them in cambios array
-            if (anterior !== nuevo){
-                cambios[campo] = { anterior, nuevo };
+            // if values differ, store the change indexed by DB column name
+            if (anterior !== nuevo) {
+                cambios[campoDB] = { anterior, nuevo };
             }
         }
 
-        // if there weren't any change, dont touch db
-        if (Object.keys(cambios).lenght === 0){
-            return res.status(200).json({ mensaje: 'Sin cambios detectados'});
+        // if there were no changes, don't touch the DB
+        if (Object.keys(cambios).length === 0) {
+            return res.status(200).json({ mensaje: 'Sin cambios detectados' });
         }
 
         // start transaction
         await client.query('BEGIN');
 
-        // Register each modified row, into Mmodificacion_expediente
-        for (const [campo, {anterior, nuevo}] of Object.entries(cambios)){
+        // register each modified field in modificacion_expediente
+        for (const [campo, { anterior, nuevo }] of Object.entries(cambios)) {
             await ClienteModel.registrarModificacion(client, {
-                IDExpediente: expediente.IDExpediente,
-                idUsuario,
+                idexpediente: expediente.idexpediente,
+                idusuario,
                 campo,
                 valorAnterior: anterior,
-                valorNuevo: nuevo,
-                justificacion
+                valorNuevo:    nuevo,
+                justificacion: justificacion.trim(),
             });
         }
 
-        //  building object with the changed rows
+        // build object with only the changed DB columns and their new values
         const camposActualizar = {};
-        for (const campo of Object.keys(cambios)){
-            camposActualizar[campo] = datosFrontend[campo];
+        for (const [campoDB, { nuevo }] of Object.entries(cambios)) {
+            camposActualizar[campoDB] = nuevo;
         }
 
         await ClienteModel.actualizarDatos(client, id, camposActualizar);
 
-        // register it into log (bitacora)
+        // register it in bitacora — uses the same client so it stays inside the transaction
         await client.query(
-            `INSERT INTO "BITACORA" ("IDUsuario", "accion", "fecha") VALUES ($1, $2, NOW())`,
-            [idUsuario, `Actualizó datos del cliente ${id}: ${Object.keys(cambios).join(', ')}`]
+            `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
+             VALUES ($1, $2, $3, $4, $5, NOW())`,
+            [idusuario, `Actualizó cliente: ${Object.keys(cambios).join(', ')}`, 'cliente', id, req.ip]
         );
 
         await client.query('COMMIT');
-        
-        res.status(200).json({ mensaje: 'Cliente actualizado con éxito'});
+        res.status(200).json({ mensaje: 'Cliente actualizado con éxito' });
+
+    } catch (e) {
+        await client.query('ROLLBACK');
+        console.error('Error en transacción RF-04:', e);
+        res.status(500).json({ error: 'Error interno al actualizar cliente' });
     } finally {
         client.release();
     }
 };
+ 

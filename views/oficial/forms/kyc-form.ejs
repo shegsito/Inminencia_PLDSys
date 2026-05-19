@@ -3,6 +3,12 @@
 
 <%- include('../../partials/head') %>
 
+<%
+  // esEdicion = true  → viewing / editing an existing client  (RF-04, RF-05)
+  // esEdicion = false → registering a new client              (RF-01)
+  const esEdicion = typeof modoEdicion !== 'undefined' && typeof cliente !== 'undefined';
+%>
+
 <body>
   <div class="entire-container">
 
@@ -16,11 +22,23 @@
 
         <p class="kyc-required-note">*Campo obligatorio</p>
 
-        <!-- Toggle Tipo de Persona -->
-        <div class="tipo-toggle">
-          <button type="button" class="tipo-toggle-btn active" id="btn-fisica" onclick="setTipo('fisica')">Física</button>
-          <button type="button" class="tipo-toggle-btn"        id="btn-moral"  onclick="setTipo('moral')">Moral</button>
-        </div>
+        <% if (esEdicion) { %>
+          <!-- RF-05: show tipo_persona as a static label, not a toggle -->
+          <div class="tipo-toggle">
+            <button type="button"
+                    class="tipo-toggle-btn <%= cliente.tipo_persona === 'fisica' ? 'active' : '' %>"
+                    disabled>Física</button>
+            <button type="button"
+                    class="tipo-toggle-btn <%= cliente.tipo_persona === 'moral'  ? 'active' : '' %>"
+                    disabled>Moral</button>
+          </div>
+        <% } else { %>
+          <!-- RF-01: interactive toggle for new registration -->
+          <div class="tipo-toggle">
+            <button type="button" class="tipo-toggle-btn active" id="btn-fisica" onclick="setTipo('fisica')">Física</button>
+            <button type="button" class="tipo-toggle-btn"        id="btn-moral"  onclick="setTipo('moral')">Moral</button>
+          </div>
+        <% } %>
 
         <form id="kyc-form">
           <div class="kyc-wrapper">
@@ -33,6 +51,9 @@
               <div class="kyc-group">
                 <label for="nombre_completo">Nombre Completo</label>
                 <input type="text" id="nombre_completo" name="nombre_completo"
+                       value="<%= esEdicion ? (cliente.nombre_cliente || '') : '' %>"
+                       class="campo-editable"
+                       <%= esEdicion ? 'readonly' : '' %>
                        placeholder="Escriba su nombre completo">
               </div>
 
@@ -40,13 +61,19 @@
               <div class="kyc-row" id="row-fisica">
                 <div class="kyc-group">
                   <label for="rfc">RFC</label>
+                  <!-- RFC no es editable; siempre readonly -->
                   <input type="text" id="rfc" name="rfc"
+                         value="<%= esEdicion ? (cliente.rfc || '') : '' %>"
+                         
                          placeholder="Escriba su RFC" maxlength="13"
                          style="text-transform:uppercase">
                 </div>
                 <div class="kyc-group">
                   <label for="curp">CURP</label>
+                  <!-- CURP no es editable; siempre readonly -->
                   <input type="text" id="curp" name="curp"
+                         value="<%= esEdicion ? (cliente.curp || '') : '' %>"
+                         
                          placeholder="Escriba su CURP" maxlength="18"
                          style="text-transform:uppercase">
                 </div>
@@ -57,6 +84,7 @@
                 <div class="kyc-group">
                   <label for="rfc-moral">RFC</label>
                   <input type="text" id="rfc-moral" name="rfc"
+                         value="<%= esEdicion ? (cliente.rfc || '') : '' %>"
                          placeholder="RFC de la empresa" maxlength="12"
                          style="text-transform:uppercase" disabled>
                 </div>
@@ -72,6 +100,9 @@
               <div class="kyc-group">
                 <label for="domicilio">Domicilio</label>
                 <input type="text" id="domicilio" name="domicilio"
+                       value="<%= esEdicion ? (cliente.domicilio || '') : '' %>"
+                       class="campo-editable"
+                       <%= esEdicion ? 'readonly' : '' %>
                        placeholder="Estado · Municipio · Colonia · Calle · Núm · C.P.">
               </div>
 
@@ -79,11 +110,17 @@
                 <div class="kyc-group">
                   <label for="email_personal">Correo personal</label>
                   <input type="email" id="email_personal" name="email_personal"
+                         value="<%= esEdicion ? (cliente.email || '') : '' %>"
+                         class="campo-editable"
+                         <%= esEdicion ? 'readonly' : '' %>
                          placeholder="Escriba su correo personal">
                 </div>
                 <div class="kyc-group">
                   <label for="telefono">Teléfono</label>
                   <input type="tel" id="telefono" name="telefono"
+                         value="<%= esEdicion ? (cliente.telefono || '') : '' %>"
+                         class="campo-editable"
+                         <%= esEdicion ? 'readonly' : '' %>
                          placeholder="Escriba su teléfono">
                 </div>
               </div>
@@ -94,14 +131,26 @@
                   <span style="color:#aaa; font-size:11px;">(opcional)</span>
                 </label>
                 <input type="email" id="email_institucional" name="email_institucional"
+                       value="<%= esEdicion ? (cliente.email_institucional || '') : '' %>"
+                       class="campo-editable"
+                       <%= esEdicion ? 'readonly' : '' %>
                        placeholder="Escriba su correo institucional">
               </div>
 
               <div class="kyc-feedback" id="kyc-feedback"></div>
 
-              <button type="submit" class="kyc-submit-btn" id="kyc-submit">
-                Registrar cliente
-              </button>
+              <% if (esEdicion) { %>
+                <!-- RF-04: edit mode buttons -->
+                <button type="button" class="kyc-submit-btn" id="btn-editar">Editar</button>
+                <button type="submit" class="kyc-submit-btn" id="kyc-submit" style="display:none;">
+                  Guardar cambios
+                </button>
+              <% } else { %>
+                <!-- RF-01: new registration button -->
+                <button type="submit" class="kyc-submit-btn" id="kyc-submit">
+                  Registrar cliente
+                </button>
+              <% } %>
 
             </div>
 
@@ -109,34 +158,54 @@
             <div class="kyc-docs">
 
               <p class="docs-title">Documentos</p>
-              <p style="font-size:11px; color:#aaa; margin-bottom:10px;">Disponibles tras registrar al cliente</p>
 
-              <p class="doc-label">Identificación Oficial (INE, pasaporte)</p>
-              <div class="doc-card doc-card--locked" data-tipo="ine">
-                <span class="doc-card-plus">+</span>
-                <span class="doc-card-hint">Subir PDF o imagen</span>
-              </div>
+              <% if (esEdicion && typeof documentos !== 'undefined' && documentos.length > 0) { %>
+                <!-- RF-05: show already-uploaded documents -->
+                <p style="font-size:11px; color:#aaa; margin-bottom:10px;">
+                  <%= documentos.length %> documento(s) cargado(s)
+                </p>
+                <% documentos.forEach(doc => { %>
+                  <div class="doc-card doc-card--done" style="margin-bottom:8px;">
+                    <span class="doc-card-plus">✓</span>
+                    <span class="doc-card-hint" style="font-size:11px;">
+                      <%= doc.tipo_documento %> —
+                      <%= new Date(doc.fecha_carga).toLocaleDateString('es-MX') %>
+                    </span>
+                  </div>
+                <% }) %>
+              <% } else if (!esEdicion) { %>
+                <!-- RF-01: locked cards that activate after registration -->
+                <p style="font-size:11px; color:#aaa; margin-bottom:10px;">Disponibles tras registrar al cliente</p>
 
-              <p class="doc-label">Comprobante de Domicilio</p>
-              <div class="doc-card doc-card--locked" data-tipo="comprobante_domicilio">
-                <span class="doc-card-plus">+</span>
-                <span class="doc-card-hint">Subir PDF o imagen</span>
-              </div>
-
-              <!-- Solo moral -->
-              <div id="docs-moral" style="display:none;">
-                <p class="doc-label">Acta constitutiva (persona moral)</p>
-                <div class="doc-card doc-card--locked" data-tipo="acta_constitutiva">
+                <p class="doc-label">Identificación Oficial (INE, pasaporte)</p>
+                <div class="doc-card doc-card--locked" data-tipo="ine">
                   <span class="doc-card-plus">+</span>
                   <span class="doc-card-hint">Subir PDF o imagen</span>
                 </div>
 
-                <p class="doc-label">Poderes notariales</p>
-                <div class="doc-card doc-card--locked" data-tipo="poder_notarial">
+                <p class="doc-label">Comprobante de Domicilio</p>
+                <div class="doc-card doc-card--locked" data-tipo="comprobante_domicilio">
                   <span class="doc-card-plus">+</span>
                   <span class="doc-card-hint">Subir PDF o imagen</span>
                 </div>
-              </div>
+
+                <!-- Solo moral -->
+                <div id="docs-moral" style="display:none;">
+                  <p class="doc-label">Acta constitutiva (persona moral)</p>
+                  <div class="doc-card doc-card--locked" data-tipo="acta_constitutiva">
+                    <span class="doc-card-plus">+</span>
+                    <span class="doc-card-hint">Subir PDF o imagen</span>
+                  </div>
+
+                  <p class="doc-label">Poderes notariales</p>
+                  <div class="doc-card doc-card--locked" data-tipo="poder_notarial">
+                    <span class="doc-card-plus">+</span>
+                    <span class="doc-card-hint">Subir PDF o imagen</span>
+                  </div>
+                </div>
+              <% } else { %>
+                <p style="font-size:11px; color:#aaa;">Sin documentos cargados.</p>
+              <% } %>
 
             </div>
 
@@ -145,42 +214,180 @@
 
       </div><!-- /primary-content -->
 
-      
     </div><!-- /right-container -->
     <%- include('../../partials/footer') %>
   </div><!-- /entire-container -->
 
-  <script>
-    let tipoActual      = 'fisica';
-    let sessionUserId   = null;
-    let sessionExpedId  = null;
+  <!-- ── Confirmation modal (RF-04 only) ── -->
+  <% if (esEdicion) { %>
+  <div id="modal-confirmacion" style="display:none; position:fixed; inset:0;
+       background:rgba(0,0,0,.45); z-index:1000;
+       align-items:center; justify-content:center;">
+    <div style="background:#fff; padding:2rem; border-radius:8px;
+                max-width:420px; width:90%; box-shadow:0 4px 24px rgba(0,0,0,.2);">
+      <p style="font-size:15px; font-weight:600; margin-bottom:1rem;">
+        ¿Desea guardar los cambios?
+      </p>
+      <label style="font-size:13px; display:block; margin-bottom:4px;">
+        Justificación <span style="color:red">*</span>
+      </label>
+      <textarea id="input-justificacion" rows="3"
+                placeholder="Indique el motivo de la modificación..."
+                style="width:100%; box-sizing:border-box; border:1px solid #ccc;
+                       border-radius:4px; padding:8px; font-size:13px;
+                       resize:vertical;"></textarea>
+      <p id="justif-error"
+         style="color:red; font-size:12px; display:none; margin-top:4px;">
+        La justificación es obligatoria (RN-03)
+      </p>
+      <div style="display:flex; gap:10px; margin-top:1.2rem; justify-content:flex-end;">
+        <button id="btn-cancelar"
+                style="padding:8px 18px; border:1px solid #ccc; border-radius:4px;
+                       background:#fff; cursor:pointer; font-size:13px;">
+          Cancelar
+        </button>
+        <button id="btn-confirmar"
+                style="padding:8px 18px; border:none; border-radius:4px;
+                       background:#2b5be0; color:#fff; cursor:pointer; font-size:13px;">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+  <% } %>
 
-    // ── Tipo persona toggle ────────────────────────────────────────────
+  <script>
+    // ── Shared state ──────────────────────────────────────────────────────────
+    const esEdicion     = <%= esEdicion %>;
+    const clienteId     = '<%= esEdicion ? cliente.idcliente : "" %>';
+    const sessionUserId = '<%= esEdicion && typeof usuario !== "undefined" ? usuario.id  : "" %>';
+    const sessionUserRol= '<%= esEdicion && typeof usuario !== "undefined" ? usuario.rol : "" %>';
+
+    let tipoActual    = '<%= esEdicion ? cliente.tipo_persona : "fisica" %>';
+    let sessionExpedId = null;
+    let sessionUsrId   = null;
+
+    // ── Tipo persona toggle (RF-01 only) ─────────────────────────────────────
     function setTipo(tipo) {
       tipoActual = tipo;
 
-      document.getElementById('btn-fisica').classList.toggle('active', tipo === 'fisica');
-      document.getElementById('btn-moral').classList.toggle('active', tipo === 'moral');
+      if (!esEdicion) {
+        document.getElementById('btn-fisica').classList.toggle('active', tipo === 'fisica');
+        document.getElementById('btn-moral').classList.toggle('active',  tipo === 'moral');
+        document.getElementById('docs-moral').style.display = tipo === 'moral'  ? 'block' : 'none';
+      }
 
       document.getElementById('row-fisica').style.display = tipo === 'fisica' ? 'flex'  : 'none';
       document.getElementById('row-moral').style.display  = tipo === 'moral'  ? 'flex'  : 'none';
-      document.getElementById('docs-moral').style.display = tipo === 'moral'  ? 'block' : 'none';
 
       document.getElementById('curp').disabled        = tipo !== 'fisica';
       document.getElementById('rfc-moral').disabled   = tipo !== 'moral';
       document.getElementById('razon_social').disabled = tipo !== 'moral';
     }
 
-    // ── RF-01: registrar cliente ───────────────────────────────────────
+    // Initialize tipo on page load
+    setTipo(tipoActual);
+
+    // ── RF-04: edit mode handlers ─────────────────────────────────────────────
+    if (esEdicion) {
+
+      // "Editar" button — unlock the editable fields
+      document.getElementById('btn-editar').addEventListener('click', () => {
+        document.querySelectorAll('.campo-editable').forEach(f => f.removeAttribute('readonly'));
+        document.getElementById('btn-editar').style.display  = 'none';
+        document.getElementById('kyc-submit').style.display  = '';
+      });
+
+      // Modal: Cancelar
+      document.getElementById('btn-cancelar').addEventListener('click', () => {
+        document.getElementById('modal-confirmacion').style.display = 'none';
+      });
+
+      // Modal: Aceptar → execute PUT
+      document.getElementById('btn-confirmar').addEventListener('click', async () => {
+        const justificacion = document.getElementById('input-justificacion').value.trim();
+
+        if (!justificacion) {
+          document.getElementById('justif-error').style.display = 'block';
+          return;
+        }
+        document.getElementById('justif-error').style.display = 'none';
+
+        const feedback = document.getElementById('kyc-feedback');
+        const btn      = document.getElementById('kyc-submit');
+        document.getElementById('modal-confirmacion').style.display = 'none';
+
+        btn.disabled    = true;
+        btn.textContent = 'Guardando...';
+        feedback.className   = 'kyc-feedback';
+        feedback.style.display = 'none';
+
+        const data = Object.fromEntries(
+          new FormData(document.getElementById('kyc-form')).entries()
+        );
+        data.justificacion = justificacion;
+
+        try {
+          const resp = await fetch(`/oficial/clientes/${clienteId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-user-id':   sessionUserId,
+              'x-user-rol':  sessionUserRol,
+            },
+            body: JSON.stringify(data),
+          });
+
+          const json = await resp.json();
+
+          if (resp.ok) {
+            const sinCambios = json.mensaje === 'Sin cambios detectados';
+            feedback.className   = sinCambios ? 'kyc-feedback' : 'kyc-feedback success';
+            feedback.style.display = 'block';
+            feedback.textContent   = json.mensaje;
+
+            if (!sinCambios) {
+              btn.textContent = 'Guardado';
+            } else {
+              btn.disabled    = false;
+              btn.textContent = 'Guardar cambios';
+            }
+          } else {
+            feedback.className   = 'kyc-feedback error';
+            feedback.style.display = 'block';
+            feedback.textContent   = json.error || 'Error al guardar';
+            btn.disabled    = false;
+            btn.textContent = 'Guardar cambios';
+          }
+        } catch {
+          feedback.className   = 'kyc-feedback error';
+          feedback.style.display = 'block';
+          feedback.textContent   = 'No se pudo conectar con el servidor.';
+          btn.disabled    = false;
+          btn.textContent = 'Guardar cambios';
+        }
+      });
+    }
+
+    // ── RF-01 / RF-04: form submit ────────────────────────────────────────────
     document.getElementById('kyc-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      if (esEdicion) {
+        // Show confirmation modal instead of submitting directly
+        document.getElementById('input-justificacion').value = '';
+        document.getElementById('justif-error').style.display = 'none';
+        document.getElementById('modal-confirmacion').style.display = 'flex';
+        return;
+      }
+
+      // ── RF-01: new client registration ─────────────────────────────────────
       const feedback = document.getElementById('kyc-feedback');
       const btn      = document.getElementById('kyc-submit');
 
-      btn.disabled = true;
+      btn.disabled    = true;
       btn.textContent = 'Registrando...';
-      feedback.className = 'kyc-feedback';
+      feedback.className   = 'kyc-feedback';
       feedback.style.display = 'none';
 
       const data = Object.fromEntries(new FormData(e.target).entries());
@@ -196,11 +403,10 @@
         const json = await resp.json();
 
         if (resp.ok) {
-          feedback.className = 'kyc-feedback success';
+          feedback.className   = 'kyc-feedback success';
           feedback.style.display = 'block';
-          feedback.textContent = `Cliente registrado. Ahora suba los documentos requeridos.`;
+          feedback.textContent   = `Cliente registrado. Ahora suba los documentos requeridos.`;
 
-          // Lock the form so no double-submit
           btn.textContent = 'Cliente registrado';
 
           // Activate document upload with the returned IDs
@@ -209,25 +415,25 @@
           const msg = json.errores
             ? json.errores.join(' · ')
             : (json.error || 'Error al registrar');
-          feedback.className = 'kyc-feedback error';
+          feedback.className   = 'kyc-feedback error';
           feedback.style.display = 'block';
-          feedback.textContent = msg;
-          btn.disabled = false;
+          feedback.textContent   = msg;
+          btn.disabled    = false;
           btn.textContent = 'Registrar cliente';
         }
       } catch {
-        feedback.className = 'kyc-feedback error';
+        feedback.className   = 'kyc-feedback error';
         feedback.style.display = 'block';
-        feedback.textContent = 'No se pudo conectar con el servidor.';
-        btn.disabled = false;
+        feedback.textContent   = 'No se pudo conectar con el servidor.';
+        btn.disabled    = false;
         btn.textContent = 'Registrar cliente';
       }
     });
 
-    // ── RF-02: activar doc-cards y manejar uploads ─────────────────────
+    // ── RF-02: activate doc-cards and handle uploads (RF-01 only) ────────────
     function activarUploadDocs(idExpediente, idUsuario) {
       sessionExpedId = idExpediente;
-      sessionUserId  = idUsuario;
+      sessionUsrId   = idUsuario;
 
       document.querySelectorAll('.doc-card[data-tipo]').forEach(card => {
         card.classList.remove('doc-card--locked');
@@ -261,21 +467,20 @@
       hint.textContent = 'Subiendo...';
 
       const formData = new FormData();
-      formData.append('archivo',  file);
+      formData.append('archivo',       file);
       formData.append('tipo_documento', tipo);
 
       try {
         const resp = await fetch(`/api/expediente/${sessionExpedId}/documentos`, {
           method: 'POST',
           headers: {
-            'x-user-id':  sessionUserId,
+            'x-user-id':  sessionUsrId,
             'x-user-rol': 'cliente',
           },
           body: formData,
         });
 
         const json = await resp.json();
-
         card.classList.remove('doc-card--uploading');
 
         if (resp.ok) {

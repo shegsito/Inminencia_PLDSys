@@ -1,107 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
-  
+<html lang="es">
+
 <%- include('../partials/head') %>
 
-  <body>
+<body>
+  <div class="entire-container">
 
-    <div class = "entire-container">
+    <%- include('../partials/sidebar') %>
 
-        <%- include('../partials/sidebar') %>
+    <div class="right-container">
 
-        <div class = "right-container">
+      <%- include('../partials/header') %>
 
-            <%- include('../partials/header') %>
+      <div class="primary-content">
 
-        <div class = "primary-content">
+        <div id="clientes-table"></div>
 
-                <div class = "side-tables-clientes">
-                    <table class = mini-table>
-                        <tr>
-                            <th><%= cliente ? cliente.nombre_completo : 'Sin nombre registrado' %></th>
-                        </tr>
-                        <tr>
-                            <td>Riesgo:</td>
-                            <td><%= cliente ? cliente.nivel_riesgo : 'N/A' %></td>
-                        </tr>
-                        <tr>
-                            <td>Expediente:</td>
-                            <td><%= cliente ? cliente.estatus_expediente : 'N/A' %></td>
-                        </tr>
-                        <tr>
-                            <td>Cliente desde:</td>
-                            <td><%= cliente && cliente.fecha_registro ? new Date(cliente.fecha_registro).toLocaleDateString() : 'N/A' %></td>
-                        </tr>
-                        <tr>
-                            <td>Correo:</td>
-                            <td><%= cliente ? cliente.correo : 'N/A' %></td>
-                        </tr>
-                        <tr>
-                            <td>Teléfono:</td>
-                            <td><%= cliente ? cliente.telefono : 'N/A' %></td>
-                        </tr>
-                        <tr>
-                            <td>RFC:</td>
-                            <td><%= cliente ? cliente.rfc : 'N/A' %></td>
-                        </tr>
-                    </table>
-                    <table class = "mini-table">
-                        <tr>
-                            <th>ID</th>
-                            <th>Fecha</th>
-                            <th>Producto</th>
-                            <th>Monto</th>
-                            <th>Riesgo</th>
-                        </tr>
-                        <% if (typeof contratos !== 'undefined' && contratos.length > 0) { %>
-                            <% contratos.forEach(contrato => { %>
-                                <tr>
-                                    <td><%= contrato.IDContrato %></td>
-                                    <td><%= new Date(contrato.fecha_apertura).toLocaleDateString() %></td>
-                                    <td><%= contrato.tipo_producto %></td>
-                                    <td>$<%= contrato.monto_limite.toLocaleString() %></td>
-                                    <td><%= contrato.nivel_riesgo %></td>
-                                </tr>
-                            <% }); %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="5" style="text-align: center;">No hay contratos registrados.</td>
-                            </tr>
-                        <% } %>
-                    </table>
-                </div>
-                <br>
-
-                <table class = "dashboard-table"> 
-                    <p class = "table-name">Documentos del expediente</p>
-                    <tr>
-                        <th>Tipo de Documento</th>
-                        <th>Fecha de Carga</th>
-                        <th>Estatus</th>
-                    </tr>
-                    
-                    <% if (typeof documentos !== 'undefined' && documentos.length > 0) { %>
-                        <% documentos.forEach(doc => { %>
-                            <tr>
-                                <td><%= doc.tipo_documento %></td>
-                                <td>Cargado <%= new Date(doc.fecha_carga).toLocaleDateString() %></td>
-                                
-                                <% let textColor = doc.estatus === 'VIGENTE' ? 'green' : 'red'; %>
-                                <td style="color: <%= textColor %>;">
-                                    <%= doc.estatus %>
-                                </td>
-                            </tr>
-                        <% }); %>
-                    <% } else { %>
-                        <tr>
-                            <td colspan="3" style="text-align: center;">Aún no se han cargado documentos.</td>
-                        </tr>
-                    <% } %>
-                </table>
-        </div>
-        
       </div>
-      <%- include('../partials/footer') %>
+
     </div>
+    <%- include('../partials/footer') %>
+  </div>
+
+  <script>
+    window.addEventListener('load', () => {
+      new gridjs.Grid({
+        columns: [
+          { id: 'idcliente', hidden: true },
+          { name: 'Nombre' },
+          { name: 'RFC' },
+          { name: 'Tipo' },
+          { name: 'Correo' },
+          { name: 'Teléfono' },
+          { name: 'Riesgo' },
+          { name: 'Estatus' },
+          { name: 'Registrado' },
+          {
+            name: 'Expediente',
+            formatter: (_, row) =>
+              gridjs.html(`<a href="/oficial/clientes/${row.cells[0].data}">Ver expediente</a>`)
+          }
+        ],
+        data: <%- JSON.stringify(clientes.map(c => [
+          c.idcliente,
+          c.nombre_cliente,
+          c.rfc,
+          c.tipo_persona === 'fisica' ? 'Física' : 'Moral',
+          c.email        || '—',
+          c.telefono     || '—',
+          c.nivel_riesgo,
+          c.estatus,
+          new Date(c.created_at).toLocaleDateString('es-MX')
+        ])) %>,
+        search: true,
+        sort:   true,
+        pagination: { limit: 10 },
+        style: {
+          table: { 'font-family': 'Cambria, serif' },
+          th:    { 'background-color': '#4d0100', 'color': 'white' }
+        }
+      }).render(document.getElementById('clientes-table'));
+    });
+  </script>
 </body>
 </html>

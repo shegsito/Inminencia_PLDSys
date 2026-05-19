@@ -52,31 +52,24 @@ const ExpedienteModel = {
 
         return completo;
     },
-};
 
-// searching for the client (1-1)
+    // searching for the expediente by client (1-1)
+    getByCliente: async (idcliente) => {
+        const res = await pool.query(
+            'SELECT * FROM expediente WHERE idcliente = $1',
+            [idcliente]
+        );
+        return res.rows[0];
+    },
 
-getByCliente: async (idCliente) => {
-    const query = `
-        SELECT * FROM expediente
-        WHERE idcliente = $1
-    `;
-
-    const res = await pool.query(query, [idCliente]);
-    return res.rows[0];
-};
-
-// get all active documents from expedients
-getDocumentos: async (idExpediente) => {
-    const query = `
-        SELECT * FROM documento 
-        WHERE idexpediente = $1
-        ORDER BY fecha_carga DESC
-    `;
-
-    const res = await pool.query(query, [idExpediente]);
-    return res.rows;
-
+    // get all documents from an expediente ordered newest first
+    getDocumentos: async (idexpediente) => {
+        const res = await pool.query(
+            `SELECT * FROM documento WHERE idexpediente = $1 ORDER BY fecha_carga DESC`,
+            [idexpediente]
+        );
+        return res.rows;
+    },
 };
 
 module.exports = ExpedienteModel;
