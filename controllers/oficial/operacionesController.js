@@ -39,6 +39,7 @@ exports.registrarOperacion = async (req, res) => {
         const { nombre_completo, producto, tipo, monto } = req.body;
         const { idcliente } = await model.findCliente(nombre_completo);
         const { idcontrato } = await model.findContrato(producto);
+        const idusuario = req.session.idusuario;
 
         if (!idcliente) {
             return res.status(400).send('Error al obtener cliente');
@@ -48,7 +49,11 @@ exports.registrarOperacion = async (req, res) => {
             return res.status(400).send('Contrato no existente para ese cliente');
         }
 
-        await model.createOperacion(idcliente, idcontrato, tipo, monto);
+        if (!idusuario) {
+            return res.status(400).send('Sesion incorrectamente iniciada');
+        }
+
+        await model.createOperacion(idcliente, idcontrato, tipo, monto, idusuario);
         res.redirect('/oficial/operaciones?success=true')
     }
     catch(e) {

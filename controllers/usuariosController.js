@@ -27,7 +27,8 @@ module.exports.do_login = async (req, res) =>{
         req.session.email = usuario.email;
         req.session.rol = usuario.rol;
         req.session.isLoggedIn = true;
-        req.session.permisos = usuario.permisos; 
+        req.session.permisos = usuario.permisos;
+        req.session.idusuario = usuario.idusuario; 
 
         //redirection based on role
         switch (usuario.rol) {

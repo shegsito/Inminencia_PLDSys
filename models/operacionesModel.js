@@ -50,11 +50,11 @@ exports.findContrato = async (product) => {
     return res.rows [0];
 };
 
-exports.createOperacion = async (idcliente, idcontrato, tipo, monto) => {
-    const sql = `INSERT INTO operacion (idcliente, idcontrato, tipo_operacion, monto, fecha)
-                 VALUES ($1, $2, $3, $4, NOW())
+exports.createOperacion = async (idcliente, idcontrato, tipo, monto, idusuario) => {
+    const sql = `INSERT INTO operacion (idcliente, idcontrato, tipo_operacion, monto, idregistradapor, fecha)
+                 VALUES ($1, $2, $3, $4, $5, NOW())
                  RETURNING *`
                  ;
-    const res = await pool.query(sql, [idcliente, idcontrato, tipo, monto]);
+    const res = await pool.query(sql, [idcliente, idcontrato, tipo, monto, idusuario]);
     return res.rows [0];
 };
