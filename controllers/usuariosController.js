@@ -8,18 +8,24 @@ module.exports.render_login = async (req, res) =>{
 module.exports.do_login = async (req, res) =>{
         try {
         const { email, password } = req.body;
+
+        //fields must be filled in
+        if (!email || !password) {
+            return res.status(400).send('Please fill in all fields');
+        }
+
         const usuario = await UsuarioModel.findByEmail(req.body.email);
         //checking for existing user
         console.log("Usuario found:", usuario);
         
         if (!usuario) {
-            return res.redirect('/usuarios/login');
+            return res.status(400).send('Username or password incorrect');
         }
 
         //verify password
         const doMatch = await bcrypt.compare(password, usuario.password);
         if (!doMatch) {
-            return res.redirect('/usuarios/login');
+            return res.status(400).send('Username or password incorrect');
         }
 
         //load user permissions

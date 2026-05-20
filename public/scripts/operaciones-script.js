@@ -8,7 +8,7 @@ window.addEventListener("load", () => {
         search: {
             enabled: true,
             server: {
-                url: (prev, key) => `${prev}?s=${key}`
+                url: (prev, key) => `${prev}?search=${key}`
             },
         },
         sort: true,
