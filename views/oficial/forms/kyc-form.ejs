@@ -20,7 +20,24 @@
 
       <div class="primary-content">
 
+        <!-- ── Action bar (edit mode: Editar / Guardar cambios buttons top-right) ── -->
+        <% if (esEdicion) { %>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+          <p class="kyc-required-note" style="margin-bottom:0;">*Campo obligatorio</p>
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="kyc-submit-btn" id="btn-editar"
+                    style="padding:8px 22px; font-size:14px;">
+              Editar
+            </button>
+            <button type="button" class="kyc-submit-btn" id="kyc-submit"
+                    style="display:none; padding:8px 22px; font-size:14px;">
+              Guardar cambios
+            </button>
+          </div>
+        </div>
+        <% } else { %>
         <p class="kyc-required-note">*Campo obligatorio</p>
+        <% } %>
 
         <% if (esEdicion) { %>
           <!-- RF-05: show tipo_persona as a static label, not a toggle -->
@@ -61,19 +78,15 @@
               <div class="kyc-row" id="row-fisica">
                 <div class="kyc-group">
                   <label for="rfc">RFC</label>
-                  <!-- RFC no es editable; siempre readonly -->
                   <input type="text" id="rfc" name="rfc"
                          value="<%= esEdicion ? (cliente.rfc || '') : '' %>"
-                         
                          placeholder="Escriba su RFC" maxlength="13"
                          style="text-transform:uppercase">
                 </div>
                 <div class="kyc-group">
                   <label for="curp">CURP</label>
-                  <!-- CURP no es editable; siempre readonly -->
                   <input type="text" id="curp" name="curp"
                          value="<%= esEdicion ? (cliente.curp || '') : '' %>"
-                         
                          placeholder="Escriba su CURP" maxlength="18"
                          style="text-transform:uppercase">
                 </div>
@@ -139,16 +152,10 @@
 
               <div class="kyc-feedback" id="kyc-feedback"></div>
 
-              <% if (esEdicion) { %>
-                <!-- RF-04: edit mode buttons -->
-                <button type="button" class="kyc-submit-btn" id="btn-editar">Editar</button>
-                <button type="submit" class="kyc-submit-btn" id="kyc-submit" style="display:none;">
-                  Guardar cambios
-                </button>
-              <% } else { %>
+              <% if (!esEdicion) { %>
                 <!-- RF-01: new registration button -->
                 <button type="submit" class="kyc-submit-btn" id="kyc-submit">
-                  Registrar cliente
+                  Guardar
                 </button>
               <% } %>
 
@@ -159,21 +166,74 @@
 
               <p class="docs-title">Documentos</p>
 
-              <% if (esEdicion && typeof documentos !== 'undefined' && documentos.length > 0) { %>
-                <!-- RF-05: show already-uploaded documents -->
-                <p style="font-size:11px; color:#aaa; margin-bottom:10px;">
-                  <%= documentos.length %> documento(s) cargado(s)
-                </p>
-                <% documentos.forEach(doc => { %>
-                  <div class="doc-card doc-card--done" style="margin-bottom:8px;">
-                    <span class="doc-card-plus">✓</span>
-                    <span class="doc-card-hint" style="font-size:11px;">
-                      <%= doc.tipo_documento %> —
-                      <%= new Date(doc.fecha_carga).toLocaleDateString('es-MX') %>
-                    </span>
+              <% if (esEdicion) { %>
+                <!-- RF-05: existing docs — always visible, clickable to view -->
+                <% if (typeof documentos !== 'undefined' && documentos.length > 0) { %>
+                  <p style="font-size:11px; color:#888; margin-bottom:10px;">
+                    <%= documentos.filter(d => d.vigente).length %> activo(s) ·
+                    <%= documentos.length %> en total
+                  </p>
+                  <% documentos.forEach(doc => { %>
+                    <a href="/oficial/documentos/<%= doc.iddocumento %>" target="_blank"
+                       style="display:block; text-decoration:none; margin-bottom:8px;
+                              <%= !doc.vigente ? 'opacity:0.5;' : '' %>">
+                      <div class="doc-card doc-card--done"
+                           style="cursor:pointer; margin-bottom:0;"
+                           title="<%= !doc.vigente ? 'Versión anterior' : 'Ver documento' %>">
+                        <span class="doc-card-plus" style="font-size:20px;">&#128196;</span>
+                        <div style="text-align:center;">
+                          <span class="doc-card-hint" style="font-weight:600; color:#155724;">
+                            <%= doc.tipo_documento.replace(/_/g, ' ') %>
+                          </span><br>
+                          <span class="doc-card-hint">
+                            <%= new Date(doc.fecha_carga).toLocaleDateString('es-MX') %>
+                          </span>
+                          <% if (!doc.vigente) { %>
+                            <br><span class="doc-card-hint" style="color:#999;">(versión anterior)</span>
+                          <% } %>
+                        </div>
+                      </div>
+                    </a>
+                  <% }) %>
+                <% } else { %>
+                  <p style="font-size:11px; color:#aaa; margin-bottom:12px;">Sin documentos cargados.</p>
+                <% } %>
+
+                <!-- Upload cards — hidden until "Editar" is clicked -->
+                <div id="docs-upload-section" style="display:none; margin-top:14px;
+                     border-top:1px solid #ddd; padding-top:14px;">
+                  <p class="docs-title" style="color:#4d0100; margin-bottom:10px;">
+                    Agregar documentos
+                  </p>
+
+                  <p class="doc-label">Identificación Oficial (INE, pasaporte)</p>
+                  <div class="doc-card" data-tipo="ine">
+                    <span class="doc-card-plus">+</span>
+                    <span class="doc-card-hint">Dar click para subir un nuevo documento</span>
                   </div>
-                <% }) %>
-              <% } else if (!esEdicion) { %>
+
+                  <p class="doc-label">Comprobante de Domicilio</p>
+                  <div class="doc-card" data-tipo="comprobante_domicilio">
+                    <span class="doc-card-plus">+</span>
+                    <span class="doc-card-hint">Dar click para subir un nuevo documento</span>
+                  </div>
+
+                  <% if (cliente.tipo_persona === 'moral') { %>
+                  <p class="doc-label">Acta constitutiva</p>
+                  <div class="doc-card" data-tipo="acta_constitutiva">
+                    <span class="doc-card-plus">+</span>
+                    <span class="doc-card-hint">Dar click para subir un nuevo documento</span>
+                  </div>
+
+                  <p class="doc-label">Poderes notariales</p>
+                  <div class="doc-card" data-tipo="poder_notarial">
+                    <span class="doc-card-plus">+</span>
+                    <span class="doc-card-hint">Dar click para subir un nuevo documento</span>
+                  </div>
+                  <% } %>
+                </div>
+
+              <% } else { %>
                 <!-- RF-01: locked cards that activate after registration -->
                 <p style="font-size:11px; color:#aaa; margin-bottom:10px;">Disponibles tras registrar al cliente</p>
 
@@ -203,8 +263,6 @@
                     <span class="doc-card-hint">Subir PDF o imagen</span>
                   </div>
                 </div>
-              <% } else { %>
-                <p style="font-size:11px; color:#aaa;">Sin documentos cargados.</p>
               <% } %>
 
             </div>
@@ -221,34 +279,53 @@
   <!-- ── Confirmation modal (RF-04 only) ── -->
   <% if (esEdicion) { %>
   <div id="modal-confirmacion" style="display:none; position:fixed; inset:0;
-       background:rgba(0,0,0,.45); z-index:1000;
+       background:rgba(0,0,0,.6); z-index:1000;
        align-items:center; justify-content:center;">
-    <div style="background:#fff; padding:2rem; border-radius:8px;
-                max-width:420px; width:90%; box-shadow:0 4px 24px rgba(0,0,0,.2);">
-      <p style="font-size:15px; font-weight:600; margin-bottom:1rem;">
+    <div style="background:#4d0100; padding:2.5rem 2rem; border-radius:12px;
+                max-width:440px; width:90%; box-shadow:0 8px 32px rgba(0,0,0,.5);
+                text-align:center;">
+
+      <!-- Warning triangle SVG -->
+      <svg width="80" height="72" viewBox="0 0 100 90" style="margin-bottom:1.2rem; display:block; margin-left:auto; margin-right:auto;">
+        <polygon points="50,8 92,82 8,82"
+                 fill="none" stroke="rgba(200,200,200,0.75)"
+                 stroke-width="5" stroke-linejoin="round"/>
+        <line x1="50" y1="34" x2="50" y2="58"
+              stroke="rgba(200,200,200,0.85)" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="50" cy="70" r="4" fill="rgba(200,200,200,0.85)"/>
+      </svg>
+
+      <p style="color:#fff; font-size:16px; font-weight:600; margin-bottom:1.4rem;">
         ¿Desea guardar los cambios?
       </p>
-      <label style="font-size:13px; display:block; margin-bottom:4px;">
-        Justificación <span style="color:red">*</span>
+
+      <label style="font-size:12px; color:rgba(255,255,255,0.7); display:block;
+                    text-align:left; margin-bottom:4px;">
+        Justificación <span style="color:#ffaaaa">*</span>
       </label>
       <textarea id="input-justificacion" rows="3"
                 placeholder="Indique el motivo de la modificación..."
-                style="width:100%; box-sizing:border-box; border:1px solid #ccc;
-                       border-radius:4px; padding:8px; font-size:13px;
-                       resize:vertical;"></textarea>
+                style="width:100%; box-sizing:border-box;
+                       border:1px solid rgba(255,255,255,0.25); border-radius:6px;
+                       padding:8px 10px; font-size:13px; resize:vertical;
+                       background:rgba(255,255,255,0.12); color:#fff;
+                       font-family:inherit;"></textarea>
       <p id="justif-error"
-         style="color:red; font-size:12px; display:none; margin-top:4px;">
+         style="color:#ffaaaa; font-size:12px; display:none; margin-top:4px; text-align:left;">
         La justificación es obligatoria (RN-03)
       </p>
-      <div style="display:flex; gap:10px; margin-top:1.2rem; justify-content:flex-end;">
+
+      <div style="display:flex; gap:16px; margin-top:1.5rem; justify-content:center;">
         <button id="btn-cancelar"
-                style="padding:8px 18px; border:1px solid #ccc; border-radius:4px;
-                       background:#fff; cursor:pointer; font-size:13px;">
+                style="padding:10px 28px; border:2px solid rgba(255,255,255,0.45);
+                       border-radius:6px; background:transparent; color:#fff;
+                       cursor:pointer; font-size:14px; font-family:inherit; font-weight:500;">
           Cancelar
         </button>
         <button id="btn-confirmar"
-                style="padding:8px 18px; border:none; border-radius:4px;
-                       background:#2b5be0; color:#fff; cursor:pointer; font-size:13px;">
+                style="padding:10px 28px; border:none; border-radius:6px;
+                       background:#fff; color:#4d0100; cursor:pointer;
+                       font-size:14px; font-family:inherit; font-weight:700;">
           Aceptar
         </button>
       </div>
@@ -258,12 +335,13 @@
 
   <script>
     // ── Shared state ──────────────────────────────────────────────────────────
-    const esEdicion     = <%= esEdicion %>;
-    const clienteId     = '<%= esEdicion ? cliente.idcliente : "" %>';
-    const sessionUserId = '<%= esEdicion && typeof usuario !== "undefined" ? usuario.id  : "" %>';
-    const sessionUserRol= '<%= esEdicion && typeof usuario !== "undefined" ? usuario.rol : "" %>';
+    const esEdicion      = <%= esEdicion %>;
+    const clienteId      = '<%= esEdicion ? cliente.idcliente : "" %>';
+    const expedienteId   = '<%= esEdicion && expediente ? expediente.idexpediente : "" %>';
+    const sessionUserId  = '<%= esEdicion && typeof usuario !== "undefined" && usuario ? usuario.id  : "" %>';
+    const sessionUserRol = '<%= esEdicion && typeof usuario !== "undefined" && usuario ? usuario.rol : "" %>';
 
-    let tipoActual    = '<%= esEdicion ? cliente.tipo_persona : "fisica" %>';
+    let tipoActual   = '<%= esEdicion ? cliente.tipo_persona : "fisica" %>';
     let sessionExpedId = null;
     let sessionUsrId   = null;
 
@@ -285,17 +363,36 @@
       document.getElementById('razon_social').disabled = tipo !== 'moral';
     }
 
-    // Initialize tipo on page load
     setTipo(tipoActual);
+
+    // ── RF-05: open document in new tab ──────────────────────────────────────
+    function abrirDocumento(id) {
+      window.open(`/oficial/documentos/${id}`, '_blank');
+    }
 
     // ── RF-04: edit mode handlers ─────────────────────────────────────────────
     if (esEdicion) {
 
-      // "Editar" button — unlock the editable fields
+      let uploadActivado = false;
+
+      // "Editar" button — unlock fields and show upload section
       document.getElementById('btn-editar').addEventListener('click', () => {
         document.querySelectorAll('.campo-editable').forEach(f => f.removeAttribute('readonly'));
         document.getElementById('btn-editar').style.display  = 'none';
         document.getElementById('kyc-submit').style.display  = '';
+
+        if (!uploadActivado) {
+          document.getElementById('docs-upload-section').style.display = 'block';
+          activarUploadDocsEdicion();
+          uploadActivado = true;
+        }
+      });
+
+      // "Guardar cambios" button — show confirmation modal
+      document.getElementById('kyc-submit').addEventListener('click', () => {
+        document.getElementById('input-justificacion').value = '';
+        document.getElementById('justif-error').style.display = 'none';
+        document.getElementById('modal-confirmacion').style.display = 'flex';
       });
 
       // Modal: Cancelar
@@ -319,7 +416,7 @@
 
         btn.disabled    = true;
         btn.textContent = 'Guardando...';
-        feedback.className   = 'kyc-feedback';
+        feedback.className    = 'kyc-feedback';
         feedback.style.display = 'none';
 
         const data = Object.fromEntries(
@@ -342,7 +439,7 @@
 
           if (resp.ok) {
             const sinCambios = json.mensaje === 'Sin cambios detectados';
-            feedback.className   = sinCambios ? 'kyc-feedback' : 'kyc-feedback success';
+            feedback.className    = sinCambios ? 'kyc-feedback' : 'kyc-feedback success';
             feedback.style.display = 'block';
             feedback.textContent   = json.mensaje;
 
@@ -353,14 +450,14 @@
               btn.textContent = 'Guardar cambios';
             }
           } else {
-            feedback.className   = 'kyc-feedback error';
+            feedback.className    = 'kyc-feedback error';
             feedback.style.display = 'block';
             feedback.textContent   = json.error || 'Error al guardar';
             btn.disabled    = false;
             btn.textContent = 'Guardar cambios';
           }
         } catch {
-          feedback.className   = 'kyc-feedback error';
+          feedback.className    = 'kyc-feedback error';
           feedback.style.display = 'block';
           feedback.textContent   = 'No se pudo conectar con el servidor.';
           btn.disabled    = false;
@@ -372,14 +469,7 @@
     // ── RF-01 / RF-04: form submit ────────────────────────────────────────────
     document.getElementById('kyc-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      if (esEdicion) {
-        // Show confirmation modal instead of submitting directly
-        document.getElementById('input-justificacion').value = '';
-        document.getElementById('justif-error').style.display = 'none';
-        document.getElementById('modal-confirmacion').style.display = 'flex';
-        return;
-      }
+      if (esEdicion) return; // edit mode uses button click handlers, not form submit
 
       // ── RF-01: new client registration ─────────────────────────────────────
       const feedback = document.getElementById('kyc-feedback');
@@ -387,7 +477,7 @@
 
       btn.disabled    = true;
       btn.textContent = 'Registrando...';
-      feedback.className   = 'kyc-feedback';
+      feedback.className    = 'kyc-feedback';
       feedback.style.display = 'none';
 
       const data = Object.fromEntries(new FormData(e.target).entries());
@@ -403,34 +493,32 @@
         const json = await resp.json();
 
         if (resp.ok) {
-          feedback.className   = 'kyc-feedback success';
+          feedback.className    = 'kyc-feedback success';
           feedback.style.display = 'block';
-          feedback.textContent   = `Cliente registrado. Ahora suba los documentos requeridos.`;
+          feedback.textContent   = 'Cliente registrado. Ahora suba los documentos requeridos.';
 
           btn.textContent = 'Cliente registrado';
-
-          // Activate document upload with the returned IDs
           activarUploadDocs(json.idexpediente, json.idusuario);
         } else {
           const msg = json.errores
             ? json.errores.join(' · ')
             : (json.error || 'Error al registrar');
-          feedback.className   = 'kyc-feedback error';
+          feedback.className    = 'kyc-feedback error';
           feedback.style.display = 'block';
           feedback.textContent   = msg;
           btn.disabled    = false;
-          btn.textContent = 'Registrar cliente';
+          btn.textContent = 'Guardar';
         }
       } catch {
-        feedback.className   = 'kyc-feedback error';
+        feedback.className    = 'kyc-feedback error';
         feedback.style.display = 'block';
         feedback.textContent   = 'No se pudo conectar con el servidor.';
         btn.disabled    = false;
-        btn.textContent = 'Registrar cliente';
+        btn.textContent = 'Guardar';
       }
     });
 
-    // ── RF-02: activate doc-cards and handle uploads (RF-01 only) ────────────
+    // ── RF-02: activate doc-cards after RF-01 registration ───────────────────
     function activarUploadDocs(idExpediente, idUsuario) {
       sessionExpedId = idExpediente;
       sessionUsrId   = idUsuario;
@@ -453,12 +541,36 @@
 
         input.addEventListener('change', () => {
           const file = input.files[0];
-          if (file) subirDocumento(card, input, file);
+          if (file) subirDocumento(card, input, file, sessionExpedId, sessionUsrId, 'cliente');
         });
       });
     }
 
-    async function subirDocumento(card, input, file) {
+    // ── RF-04: activate upload cards in edit mode ─────────────────────────────
+    function activarUploadDocsEdicion() {
+      document.querySelectorAll('#docs-upload-section .doc-card[data-tipo]').forEach(card => {
+        const input = document.createElement('input');
+        input.type   = 'file';
+        input.accept = '.pdf,.jpg,.jpeg,.png';
+        input.style.display = 'none';
+        card.appendChild(input);
+
+        card.addEventListener('click', () => {
+          if (!card.classList.contains('doc-card--done') &&
+              !card.classList.contains('doc-card--uploading')) {
+            input.click();
+          }
+        });
+
+        input.addEventListener('change', () => {
+          const file = input.files[0];
+          if (file) subirDocumento(card, input, file, expedienteId, sessionUserId, sessionUserRol);
+        });
+      });
+    }
+
+    // ── Shared: upload a document to an expediente ────────────────────────────
+    async function subirDocumento(card, input, file, idExpediente, userId, userRol) {
       const tipo = card.dataset.tipo;
       const hint = card.querySelector('.doc-card-hint');
       const plus = card.querySelector('.doc-card-plus');
@@ -467,15 +579,15 @@
       hint.textContent = 'Subiendo...';
 
       const formData = new FormData();
-      formData.append('archivo',       file);
+      formData.append('archivo',        file);
       formData.append('tipo_documento', tipo);
 
       try {
-        const resp = await fetch(`/api/expediente/${sessionExpedId}/documentos`, {
+        const resp = await fetch(`/api/expediente/${idExpediente}/documentos`, {
           method: 'POST',
           headers: {
-            'x-user-id':  sessionUsrId,
-            'x-user-rol': 'cliente',
+            'x-user-id':  userId,
+            'x-user-rol': userRol,
           },
           body: formData,
         });
@@ -494,7 +606,7 @@
         card.classList.remove('doc-card--uploading');
         hint.textContent = 'Error de conexión';
       } finally {
-        input.value = ''; // allow re-selecting same file
+        input.value = '';
       }
     }
   </script>

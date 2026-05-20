@@ -1,6 +1,30 @@
+const path = require('path');
+const fs   = require('fs');
 const pool = require('../../config/db');
 const ClienteModel = require('../../models/clienteModel');
 const ExpedienteModel = require('../../models/expedienteModel');
+
+// -------------- Document viewer
+
+// GET /oficial/documentos/:id
+exports.verDocumento = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await pool.query(
+            'SELECT ruta_archivo, formato FROM documento WHERE iddocumento = $1',
+            [id]
+        );
+        const doc = result.rows[0];
+        if (!doc) return res.status(404).send('Documento no encontrado');
+        if (!fs.existsSync(doc.ruta_archivo))
+            return res.status(404).send('Archivo no encontrado en el servidor');
+        res.setHeader('Content-Type', doc.formato);
+        res.sendFile(path.resolve(doc.ruta_archivo));
+    } catch (e) {
+        console.error('Error al servir documento:', e);
+        res.status(500).send('Error al obtener el documento');
+    }
+};
 
 // -------------- RF-05 consulting expedient and client data
 
@@ -64,7 +88,7 @@ exports.actualizarCliente = async (req, res) => {
 
     // RN-03: justificación obligatoria — system does not allow saving without it
     if (!justificacion?.trim()) {
-        return res.status(400).json({ error: 'La justificación es obligatoria (RN-03)' });
+        return res.status(400).json({ error: 'La justificación es obligatoria' });
     }
 
     // Map: form field name → actual DB column name

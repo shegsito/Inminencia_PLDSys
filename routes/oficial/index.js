@@ -27,6 +27,7 @@ router.post('/new-client',   (req, res) => res.redirect('/oficial/dashboard'));
 router.get('/api/operaciones/count', operaciones.count);
 router.get('/api/operaciones/data', operaciones.operaciones);
 
-router.get('/clientes/:id',  clientes.getCliente);
-router.put('/clientes/:id',  verificarRol(['oficial']), clientes.actualizarCliente);
+router.get('/clientes/:id',    clientes.getCliente);
+router.put('/clientes/:id',    verificarRol(['oficial']), clientes.actualizarCliente);
+router.get('/documentos/:id',  clientes.verDocumento);
 module.exports = router;
