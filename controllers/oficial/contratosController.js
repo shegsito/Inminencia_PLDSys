@@ -48,6 +48,6 @@ exports.registrarContrato = async (req, res) => {
     }
     catch(e) {
        console.log(e);
-       res.status(500).send('Error al regitsrar contrato'); 
+       res.status(500).send('Error al registrar contrato'); 
     }
 };

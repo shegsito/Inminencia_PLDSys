@@ -38,7 +38,7 @@ exports.registrarOperacion = async (req, res) => {
     try {
         const { nombre_completo, producto, tipo, monto } = req.body;
         const { idcliente } = await model.findCliente(nombre_completo);
-        const { idcontrato } = await model.findContrato(producto);
+        const { idcontrato } = await model.findContrato(producto, idcliente);
         const idusuario = req.session.idusuario;
 
         if (!idcliente) {
@@ -58,6 +58,6 @@ exports.registrarOperacion = async (req, res) => {
     }
     catch(e) {
        console.log(e);
-       res.status(500).send('Error al regitsrar operacion'); 
+       res.status(500).send('Error al registrar operacion'); 
     }
 };

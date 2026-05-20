@@ -41,13 +41,13 @@ exports.findCliente = async (name) => {
     return res.rows [0];
 };
 
-exports.findContrato = async (product, idusuario) => {
+exports.findContrato = async (product, idcliente) => {
     const sql = `SELECT idcontrato 
                  FROM contrato
                  WHERE tipo_producto ILIKE $1
-                 AND idcliente ILIKE = $2`
+                 AND idcliente::text = $2`
                  ;
-    const res = await pool.query(sql, [product, idusuario]);
+    const res = await pool.query(sql, [product, idcliente]);
     return res.rows [0];
 };
 
