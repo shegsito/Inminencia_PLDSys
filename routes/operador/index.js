@@ -12,10 +12,15 @@ router.get('/clientes', clientes.index);
 //data
 router.get('/operaciones/operacionesCount', operaciones.count);
 router.get('/operaciones/operacionesData', operaciones.operaciones);
-
 router.get('/clientes/:id',    clientes.getCliente);
+
 //forms
 router.get('/reportar',  dashboard.operador_reporte);
 router.post('/reportar', (req, res) => res.redirect('/operador/dashboard'));
+router.get('/kyc', (req, res) => 
+    res.render('operador/forms/kyc-form', { 
+        pageTitle: 'Nuevo cliente' }));
+router.post('/new-client', (req, res) => 
+    res.redirect('/operador/dashboard'));
 
 module.exports = router;
