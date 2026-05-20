@@ -17,11 +17,11 @@ window.addEventListener("load", () => {
         server: {
             url: '/oficial/canalInterno/canalInternoData',
             then: data => data.map(ri => [
-                ri.idreporteint,
-                ri.descripcion, 
-                ri.fecha,
-                ri.estatus,
-                ri.ruta_evidencia
+                ri.idreporteint || 'N/A',
+                ri.descripcion || 'N/A', 
+                ri.fecha ? new Date(ri.fecha).toLocaleDateString() : 'N/A',
+                ri.estatus || 'N/A',
+                ri.ruta_evidencia ? `<a href="${ri.ruta_evidencia}" target="_blank">Ver evidencia</a>` : 'N/A'
             ])
         },
         

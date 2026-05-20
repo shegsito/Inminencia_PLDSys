@@ -1,4 +1,3 @@
-<script>
     window.addEventListener("load", () => {
   gridTable = new gridjs.Grid({
     columns: ["TIPO", "CLIENTE", "MOTIVO", "GENERADA", "PRIORIDAD", "ESTATUS"],
@@ -29,5 +28,3 @@
     }
   }).render(document.getElementById("test-table"));
     });
-
-</script>
