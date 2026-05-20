@@ -2,8 +2,8 @@
 // THIS IS A BETA VERIFICTATION, THIS SHOULD BE REPLACED WITH SOMETHINF MORE SAFE AS JWT VERIFICATION
 
 
-// first function validate the allowed roles, the second one it's just the middleware 
-module.exports = (rolesPermitidos) => (req, res, next) => {
+// first function validate the allowed roles, the second one it's just the middleware
+const verificarRol = (rolesPermitidos) => (req, res, next) => {
     const userID = req.headers['x-user-id'];
     const userRol = req.headers['x-user-rol'];
 
@@ -16,6 +16,14 @@ module.exports = (rolesPermitidos) => (req, res, next) => {
     }
 
     req.usuario = { id: userID, rol: userRol };
-    next();   
+    next();
 };
+
+// export as both default function and named export so both styles work:
+//const auth = require('./auth');               auth(['oficial'])
+//const { verificarRol } = require('./auth');   verificarRol('oficial')
+
+
+module.exports = verificarRol;
+module.exports.verificarRol = verificarRol;
 
