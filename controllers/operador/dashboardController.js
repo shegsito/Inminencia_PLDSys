@@ -6,18 +6,6 @@ exports.operador_index = (req, res) => {
             });
 };
 
-/*exports.operador_clientes = (req, res) => {
-    res.render('/operador/clientes', {
-                pageTitle: 'Clientes'
-            });
-};
-
-exports.operador_expedientes = (req, res) => {
-    res.render('/operador/expedientes', {
-                pageTitle: 'Expedientes de cliente'
-            });
-};*/
-
 exports.operador_reporte = (req, res) => {
     //route to connect report creation button with form
     res.render('operador/forms/caso-sospechoso', {

@@ -12,10 +12,10 @@ window.addEventListener("load", () => {
             },
         },
         sort: true,
-        pagination: true,
         limit: 5,
+        pagination: true,
         server: {
-            url: '/oficial/operaciones/operacionesData',
+            url: '/operador/operaciones/operacionesData',
             then: data => data.map(op => [
                 op.nombre_cliente, 
                 op.idoperacion, 
