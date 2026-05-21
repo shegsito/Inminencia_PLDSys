@@ -9,9 +9,10 @@ exports.count = async () => {
 //fetch records
 exports.fetchAll = async () => {
     const sql = `
-        SELECT c.nombre_cliente, co.tipo_producto, co.monto, co.estatus
+        SELECT c.nombre_cliente, co.tipo_producto, co.monto, co.estatus, c.created_at
         FROM contrato co
         JOIN cliente c ON c.idcliente = co.idcliente
+        ORDER BY c.created_at DESC
     `;
     const { rows } = await pool.query(sql);
     return rows;

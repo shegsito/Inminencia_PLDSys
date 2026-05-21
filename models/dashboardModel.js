@@ -9,9 +9,10 @@ exports.countAlertas = async () => {
 
 exports.fetchAllAlertas = async () => {
     const sql = `
-        SELECT motivo, prioridad
+        SELECT motivo, prioridad, generada_en
         FROM alerta
         WHERE prioridad IN ('alta')
+        ORDER BY generada_en DESC
     `;
     const { rows } = await pool.query(sql);
     return rows;
@@ -27,6 +28,7 @@ exports.fetchAllClientes = async () => {
     const sql = `
         SELECT nombre_cliente, nivel_riesgo
         FROM cliente
+        ORDER BY created_at DESC
     `;
     const { rows } = await pool.query(sql);
     return rows;

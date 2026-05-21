@@ -8,7 +8,13 @@ window.addEventListener("load", () => {
     const alertasGrid = new gridjs.Grid({
         columns: ["Alertas recientes", "Prioridad"],
         sort: true,
-        pagination: false,
+        pagination: {
+            limit: 5,
+            prevButton: false,
+            nextButton: false,
+            summary: false,
+            buttonsCount: false
+        },
         server: {
             url: '/oficial/dashboard/api/alertasDataDashboard',
             then: data => data.map(alerta => [
@@ -19,11 +25,15 @@ window.addEventListener("load", () => {
         
         style: {
             table: {
-                'font-family': 'Cambria, serif'
+                'font-family': 'Cambria, serif',
             },
             th: {
                 'background-color': '#4d0100',
-                'color': 'white'
+                'color': 'white',
+                'font-size': '18px'
+            },
+            td: {
+                'font-size': '16px'
             }
         }
 }).render(alertasRecientes);
@@ -31,7 +41,13 @@ window.addEventListener("load", () => {
 const clientesGrid = new gridjs.Grid({
         columns: ["Clientes recientes", "Riesgo"],
         sort: true,
-        pagination: false,
+        pagination: {
+            limit: 5,
+            prevButton: false,
+            nextButton: false,
+            summary: false,
+            buttonsCount: false
+        },
         server: {
             url: '/oficial/dashboard/api/clientesDataDashboard',
             then: data => data.map(cliente => [
@@ -46,7 +62,11 @@ const clientesGrid = new gridjs.Grid({
             },
             th: {
                 'background-color': '#4d0100',
-                'color': 'white'
+                'color': 'white',
+                'font-size': '18px'
+            },
+            td: {
+                'font-size': '16px'
             }
         }
 }).render(clientesRecientes);
@@ -54,14 +74,20 @@ const clientesGrid = new gridjs.Grid({
 const operacionesGrid = new gridjs.Grid({
         columns: ["Cliente", "Producto", "Monto", "Fecha"],
         sort: true,
-        pagination: false,
+        pagination: {
+            limit: 5,
+            prevButton: false,
+            nextButton: false,
+            summary: false,
+            buttonsCount: false
+        },
         server: {
             url: '/oficial/dashboard/api/operacionesDataDashboard',
             then: data => data.map(op => [
                 op.nombre_cliente, 
                 op.tipo_operacion, 
                 op.monto, 
-                op.fecha
+                new Date(op.fecha).toLocaleDateString('es-MX')
             ])
         },
         
@@ -71,7 +97,11 @@ const operacionesGrid = new gridjs.Grid({
             },
             th: {
                 'background-color': '#4d0100',
-                'color': 'white'
+                'color': 'white',
+                'font-size': '18px'
+            },
+            td: {
+                'font-size': '16px'
             }
         }
 }).render(operacionesRecientes);
