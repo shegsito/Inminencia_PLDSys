@@ -25,7 +25,7 @@ router.post('/new-client', (req, res) =>
     res.redirect('/oficial/dashboard'));
 router.get('/registrar-operacion', (req, res) =>
     res.render('oficial/forms/nueva-operacion-form', {
-        pageTitle: 'Nueva Operacion' }));
+        pageTitle: 'Nueva Operación' }));
 router.post('/new-operacion', operaciones.registrarOperacion);
 router.get('/registrar-contrato', (req, res) =>
     res.render('oficial/forms/nuevo-contrato-form', {

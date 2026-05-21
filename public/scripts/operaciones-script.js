@@ -9,7 +9,7 @@ window.addEventListener("load", () => {
             enabled: true,
             server: {
                 url: (prev, key) => `${prev}?search=${key}`
-            },
+            }
         },
         sort: true,
         pagination: {

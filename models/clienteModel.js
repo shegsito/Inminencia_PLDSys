@@ -2,7 +2,7 @@ const pool = require('../config/db');
 
 const ClienteModel = {
     getAll: async () => {
-        const res = await pool.query('SELECT * FROM cliente ORDER BY nombre_cliente');
+        const res = await pool.query('SELECT * FROM cliente ORDER BY created_at DESC');
         return res.rows;
     },
 

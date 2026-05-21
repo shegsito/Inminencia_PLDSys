@@ -4,7 +4,7 @@ const testTable = document.getElementById("test-table");
 
 window.addEventListener("load", () => {
     gridTable = new gridjs.Grid({
-        columns: ["NOMBRE", "FOLIO", "PRODUCTOS", "MONTO", "FECHA", "ESTATUS"],
+        columns: ["Nombre", "Folio", "Productos", "Monto", "Fecha", "Estatus"],
         search: {
             enabled: true,
             server: {
@@ -12,8 +12,10 @@ window.addEventListener("load", () => {
             },
         },
         sort: true,
-        limit: 5,
-        pagination: true,
+        pagination: {
+            limit: 5,
+            summary: false
+        },
         server: {
             url: '/operador/operaciones/operacionesData',
             then: data => data.map(op => [
@@ -21,7 +23,7 @@ window.addEventListener("load", () => {
                 op.idoperacion, 
                 op.tipo_operacion, 
                 op.monto, 
-                op.fecha, 
+                new Date(op.fecha).toLocaleDateString('es-MX'), 
                 op.estatus
             ])
         },
@@ -32,8 +34,12 @@ window.addEventListener("load", () => {
             },
         th: {
                 'background-color': '#4d0100',
-                'color': 'white'
-        }
+                'color': 'white',
+                'font-size': '18px'
+        },
+        td: {
+                'font-size': '16px'
+            }
     }
 }).render(testTable);
 });

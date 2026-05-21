@@ -12,8 +12,10 @@ window.addEventListener("load", () => {
             },
         },
         sort: true,
-        limit: 5,
-        pagination: true,
+        pagination: {
+            limit: 5,
+            summary: false
+        },
         server: {
             url: '/oficial/canalInterno/canalInternoData',
             then: data => data.map(ri => [
@@ -31,8 +33,12 @@ window.addEventListener("load", () => {
             },
         th: {
                 'background-color': '#4d0100',
-                'color': 'white'
-        }
+                'color': 'white',
+                'font-size': '18px'
+        },
+        td: {
+                'font-size': '16px'
+            }
     }
 }).render(testTable);
 });
