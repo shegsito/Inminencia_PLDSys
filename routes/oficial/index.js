@@ -44,6 +44,7 @@ router.get(`/alertas/api/alertasData`, alertas.getAlertasData);
 router.get('/contratos/contratosCount', contratos.count);
 router.get('/contratos/contratosData', contratos.contratos);
 router.get('/canalInterno/canalInternoData', canalInterno.getCanalInternoData);
+router.get('/reportes/reportesData', reportes.getCanalInternoData);
 
 router.get('/clientes/:id',    clientes.getCliente);
 router.put('/clientes/:id',    verificarRol(['oficial']), clientes.actualizarCliente);
