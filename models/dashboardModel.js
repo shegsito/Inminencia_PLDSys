@@ -50,3 +50,4 @@ exports.fetchAllOperaciones = async () => {
     const { rows } = await pool.query(sql);
     return rows;
 };
+

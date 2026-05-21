@@ -9,8 +9,6 @@ const contratos    = require('../../controllers/oficial/contratosController');
 const operaciones  = require('../../controllers/oficial/operacionesController');
 const listas       = require('../../controllers/oficial/listasController');
 const reportes     = require('../../controllers/oficial/reportesController');
-const { verificarRol } = require('../../middleware/auth');
-
 router.get('/dashboard',     dashboard.index);
 router.get('/clientes',      clientes.index);
 router.get('/alertas',       alertas.index);
@@ -46,6 +44,6 @@ router.get('/contratos/contratosData', contratos.contratos);
 router.get('/canalInterno/canalInternoData', canalInterno.getCanalInternoData);
 
 router.get('/clientes/:id',    clientes.getCliente);
-router.put('/clientes/:id',    verificarRol(['oficial']), clientes.actualizarCliente);
+router.put('/clientes/:id',    clientes.actualizarCliente);
 router.get('/documentos/:id',  clientes.verDocumento);
 module.exports = router;

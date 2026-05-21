@@ -1,9 +1,26 @@
 const express    = require('express');
 const router     = express.Router();
-const controller = require('../../controllers/operador/dashboardController');
+const dashboard = require('../../controllers/operador/dashboardController');
+const operaciones = require('../../controllers/operador/operacionesController');
+const clientes = require('../../controllers/operador/clientesController');
 
-router.get('/dashboard', controller.operador_index);
-router.get('/reportar',  controller.operador_reporte);
+//pages
+router.get('/dashboard', dashboard.operador_index);
+router.get('/operaciones', operaciones.index);
+router.get('/clientes', clientes.index);
+
+//data
+router.get('/operaciones/operacionesCount', operaciones.count);
+router.get('/operaciones/operacionesData', operaciones.operaciones);
+router.get('/clientes/:id',    clientes.getCliente);
+
+//forms
+router.get('/reportar',  dashboard.operador_reporte);
 router.post('/reportar', (req, res) => res.redirect('/operador/dashboard'));
+router.get('/kyc', (req, res) => 
+    res.render('operador/forms/kyc-form', { 
+        pageTitle: 'Nuevo cliente' }));
+router.post('/new-client', (req, res) => 
+    res.redirect('/operador/dashboard'));
 
 module.exports = router;
