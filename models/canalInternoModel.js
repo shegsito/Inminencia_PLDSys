@@ -9,8 +9,11 @@ exports.count = async () => {
 //fetch records
 exports.fetchAll = async () => {
     const sql = `
-        SELECT idreporteint, descripcion, estatus, fecha, ruta_evidencia
-        FROM reporte_interno
+        SELECT   idreporteint, 
+                 descripcion, 
+                 estatus, 
+                 fecha, 
+                 ruta_evidencia FROM reporte_interno
     `;
     const { rows } = await pool.query(sql);
     return rows;
