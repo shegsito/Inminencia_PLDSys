@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error <%= codigo %> — Sistema de monitoreo</title>
+  <link href="/styles/global.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #f5f0f0;
+      font-family: var(--font-family, 'Cambria', serif);
+    }
+    .error-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.12);
+      padding: 3rem 3.5rem;
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+    }
+    .error-code {
+      font-size: 72px;
+      font-weight: 700;
+      color: #4d0100;
+      line-height: 1;
+      margin-bottom: .4rem;
+    }
+    .error-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    .error-msg {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+    .btn-back {
+      display: inline-block;
+      padding: 10px 28px;
+      background: #4d0100;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: opacity .2s;
+    }
+    .btn-back:hover { opacity: .85; }
+  </style>
+</head>
+<body>
+  <div class="error-card">
+    <div class="error-code"><%= codigo %></div>
+    <div class="error-title"><%= titulo %></div>
+    <p class="error-msg"><%= mensaje %></p>
+
+    <%
+      const destinos = { admin: '/admin/dashboard', oficial: '/oficial/dashboard', operador: '/operador/dashboard' };
+      const destino  = destinos[rol] || '/usuarios/login';
+      const etiqueta = destinos[rol] ? 'Ir a mi panel' : 'Ir al inicio de sesión';
+    %>
+    <a href="<%= destino %>" class="btn-back"><%= etiqueta %></a>
+  </div>
+</body>
+</html>
