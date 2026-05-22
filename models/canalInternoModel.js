@@ -48,6 +48,6 @@ exports.evaluateRI = async (idreporteint, estatus, resolucion) => {
         WHERE idreporteint = $3
         RETURNING *
     `;
-    const { rows } = await pool.query(sql, [idreporteint, estatus, resolucion]);
+    const { rows } = await pool.query(sql, [estatus, resolucion, idreporteint]);
     return rows;
 };

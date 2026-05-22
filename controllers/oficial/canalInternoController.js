@@ -6,7 +6,8 @@ const canalInterno = require('../../models/canalInternoModel');
 exports.index = (req, res) => {
     res.render('oficial/canal-interno', { 
                 pageTitle: 'Canal Interno', 
-                buttonText: 'Evaluar reporte' });
+                buttonText: 'Evaluar reporte',
+                buttonLink: '/oficial/evaluar-reporte' });
 };
 
 exports.getCanalInternoData = async (req, res) => {
@@ -27,16 +28,16 @@ module.exports.count = async (req, res) => {
 //updating internal report through evaluation form
 exports.evaluation = async (req, res) => {
     try {
-        const { idreporteint, estatus, resolucion } = req.body;
+        const { folio, estatus, resolucion } = req.body;
 
-        if (!idreporteint) {
+        if (!folio) {
             return res.status(400).send('Favor de ingresar folio')
         }
         if (!resolucion) {
             return res.status(400).send('Favor de ingresar resolución')
         }
 
-        await canalInterno.evaluateRI(idreporteint, estatus, resolucion);
+        await canalInterno.evaluateRI(folio, estatus, resolucion);
         res.redirect('/oficial/evaluar-reporte?success=true')
     }
     catch(e) {
