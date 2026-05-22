@@ -1,3 +1,26 @@
+const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
+const canalInterno = require('../../models/canalInternoModel');
+
+//create uploads folder if not existing
+const uploadDir = './uploads';
+if (!fs.existsSync(uploadDir)){
+    fs.mkdirSync(uploadDir, { recursive: true });
+};
+
+//uploading of evidence files
+const storage = multer.diskStorage({
+    destination: function (req, file, callback){
+        callback(null, "./uploads");
+    },
+    filename: function (req, file, callback){
+        callback(null, file.originalname);
+    }
+});
+
+exports.upload = multer({ storage: storage }).single('evidencia');
+
 exports.operador_index = (req, res) => {
     res.render('operador/dashboard', {
                 pageTitle: 'Dashboard Principal',
@@ -7,11 +30,54 @@ exports.operador_index = (req, res) => {
 };
 
 exports.operador_reporte = (req, res) => {
-    //route to connect report creation button with form
+    //route to connect internal report button with form
     res.render('operador/forms/caso-sospechoso', {
         pageTitle: "Reporte de caso sospechoso"
     });
 };
 
+exports.operador_estatus = (req, res) => {
+    res.render('operador/caso-estatus', {
+        pageTitle: "Consultar estatus de caso"
+    });
+};
 
+//internal report creation with the upload of files
+exports.createInternal = async (req, res) => {
+    try {
+        const { queja_desc, fecha_int } = req.body;
 
+        //user MUST input description
+        if (!queja_desc) {
+            return res.status(400).send('Debe entregar una descripcion.')
+        }
+        
+        //user MUST upload evidence, if not message pops up
+        if (!req.file){
+            res.status(400).send('Evidencia debe ser entregada.');
+        }
+
+        const ruta_evidencia = req.file.path;
+
+        await canalInterno.reporteInterno(queja_desc, ruta_evidencia, fecha_int);
+        res.redirect('/operador/reportar?success=true')
+    }
+    catch(e) {
+        console.log(e);
+        res.status(500).send('Error al registrar reporte interno.'); 
+    }
+};
+
+/*exports.get_evidence_file = async (req, res) => {
+    const fileName = req.params.file;
+    const filePath = path.join(__dirname, "./uploads", fileName);
+
+    res.sendFile(filePath, (err) => {
+        if (err){
+            console.error(err);
+            return res.status(404).json({code: 404, msg:"File not found"})
+        }
+    });
+};*/
+
+//able to see reports and status

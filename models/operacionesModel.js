@@ -53,7 +53,7 @@ exports.findContrato = async (product, idcliente) => {
 
 exports.createOperacion = async (idcliente, idcontrato, tipo, monto, idusuario) => {
     const sql = `INSERT INTO operacion (idcliente, idcontrato, tipo_operacion, monto, idregistradapor, fecha)
-      https://www.google.com/search?q=poster+the+marias&sourceid=chrome&ie=UTF-8           VALUES ($1, $2, $3, $4, $5, NOW())
+                 VALUES ($1, $2, $3, $4, $5, NOW())
                  RETURNING *`
                  ;
     const res = await pool.query(sql, [idcliente, idcontrato, tipo, monto, idusuario]);

@@ -1,5 +1,5 @@
-const express    = require('express');
-const router     = express.Router();
+const express = require('express');
+const router = express.Router();
 const dashboard = require('../../controllers/operador/dashboardController');
 const operaciones = require('../../controllers/operador/operacionesController');
 const clientes = require('../../controllers/operador/clientesController');
@@ -8,6 +8,7 @@ const clientes = require('../../controllers/operador/clientesController');
 router.get('/dashboard', dashboard.operador_index);
 router.get('/operaciones', operaciones.index);
 router.get('/clientes', clientes.index);
+router.get('/caso-estatus', dashboard.operador_estatus);
 
 //data
 router.get('/operaciones/operacionesCount', operaciones.count);
@@ -16,7 +17,8 @@ router.get('/clientes/:id',    clientes.getCliente);
 
 //forms
 router.get('/reportar',  dashboard.operador_reporte);
-router.post('/reportar', (req, res) => res.redirect('/operador/dashboard'));
+router.post('/reportar', dashboard.upload, dashboard.createInternal);
+
 router.get('/kyc', (req, res) => 
     res.render('operador/forms/kyc-form', { 
         pageTitle: 'Nuevo cliente' }));

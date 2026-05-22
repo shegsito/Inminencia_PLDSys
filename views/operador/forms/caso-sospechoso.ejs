@@ -16,13 +16,19 @@
 
             <form method="POST" action="/operador/reportar" enctype="multipart/form-data">
 
-                <label for="queja-desc">Describir con más detalle posible:</label>
-                <textarea name="queja-desc" rows="4" placeholder="Descripción de caso..."></textarea>
+                <div class="form-group">
+                  <label for="fecha_int">Fecha del reporte</label>
+                  <input type="date" id="fecha_int" name="fecha_int" required>
+                </div>
+
+                <div class="form-group">
+                <label for="queja_desc">Describir con más detalle posible:</label>
+                <textarea name="queja_desc" rows="4" placeholder="Descripción del caso..." required></textarea></div>
 
                 <label for="evidencia">Adjuntar evidencia</label>
-                <input type="file" name="evidencia">
+                <input type="file" name="evidencia" required>
                 
-                <button type="submit" value="Submit">Enviar Reporte</button>
+                <button type="submit" class="form-submit-btn" id="form-submit">Enviar reporte</button>
             </form>
             </div>
 
