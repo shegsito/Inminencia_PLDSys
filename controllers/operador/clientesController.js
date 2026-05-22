@@ -1,5 +1,3 @@
-const path = require('path');
-const fs   = require('fs');
 const pool = require('../../config/db');
 const ClienteModel = require('../../models/clienteModel');
 const ExpedienteModel = require('../../models/expedienteModel');
@@ -14,6 +12,8 @@ exports.index = async (req, res) => {
         res.render('operador/clientes', {
             pageTitle: 'Clientes',
             clientes,
+            buttonText: '+ Nuevo cliente',
+            buttonLink: '/operador/kyc',
         });
     } catch (e) {
         console.error('Error al obtener clientes:', e);

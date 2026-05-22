@@ -29,13 +29,15 @@ exports.verDocumento = async (req, res) => {
 // -------------- RF-05 consulting expedient and client data
 
 // GET /oficial/clientes
-exports.index = async (req, res) => {
+exports.index = async (_req, res) => {
     try {
         const clientes = await ClienteModel.getAll(); // get all clients
 
         res.render('oficial/clientes', {
             pageTitle: 'Clientes',
             clientes,
+            buttonText: '+ Nuevo cliente',
+            buttonLink: '/oficial/kyc',
         });
     } catch (e) {
         console.error('Error al obtener clientes:', e);
