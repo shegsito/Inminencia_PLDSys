@@ -14,6 +14,8 @@ router.get('/caso-estatus', dashboard.operador_estatus);
 router.get('/operaciones/operacionesCount', operaciones.count);
 router.get('/operaciones/operacionesData', operaciones.operaciones);
 router.get('/clientes/:id',    clientes.getCliente);
+router.get('/caso-estatus/casoEstatusCount', dashboard.count);
+router.get('/caso-estatus/casoEstatusData', dashboard.casoEstatus);
 
 //forms
 router.get('/reportar',  dashboard.operador_reporte);

@@ -21,12 +21,12 @@ const storage = multer.diskStorage({
 
 exports.upload = multer({ storage: storage }).single('evidencia');
 
-exports.operador_index = (req, res) => {
+exports.operador_index = (req, res) => { 
     res.render('operador/dashboard', {
-                pageTitle: 'Dashboard Principal',
-                buttonText: '+ Nuevo cliente',
-                buttonLink: '/operador/kyc'
-            });
+        pageTitle: 'Dashboard Principal',
+        buttonText: '+ Nuevo cliente',
+        buttonLink: '/operador/kyc'
+    });
 };
 
 exports.operador_reporte = (req, res) => {
@@ -36,7 +36,7 @@ exports.operador_reporte = (req, res) => {
     });
 };
 
-exports.operador_estatus = (req, res) => {
+exports.operador_estatus = async (req, res) => {
     res.render('operador/caso-estatus', {
         pageTitle: "Consultar estatus de caso"
     });
@@ -46,10 +46,15 @@ exports.operador_estatus = (req, res) => {
 exports.createInternal = async (req, res) => {
     try {
         const { queja_desc, fecha_int } = req.body;
+        const userId = req.session.idusuario;
+
+        if (!userId) {
+            return res.status(401).send('Sesión iniciada incorrectamente')
+        }
 
         //user MUST input description
         if (!queja_desc) {
-            return res.status(400).send('Debe entregar una descripcion.')
+            return res.status(400).send('Debe entregar una descripción.')
         }
         
         //user MUST upload evidence, if not message pops up
@@ -59,7 +64,7 @@ exports.createInternal = async (req, res) => {
 
         const ruta_evidencia = req.file.path;
 
-        await canalInterno.reporteInterno(queja_desc, ruta_evidencia, fecha_int);
+        await canalInterno.reporteInterno(queja_desc, ruta_evidencia, fecha_int, userId);
         res.redirect('/operador/reportar?success=true')
     }
     catch(e) {
@@ -81,3 +86,24 @@ exports.createInternal = async (req, res) => {
 };*/
 
 //able to see reports and status
+module.exports.count = async (req, res) => {
+    const resultados = await canalInterno.count();
+    res.status(200).json({ total : resultados });
+};
+
+exports.casoEstatus = async (req, res) => {
+    try {
+        const userId = req.session.idusuario;
+        
+        if(!userId) {
+            return res.status(400).send('No autorizado');
+        }
+
+        const data = await canalInterno.fetchAllOperador(userId);
+        return res.json(data);
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send('Error al obtener casos y su estatus');
+    }
+};

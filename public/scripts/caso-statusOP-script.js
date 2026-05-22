@@ -1,23 +1,16 @@
-
 const testTable = document.getElementById("test-table");
-
 
 window.addEventListener("load", () => {
     gridTable = new gridjs.Grid({
         columns: ["Folio", "Fecha", "Estatus"],
-        search: {
-            enabled: true,
-            server: {
-                url: (prev, key) => `${prev}?search=${key}`
-            },
-        },
+        search: false,
         sort: true,
         pagination: {
             limit: 5,
             summary: false
         },
         server: {
-            url: '/operador/caso-estatus/casoStatusData',
+            url: '/operador/caso-estatus/casoEstatusData',
             then: data => data.map(ri => [
                 ri.idreporteint, 
                 new Date(ri.fecha).toLocaleDateString('es-MX'),

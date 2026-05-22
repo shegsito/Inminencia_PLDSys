@@ -6,33 +6,38 @@ exports.count = async () => {
     return rows[0].total;
 };
 
-//fetch records
-exports.fetchAll = async (userId) => {
+//fetch records for canal interno oficial
+exports.fetchAll = async () => {
     const sql = `
-        SELECT ri.idreporteint, ri.descripcion, ri.estatus, ri.fecha, ri.ruta_evidencia 
-        FROM reporte_interno ri
-        JOIN usuario u ON u.idusuario = ri.idreporteint
-        WHERE u.idusuario = $1
-        ORDER BY ri.fecha DESC
+        SELECT   idreporteint, 
+                 descripcion, 
+                 estatus, 
+                 fecha, 
+                 ruta_evidencia FROM reporte_interno
     `;
     const { rows } = await pool.query(sql);
     return rows;
 };
 
 //new internal report
-exports.reporteInterno = async (queja_desc, evidencia, fecha_int, idusuario) => {
-    const sql = `INSERT INTO reporte_interno (descripcion, ruta_evidencia, estatus, fecha)
-                 VALUES ($1, $2, 'recibido', $3)
+exports.reporteInterno = async (queja_desc, evidenica, fecha_int, idasignadoa) => {
+    const sql = `INSERT INTO reporte_interno (descripcion, ruta_evidencia, estatus, fecha, idasignadoa, anonimo)
+                 VALUES ($1, $2, 'recibido', $3, $4, TRUE)
                  RETURNING *`
                  ;
-    const res = await pool.query(sql, [queja_desc, evidencia, fecha_int]);
-    const reporteId = res.rows [0];
-
-    const sql2 = `UPDATE usuario
-                  SET idreporteint = $1
-                  WHERE idusuario = $2
-                  `;
-    await pool.query(sql2, [reporteId, idusuario]);
-    return reporteId;
+    const res = await pool.query(sql, [queja_desc, evidenica, fecha_int, idasignadoa]);
+    return res.rows [0];
 };
 
+//fetch case status for operador
+//fetch records
+exports.fetchAllOperador = async (userId) => {
+    const sql = `
+        SELECT ri.idreporteint, ri.estatus, ri.fecha
+        FROM reporte_interno ri
+        WHERE ri.idasignadoa = $1
+        ORDER BY ri.fecha DESC
+    `;
+    const { rows } = await pool.query(sql, [userId]);
+    return rows;
+};
