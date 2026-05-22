@@ -1,28 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
-    
+<html lang="es">
+
 <%- include('../partials/head') %>
 
-  <body>
+<body>
+  <div class="entire-container">
 
-    <div class = "entire-container">
+    <%- include('../partials/sidebar') %>
 
-        <%- include('../partials/sidebar') %>
+    <div class="right-container">
 
-        <div class = "right-container">
+      <%- include('../partials/header') %>
 
-            <%- include('../partials/header') %>
+      <div class="primary-content">
 
-        <div class = "primary-content">
-          <p>admin page</p>
- 
+        <div class="admin-cards">
+
+          <a href="/admin/bitacora" class="admin-card">
+            <h3>Bitácora</h3>
+            <p>Consulta la bitácora para tener el registro de acciones ejecutadas en el sistema</p>
+          </a>
+
+          <div class="admin-card admin-card--disabled">
+            <h3>Gestionar usuarios</h3>
+            <p>Crea nuevos usuarios, asigna o cambia roles o desactiva usuarios.</p>
+          </div>
+
+          <div class="admin-card admin-card--disabled">
+            <h3>Aplicar medida de restricción</h3>
+            <p>Aplica medida de restricción a un cliente restringido.</p>
+          </div>
 
         </div>
 
       </div>
+    </div>
 
-      <%- include('../partials/footer') %>
+    <%- include('../partials/footer') %>
 
-      </div>
+  </div>
 </body>
 </html>

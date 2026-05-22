@@ -39,7 +39,7 @@ module.exports.do_login = async (req, res) =>{
         //redirection based on role
         switch (usuario.rol) {
             case 'admin':
-                return res.redirect ('/admin/dashboard');
+                return res.redirect('/admin/administrar');
 
             case 'oficial':
                 return res.redirect ('/oficial/dashboard');
