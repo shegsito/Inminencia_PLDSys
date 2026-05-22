@@ -91,11 +91,19 @@ exports.actualizarCliente = async (req, res) => {
         return res.status(400).json({ error: 'La justificación es obligatoria' });
     }
 
+    // NEW CHANGE
     // Map: form field name → actual DB column name
     // Rows that the Oficial can edit
     const camposEditables = {
-        nombre_completo:     'nombre_cliente',
-        domicilio:           'domicilio',
+        nombre:              'nombre',
+        apellido_paterno:    'apellido_paterno',
+        apellido_materno:    'apellido_materno',
+        calle:               'calle',
+        colonia:             'colonia',
+        municipio:           'municipio',
+        estado:              'estado',
+        cp:                  'cp',
+        pais:                'pais',
         telefono:            'telefono',
         email_personal:      'email',
         email_institucional: 'email_institucional',

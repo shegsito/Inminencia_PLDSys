@@ -9,7 +9,10 @@ exports.count = async () => {
 //fetch records
 exports.fetchAll = async () => {
     const sql = `
-        SELECT c.nombre_cliente, co.tipo_producto, co.monto, co.estatus
+        SELECT TRIM(CONCAT(c.nombre, ' ', c.apellido_paterno,
+            CASE WHEN c.apellido_materno IS NOT NULL AND c.apellido_materno <> ''
+                THEN ' ' || c.apellido_materno ELSE '' END)) AS nombre_cliente,
+            co.tipo_producto, co.monto, co.estatus
         FROM contrato co
         JOIN cliente c ON c.idcliente = co.idcliente
     `;
@@ -19,19 +22,23 @@ exports.fetchAll = async () => {
 
 //configure search bar
 exports.findByNameOrFolio = async (input) => {
-    const sql = `SELECT c.nombre_cliente, co.tipo_producto, co.monto, co.estatus
+    const sql = `SELECT TRIM(CONCAT(c.nombre, ' ', c.apellido_paterno,
+                     CASE WHEN c.apellido_materno IS NOT NULL AND c.apellido_materno <> ''
+                         THEN ' ' || c.apellido_materno ELSE '' END)) AS nombre_cliente,
+                     co.tipo_producto, co.monto, co.estatus
                  FROM contrato co
                  JOIN cliente c ON c.idcliente = co.idcliente
-                 WHERE c.nombre_cliente ILIKE $1 OR co.tipo_producto::text ILIKE $1`
+                 WHERE CONCAT(c.nombre, ' ', c.apellido_paterno, ' ', COALESCE(c.apellido_materno, '')) ILIKE $1
+                    OR co.tipo_producto::text ILIKE $1`
                  ;
     const { rows } = await pool.query(sql, [`%${input}%`]);
     return rows;
 };
 
 exports.findCliente = async (name) => {
-    const sql = `SELECT idcliente 
+    const sql = `SELECT idcliente
                  FROM cliente
-                 WHERE nombre_cliente ILIKE $1`
+                 WHERE CONCAT(nombre, ' ', apellido_paterno, ' ', COALESCE(apellido_materno, '')) ILIKE $1`
                  ;
     const res = await pool.query(sql, [name]);
     return res.rows [0];

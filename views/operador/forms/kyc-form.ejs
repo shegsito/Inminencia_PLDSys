@@ -65,13 +65,34 @@
 
               <p class="form-section-title">Datos de identificación</p>
 
+              <div class="kyc-row">
+                <div class="kyc-group">
+                  <label for="nombre">Nombre(s) *</label>
+                  <input type="text" id="nombre" name="nombre"
+                         value="<%= esEdicion ? (cliente.nombre || '') : '' %>"
+                         class="campo-editable"
+                         <%= esEdicion ? 'readonly' : '' %>
+                         placeholder="Nombre(s)">
+                </div>
+                <div class="kyc-group">
+                  <label for="apellido_paterno">Apellido paterno *</label>
+                  <input type="text" id="apellido_paterno" name="apellido_paterno"
+                         value="<%= esEdicion ? (cliente.apellido_paterno || '') : '' %>"
+                         class="campo-editable"
+                         <%= esEdicion ? 'readonly' : '' %>
+                         placeholder="Apellido paterno">
+                </div>
+              </div>
               <div class="kyc-group">
-                <label for="nombre_completo">Nombre Completo</label>
-                <input type="text" id="nombre_completo" name="nombre_completo"
-                       value="<%= esEdicion ? (cliente.nombre_cliente || '') : '' %>"
+                <label for="apellido_materno">
+                  Apellido materno
+                  <span style="color:#aaa; font-size:11px;">(opcional)</span>
+                </label>
+                <input type="text" id="apellido_materno" name="apellido_materno"
+                       value="<%= esEdicion ? (cliente.apellido_materno || '') : '' %>"
                        class="campo-editable"
                        <%= esEdicion ? 'readonly' : '' %>
-                       placeholder="Escriba su nombre completo">
+                       placeholder="Apellido materno">
               </div>
 
               <!-- Fila física: RFC + CURP -->
@@ -108,16 +129,68 @@
                 </div>
               </div>
 
-              <p class="form-section-title" style="margin-top:20px;">Datos de contacto</p>
+              <p class="form-section-title" style="margin-top:20px;">Domicilio</p>
 
               <div class="kyc-group">
-                <label for="domicilio">Domicilio</label>
-                <input type="text" id="domicilio" name="domicilio"
-                       value="<%= esEdicion ? (cliente.domicilio || '') : '' %>"
+                <label for="calle">Calle y número *</label>
+                <input type="text" id="calle" name="calle"
+                       value="<%= esEdicion ? (cliente.calle || '') : '' %>"
                        class="campo-editable"
                        <%= esEdicion ? 'readonly' : '' %>
-                       placeholder="Estado · Municipio · Colonia · Calle · Núm · C.P.">
+                       placeholder="Av. Juárez 400 Int. 3">
               </div>
+
+              <div class="kyc-row">
+                <div class="kyc-group">
+                  <label for="colonia">
+                    Colonia
+                    <span style="color:#aaa; font-size:11px;">(opcional)</span>
+                  </label>
+                  <input type="text" id="colonia" name="colonia"
+                         value="<%= esEdicion ? (cliente.colonia || '') : '' %>"
+                         class="campo-editable"
+                         <%= esEdicion ? 'readonly' : '' %>
+                         placeholder="Colonia">
+                </div>
+                <div class="kyc-group">
+                  <label for="municipio">Municipio / Alcaldía *</label>
+                  <input type="text" id="municipio" name="municipio"
+                         value="<%= esEdicion ? (cliente.municipio || '') : '' %>"
+                         class="campo-editable"
+                         <%= esEdicion ? 'readonly' : '' %>
+                         placeholder="Municipio">
+                </div>
+              </div>
+
+              <div class="kyc-row">
+                <div class="kyc-group">
+                  <label for="estado">Estado *</label>
+                  <input type="text" id="estado" name="estado"
+                         value="<%= esEdicion ? (cliente.estado || '') : '' %>"
+                         class="campo-editable"
+                         <%= esEdicion ? 'readonly' : '' %>
+                         placeholder="Estado">
+                </div>
+                <div class="kyc-group">
+                  <label for="cp">C.P. *</label>
+                  <input type="text" id="cp" name="cp"
+                         value="<%= esEdicion ? (cliente.cp || '') : '' %>"
+                         class="campo-editable"
+                         <%= esEdicion ? 'readonly' : '' %>
+                         placeholder="00000" maxlength="5">
+                </div>
+              </div>
+
+              <div class="kyc-group">
+                <label for="pais">País *</label>
+                <input type="text" id="pais" name="pais"
+                       value="<%= esEdicion ? (cliente.pais || 'México') : 'México' %>"
+                       class="campo-editable"
+                       <%= esEdicion ? 'readonly' : '' %>
+                       placeholder="México">
+              </div>
+
+              <p class="form-section-title" style="margin-top:20px;">Datos de contacto</p>
 
               <div class="kyc-row">
                 <div class="kyc-group">

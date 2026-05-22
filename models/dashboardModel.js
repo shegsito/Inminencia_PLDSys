@@ -25,7 +25,10 @@ exports.countClientes = async () => {
 
 exports.fetchAllClientes = async () => {
     const sql = `
-        SELECT nombre_cliente, nivel_riesgo
+        SELECT TRIM(CONCAT(nombre, ' ', apellido_paterno,
+            CASE WHEN apellido_materno IS NOT NULL AND apellido_materno <> ''
+                THEN ' ' || apellido_materno ELSE '' END)) AS nombre_cliente,
+            nivel_riesgo
         FROM cliente
     `;
     const { rows } = await pool.query(sql);
@@ -40,7 +43,10 @@ exports.countOperaciones = async () => {
 
 exports.fetchAllOperaciones = async () => {
     const sql = `
-        SELECT c.nombre_cliente, op.tipo_operacion, op.monto, op.fecha
+        SELECT TRIM(CONCAT(c.nombre, ' ', c.apellido_paterno,
+            CASE WHEN c.apellido_materno IS NOT NULL AND c.apellido_materno <> ''
+                THEN ' ' || c.apellido_materno ELSE '' END)) AS nombre_cliente,
+            op.tipo_operacion, op.monto, op.fecha
         FROM operacion op
         JOIN cliente c ON c.idcliente = op.idcliente
         ORDER BY op.fecha DESC
