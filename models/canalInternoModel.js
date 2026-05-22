@@ -9,11 +9,9 @@ exports.count = async () => {
 //fetch records for canal interno oficial
 exports.fetchAll = async () => {
     const sql = `
-        SELECT   idreporteint, 
-                 descripcion, 
-                 estatus, 
-                 fecha, 
-                 ruta_evidencia FROM reporte_interno
+        SELECT idreporteint, descripcion, estatus, fecha, ruta_evidencia 
+        FROM reporte_interno
+        ORDER BY fecha DESC
     `;
     const { rows } = await pool.query(sql);
     return rows;
@@ -39,5 +37,17 @@ exports.fetchAllOperador = async (userId) => {
         ORDER BY ri.fecha DESC
     `;
     const { rows } = await pool.query(sql, [userId]);
+    return rows;
+};
+
+//evaluate internal report
+exports.evaluateRI = async (idreporteint, estatus, resolucion) => {
+    const sql = `
+        UPDATE reporte_interno
+        SET estatus = $1, resolucion = $2
+        WHERE idreporteint = $3
+        RETURNING *
+    `;
+    const { rows } = await pool.query(sql, [idreporteint, estatus, resolucion]);
     return rows;
 };

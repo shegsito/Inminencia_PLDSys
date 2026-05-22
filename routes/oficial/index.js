@@ -31,6 +31,10 @@ router.get('/registrar-contrato', (req, res) =>
     res.render('oficial/forms/nuevo-contrato-form', {
         pageTitle: 'Nuevo contrato' }));
 router.post('/new-contrato', contratos.registrarContrato);
+router.get('/evaluar-reporte', (req, res) =>
+    res.render('oficial/forms/evaluar-caso-form', {
+        pageTitle: 'Forma de evaluación' }));
+router.post('/evaluar-caso', canalInterno.evaluation);
 
 //return the data
 router.get('/operaciones/operacionesCount', operaciones.count);
@@ -46,4 +50,5 @@ router.get('/canalInterno/canalInternoData', canalInterno.getCanalInternoData);
 router.get('/clientes/:id',    clientes.getCliente);
 router.put('/clientes/:id',    clientes.actualizarCliente);
 router.get('/documentos/:id',  clientes.verDocumento);
+router.get('/evidencia/:id', canalInterno.verEvidencia);
 module.exports = router;

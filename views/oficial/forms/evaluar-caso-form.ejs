@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('../../partials/head') %>
+
+<body>
+  <div class="entire-container">
+
+    <%- include('../../partials/sidebar') %>
+
+    <div class="right-container">
+
+      <%- include('../../partials/header') %>
+
+      <div class="primary-content">
+        
+        <form action="/oficial/evaluar-caso" method="POST" id="new-form">
+          <div class="form-wrapper">
+
+            <div class="form-fields">
+              <p class="form-section-title">Datos de evaluación</p>
+
+              <!-- nombre y producto -->
+              <div class="form-row" id="row-data">
+              <div class="form-group">
+                <label for="folio">Folio de reporte</label>
+                <input type="text" id="folio" name="folio"
+                       placeholder="Folio completo de caso">
+              </div>
+
+              <div class="form-group">
+                  <label for="estatus">Estatus</label>
+                  <select id="estatus" name="estatus">
+                    <option value="recibido">Recibido</option>
+                    <option value="en_revision">En revisión</option>
+                    <option value="investigando">Investigando</option>
+                    <option value="cerrado">Cerrado</option>
+                    <option value="escalado">Escalado</option>
+                  </select>
+                </div>
+                </div>
+
+              <!-- tipo y monto -->
+              <div class="form-row" id="row-data">
+
+                <div class="form-group">
+                <label for="resolucion">Resolución del caso:</label>
+                <textarea name="resolucion" rows="4" placeholder="Resolución del caso..." required></textarea></div>
+
+              </div>
+
+              <div class="form-feedback" id="form-feedback"></div>
+
+              <button type="submit" class="form-submit-btn" id="form-submit">Actualizar caso</button>
+
+            </div>
+
+          </div><!-- /form-wrapper -->
+        </form>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
