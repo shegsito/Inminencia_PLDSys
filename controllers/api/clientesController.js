@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 const pool = require('../../config/db');
-const UsuarioModel = require('../../models/usuarioModel');
 const ClienteModel = require('../../models/clienteModel');
 const ExpedienteModel = require('../../models/expedienteModel');
 
@@ -91,12 +90,7 @@ exports.registrar = async (req, res) => {
     
     // -------------------
     // to generate random UUID
-
-    // i'd defined the ID generation in postgres
-    // i have to check what's up with the passwords...
-    const idusuario = crypto.randomUUID();
     const idcliente = crypto.randomUUID();
-    const passwordTemporal = crypto.randomBytes(10).toString('hex');
 
     const dbClient = await pool.connect();
     try {
@@ -104,18 +98,9 @@ exports.registrar = async (req, res) => {
         // begin to make sure to handle errors while making expedients and getting mistakes
         await dbClient.query('BEGIN');
 
-        await UsuarioModel.crear(dbClient, {
-            idusuario,
-            nombre: [nombre, apellido_paterno, apellido_materno]
-                        .filter(Boolean).map(s => s.trim()).join(' '),
-            email: email_personal.trim(),
-            password: passwordTemporal,
-            rol: 'cliente',
-        });
-
         await ClienteModel.crear(dbClient, {
             idcliente,
-            idusuario,
+            idusuario: null,
             nombre:           nombre.trim(),
             apellido_paterno: apellido_paterno.trim(),
             apellido_materno: apellido_materno?.trim() || null,
@@ -139,7 +124,7 @@ exports.registrar = async (req, res) => {
         await dbClient.query(
              `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
               VALUES ($1, $2, $3, $4, $5, NOW())`,
-              [idusuario, 'CREAR_CLIENTE', 'cliente', idcliente, req.ip]
+              [req.usuario?.id || null, 'CREAR_CLIENTE', 'cliente', idcliente, req.ip]
         );
 
         // Commit the action
@@ -147,7 +132,6 @@ exports.registrar = async (req, res) => {
 
         return res.status(201).json({
             message: 'Cliente registrado exitosamente',
-            idusuario: idusuario,
             idcliente: idcliente,
             idexpediente: idexpediente,
         });
