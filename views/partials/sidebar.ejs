@@ -3,6 +3,9 @@
             <nav>
                 <p>Principal</p>
                 <ul>
+                    <% if (usuario?.rol === 'admin') { %>
+                    <li><a href="/admin/administrar">Administrar</a></li>
+                    <% } %>
                     <li><a href = "/oficial/dashboard">Dashboard</a></li>
                     <li><a href = "/oficial/alertas">Alertas</a></li>
                 </ul>

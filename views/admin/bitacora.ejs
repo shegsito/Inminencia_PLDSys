@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('../partials/head') %>
+
+<body>
+  <div class="entire-container">
+
+    <%- include('../partials/sidebar') %>
+
+    <div class="right-container">
+
+      <%- include('../partials/header') %>
+
+      <div class="primary-content">
+
+        <form method="GET" action="/admin/bitacora" class="bitacora-filtros">
+
+          <div class="bitacora-filtro-input">
+            <input
+              type="text"
+              name="nombre"
+              placeholder="Buscar usuario..."
+              value="<%= filtros.nombre || '' %>"
+            />
+          </div>
+
+          <select name="accion">
+            <option value="">Todas las acciones</option>
+            <% acciones.forEach(a => { %>
+              <option value="<%= a %>" <%= filtros.accion === a ? 'selected' : '' %>><%= a %></option>
+            <% }) %>
+          </select>
+
+          <select name="entidad">
+            <option value="">Todas las entidades</option>
+            <% entidades.forEach(e => { %>
+              <option value="<%= e %>" <%= filtros.entidad === e ? 'selected' : '' %>><%= e %></option>
+            <% }) %>
+          </select>
+
+          <input type="date" name="fechaInicio" value="<%= filtros.fechaInicio || '' %>" />
+          <input type="date" name="fechaFin"    value="<%= filtros.fechaFin    || '' %>" />
+
+          <button type="submit" class="bitacora-btn-filtrar">Filtrar</button>
+          <a href="/admin/bitacora" class="bitacora-btn-limpiar">Limpiar</a>
+
+        </form>
+
+        <table class="bitacora-tabla">
+          <thead>
+            <tr>
+              <th>Fecha y hora</th>
+              <th>Usuario</th>
+              <th>Acción</th>
+              <th>Entidad</th>
+              <th>ID Afectado</th>
+              <th>IP Origen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (registros.length === 0) { %>
+              <tr>
+                <td colspan="6" class="bitacora-vacia">Sin registros para los filtros seleccionados</td>
+              </tr>
+            <% } else { %>
+              <% registros.forEach(r => { %>
+                <tr>
+                  <td><%= new Date(r.fecha).toLocaleString('es-MX') %></td>
+                  <td><%= r.nombre_usuario %></td>
+                  <td><%= r.accion %></td>
+                  <td><%= r.entidad_afect || '—' %></td>
+                  <td class="bitacora-id"><%= r.id_entidad || '—' %></td>
+                  <td><%= r.ip_origen || '—' %></td>
+                </tr>
+              <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+  </div>
+</body>
+</html>
