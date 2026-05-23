@@ -43,7 +43,7 @@
         ],
         data: <%- JSON.stringify(clientes.map(c => [
           c.idcliente,
-          c.nombre_cliente,
+          c.nombre_completo,
           c.rfc,
           c.tipo_persona === 'fisica' ? 'Física' : 'Moral',
           c.email        || '—',

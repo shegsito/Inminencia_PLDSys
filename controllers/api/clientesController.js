@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 const pool = require('../../config/db');
-const UsuarioModel = require('../../models/usuarioModel');
 const ClienteModel = require('../../models/clienteModel');
 const ExpedienteModel = require('../../models/expedienteModel');
 
@@ -15,17 +14,25 @@ const CURP_REGEX = /^[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[A-Z0-9]{2}$/;
 // characters until @, chatacters until . , characters to finish
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// 5 digits postal code (Mexico)
+const CP_REGEX = /^\d{5}$/;
+
 // validate function to advertise mandatory fills to the user
 function validar(body){
     const errores = [];
-    const { nombre_completo, rfc, curp, tipo_persona, domicilio, email_personal, telefono, email_institucional} = body;
+    const {
+        nombre, apellido_paterno,
+        rfc, curp, tipo_persona,
+        calle, municipio, estado, cp, pais,
+        email_personal, email_institucional, telefono,
+    } = body;
 
-    if(!nombre_completo?.trim()) errores.push ("nombre completo es obligatorio");
-    if(!domicilio?.trim()) errores.push('domicilio es obligatorio');
-    if(!telefono?.trim()) errores.push('telefono es obligatorio');
+    // nombre
+    if(!nombre?.trim())           errores.push('nombre es obligatorio');
+    if(!apellido_paterno?.trim()) errores.push('apellido paterno es obligatorio');
 
     // trim() function to eliminate blank spaces in a string
-    // validate the RFC 
+    // validate the RFC
     if(!rfc?.trim()) errores.push('rfc es obligatorio');
     else if(!RFC_REGEX.test(rfc.trim().toUpperCase())) errores.push("RFC inválido");
 
@@ -42,6 +49,16 @@ function validar(body){
             else if (!CURP_REGEX.test(curp.trim().toUpperCase())) errores.push('CURP inválido');
     }
 
+    // domicilio
+    if(!calle?.trim())     errores.push('calle es obligatoria');
+    if(!municipio?.trim()) errores.push('municipio es obligatorio');
+    if(!estado?.trim())    errores.push('estado es obligatorio');
+    if(!pais?.trim())      errores.push('país es obligatorio');
+    if(!cp?.trim())        errores.push('cp es obligatorio');
+    else if(!CP_REGEX.test(cp.trim())) errores.push('CP inválido (5 dígitos)');
+
+    if(!telefono?.trim()) errores.push('teléfono es obligatorio');
+
     return errores;
 }   
 
@@ -53,7 +70,12 @@ exports.registrar = async (req, res) => {
         return res.status(400).json({ errores});
     }
 
-    const { nombre_completo, rfc, curp, tipo_persona, domicilio, email_personal, email_institucional, telefono} = req.body;
+    const {
+        nombre, apellido_paterno, apellido_materno,
+        rfc, curp, tipo_persona,
+        calle, colonia, municipio, estado, cp, pais,
+        email_personal, email_institucional, telefono,
+    } = req.body;
 
     // is the RFC trying to be duplicated?
     try {
@@ -68,12 +90,7 @@ exports.registrar = async (req, res) => {
     
     // -------------------
     // to generate random UUID
-
-    // i'd defined the ID generation in postgres
-    // i have to check what's up with the passwords...
-    const idusuario = crypto.randomUUID();
     const idcliente = crypto.randomUUID();
-    const passwordTemporal = crypto.randomBytes(10).toString('hex');
 
     const dbClient = await pool.connect();
     try {
@@ -81,24 +98,23 @@ exports.registrar = async (req, res) => {
         // begin to make sure to handle errors while making expedients and getting mistakes
         await dbClient.query('BEGIN');
 
-        await UsuarioModel.crear(dbClient, {
-            idusuario,
-            nombre: nombre_completo.trim(),
-            email: email_personal.trim(),
-            password: passwordTemporal,
-            rol: 'cliente',
-        });
-
         await ClienteModel.crear(dbClient, {
             idcliente,
-            idusuario,
-            nombre_completo: nombre_completo.trim(),
-            rfc: rfc.trim().toUpperCase(),
-            curp: curp?.trim().toUpperCase() || null,
-            domicilio: domicilio.trim(),
-            email_personal: email_personal.trim(),
+            idusuario: null,
+            nombre:           nombre.trim(),
+            apellido_paterno: apellido_paterno.trim(),
+            apellido_materno: apellido_materno?.trim() || null,
+            rfc:              rfc.trim().toUpperCase(),
+            curp:             curp?.trim().toUpperCase() || null,
+            calle:            calle.trim(),
+            colonia:          colonia?.trim() || null,
+            municipio:        municipio.trim(),
+            estado:           estado.trim(),
+            cp:               cp.trim(),
+            pais:             pais.trim(),
+            email_personal:   email_personal.trim(),
             email_institucional: email_institucional?.trim() || null,
-            telefono: telefono.trim(),
+            telefono:         telefono.trim(),
             tipo_persona,
         });
 
@@ -108,7 +124,7 @@ exports.registrar = async (req, res) => {
         await dbClient.query(
              `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
               VALUES ($1, $2, $3, $4, $5, NOW())`,
-              [idusuario, 'CREAR_CLIENTE', 'cliente', idcliente, req.ip]
+              [req.usuario?.id || null, 'CREAR_CLIENTE', 'cliente', idcliente, req.ip]
         );
 
         // Commit the action
@@ -116,7 +132,6 @@ exports.registrar = async (req, res) => {
 
         return res.status(201).json({
             message: 'Cliente registrado exitosamente',
-            idusuario: idusuario,
             idcliente: idcliente,
             idexpediente: idexpediente,
         });

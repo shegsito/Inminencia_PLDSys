@@ -10,7 +10,10 @@ exports.count = async () => {
 //fetch records
 exports.fetchAll = async () => {
     const sql = `
-        SELECT c.nombre_cliente, op.idoperacion, op.tipo_operacion, op.monto, op.fecha, op.estatus
+        SELECT TRIM(CONCAT(c.nombre, ' ', c.apellido_paterno,
+            CASE WHEN c.apellido_materno IS NOT NULL AND c.apellido_materno <> ''
+                THEN ' ' || c.apellido_materno ELSE '' END)) AS nombre_cliente,
+            op.idoperacion, op.tipo_operacion, op.monto, op.fecha, op.estatus
         FROM operacion op
         JOIN cliente c ON c.idcliente = op.idcliente
         ORDER BY op.fecha DESC
@@ -21,10 +24,14 @@ exports.fetchAll = async () => {
 
 //configure search bar
 exports.findByNameOrFolio = async (input) => {
-    const sql = `SELECT c.nombre_cliente, op.idoperacion, op.tipo_operacion, op.monto, op.fecha, op.estatus
-                 FROM operacion op 
+    const sql = `SELECT TRIM(CONCAT(c.nombre, ' ', c.apellido_paterno,
+                     CASE WHEN c.apellido_materno IS NOT NULL AND c.apellido_materno <> ''
+                         THEN ' ' || c.apellido_materno ELSE '' END)) AS nombre_cliente,
+                     op.idoperacion, op.tipo_operacion, op.monto, op.fecha, op.estatus
+                 FROM operacion op
                  JOIN cliente c ON c.idcliente = op.idcliente
-                 WHERE c.nombre_cliente ILIKE $1 OR op.idoperacion::text ILIKE $1
+                 WHERE CONCAT(c.nombre, ' ', c.apellido_paterno, ' ', COALESCE(c.apellido_materno, '')) ILIKE $1
+                    OR op.idoperacion::text ILIKE $1
                  ORDER BY op.fecha DESC`
                  ;
     const { rows } = await pool.query(sql, [`%${input}%`]);
@@ -33,9 +40,9 @@ exports.findByNameOrFolio = async (input) => {
 
 //queries for new operation register form
 exports.findCliente = async (name) => {
-    const sql = `SELECT idcliente 
+    const sql = `SELECT idcliente
                  FROM cliente
-                 WHERE nombre_cliente ILIKE $1`
+                 WHERE CONCAT(nombre, ' ', apellido_paterno, ' ', COALESCE(apellido_materno, '')) ILIKE $1`
                  ;
     const res = await pool.query(sql, [name]);
     return res.rows [0];
