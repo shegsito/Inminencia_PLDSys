@@ -58,6 +58,6 @@ exports.registrarOperacion = async (req, res) => {
     }
     catch(e) {
        console.log(e);
-       res.status(500).send('Error al registrar operacion'); 
+       res.status(500).send('Favor de verificar contrato existente de cliente existente.'); 
     }
 };
