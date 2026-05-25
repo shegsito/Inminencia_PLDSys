@@ -36,8 +36,8 @@ exports.contratos = async (req, res) => {
 //new contrato form
 exports.registrarContrato = async (req, res) => {
     try {
-        const { nombre_completo, producto, fecha_init, fecha_fin, monto, estatus } = req.body;
-        const { idcliente } = await model.findCliente(nombre_completo);
+        const { nombre, producto, fecha_init, fecha_fin, monto, estatus } = req.body;
+        const { idcliente } = await model.findCliente(nombre);
 
         if (!idcliente) {
             return res.status(400).send('Error al obtener cliente');
@@ -48,6 +48,6 @@ exports.registrarContrato = async (req, res) => {
     }
     catch(e) {
        console.log(e);
-       res.status(500).send('Error al registrar contrato'); 
+       res.status(500).send('Favor de verificar cliente existente.'); 
     }
 };
