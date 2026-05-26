@@ -40,7 +40,7 @@ exports.reporteInterno = async (queja_desc, evidencia, fecha_int, idasignadoa, i
         const bitacora = `INSERT INTO bitacora (accion, entidad_afect, id_entidad, ip_origen, fecha)
              VALUES ($1, $2, $3, $4, NOW())`
 
-        await dbClient.query(bitacora, ['CREAR REPORTE INTERNO', 'reporte interno', reporte_int, ipOrigin]);
+        await dbClient.query(bitacora, ['CREAR REPORTE INTERNO', 'reporte interno', idreporteInterno, ipOrigin]);
 
         //DB change if all succeeds
         await dbClient.query('COMMIT');
