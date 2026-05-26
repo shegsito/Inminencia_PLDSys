@@ -350,7 +350,7 @@
   </div><!-- /entire-container -->
 
   <!-- ── Confirmation modal (RF-04 only) ── -->
-  <% if (esEdicion) { %>
+  <!-- ── Confirmation modal ── -->
   <div id="modal-confirmacion" style="display:none; position:fixed; inset:0;
        background:rgba(0,0,0,.6); z-index:1000;
        align-items:center; justify-content:center;">
@@ -368,25 +368,25 @@
         <circle cx="50" cy="70" r="4" fill="rgba(200,200,200,0.85)"/>
       </svg>
 
-      <p style="color:#fff; font-size:16px; font-weight:600; margin-bottom:1.4rem;">
-        ¿Desea guardar los cambios?
-      </p>
+      <p id="modal-mensaje" style="color:#fff; font-size:16px; font-weight:600; margin-bottom:1.4rem;"></p>
 
-      <label style="font-size:12px; color:rgba(255,255,255,0.7); display:block;
-                    text-align:left; margin-bottom:4px;">
-        Justificación <span style="color:#ffaaaa">*</span>
-      </label>
-      <textarea id="input-justificacion" rows="3"
-                placeholder="Indique el motivo de la modificación..."
-                style="width:100%; box-sizing:border-box;
-                       border:1px solid rgba(255,255,255,0.25); border-radius:6px;
-                       padding:8px 10px; font-size:13px; resize:vertical;
-                       background:rgba(255,255,255,0.12); color:#fff;
-                       font-family:inherit;"></textarea>
-      <p id="justif-error"
-         style="color:#ffaaaa; font-size:12px; display:none; margin-top:4px; text-align:left;">
-        La justificación es obligatoria (RN-03)
-      </p>
+      <div id="justif-section">
+        <label style="font-size:12px; color:rgba(255,255,255,0.7); display:block;
+                      text-align:left; margin-bottom:4px;">
+          Justificación <span style="color:#ffaaaa">*</span>
+        </label>
+        <textarea id="input-justificacion" rows="3"
+                  placeholder="Indique el motivo de la modificación..."
+                  style="width:100%; box-sizing:border-box;
+                         border:1px solid rgba(255,255,255,0.25); border-radius:6px;
+                         padding:8px 10px; font-size:13px; resize:vertical;
+                         background:rgba(255,255,255,0.12); color:#fff;
+                         font-family:inherit;"></textarea>
+        <p id="justif-error"
+           style="color:#ffaaaa; font-size:12px; display:none; margin-top:4px; text-align:left;">
+          La justificación es obligatoria (RN-03)
+        </p>
+      </div>
 
       <div style="display:flex; gap:16px; margin-top:1.5rem; justify-content:center;">
         <button id="btn-cancelar"
@@ -404,19 +404,53 @@
       </div>
     </div>
   </div>
-  <% } %>
 
   <script>
     // ── Shared state ──────────────────────────────────────────────────────────
     const esEdicion      = <%= esEdicion %>;
     const clienteId      = '<%= esEdicion ? cliente.idcliente : "" %>';
     const expedienteId   = '<%= esEdicion && expediente ? expediente.idexpediente : "" %>';
-    const sessionUserId  = '<%= esEdicion && typeof usuario !== "undefined" && usuario ? usuario.id  : "" %>';
-    const sessionUserRol = '<%= esEdicion && typeof usuario !== "undefined" && usuario ? usuario.rol : "" %>';
+    const sessionUserId  = '<%= typeof usuario !== "undefined" && usuario ? usuario.id  : "" %>';
+    const sessionUserRol = '<%= typeof usuario !== "undefined" && usuario ? usuario.rol : "" %>';
 
     let tipoActual   = '<%= esEdicion ? cliente.tipo_persona : "fisica" %>';
     let sessionExpedId = null;
-    let sessionUsrId   = null;
+
+    // ── Modal helpers ─────────────────────────────────────────────────────────
+    const modal        = document.getElementById('modal-confirmacion');
+    const modalMsg     = document.getElementById('modal-mensaje');
+    const justifSection= document.getElementById('justif-section');
+    let pendingAction  = null;
+
+    function abrirModal(mensaje, mostrarJustif, accion) {
+      modalMsg.textContent = mensaje;
+      justifSection.style.display = mostrarJustif ? '' : 'none';
+      document.getElementById('input-justificacion').value = '';
+      document.getElementById('justif-error').style.display = 'none';
+      pendingAction = accion;
+      modal.style.display = 'flex';
+    }
+
+    function cerrarModal() {
+      modal.style.display = 'none';
+      pendingAction = null;
+    }
+
+    document.getElementById('btn-cancelar').addEventListener('click', cerrarModal);
+
+    document.getElementById('btn-confirmar').addEventListener('click', async () => {
+      if (justifSection.style.display !== 'none') {
+        const justif = document.getElementById('input-justificacion').value.trim();
+        if (!justif) {
+          document.getElementById('justif-error').style.display = 'block';
+          return;
+        }
+        document.getElementById('justif-error').style.display = 'none';
+      }
+      const accion = pendingAction;
+      cerrarModal();
+      if (accion) await accion();
+    });
 
     // ── Tipo persona toggle (RF-01 only) ─────────────────────────────────────
     function setTipo(tipo) {
@@ -461,81 +495,54 @@
         }
       });
 
-      // "Guardar cambios" button — show confirmation modal
+      // "Guardar cambios" button — show confirmation modal (with justificación — RN-03)
       document.getElementById('kyc-submit').addEventListener('click', () => {
-        document.getElementById('input-justificacion').value = '';
-        document.getElementById('justif-error').style.display = 'none';
-        document.getElementById('modal-confirmacion').style.display = 'flex';
-      });
+        abrirModal('¿Desea guardar los cambios?', true, async () => {
+          const justificacion = document.getElementById('input-justificacion').value.trim();
+          const feedback = document.getElementById('kyc-feedback');
+          const btn      = document.getElementById('kyc-submit');
 
-      // Modal: Cancelar
-      document.getElementById('btn-cancelar').addEventListener('click', () => {
-        document.getElementById('modal-confirmacion').style.display = 'none';
-      });
+          btn.disabled    = true;
+          btn.textContent = 'Guardando...';
+          feedback.className    = 'kyc-feedback';
+          feedback.style.display = 'none';
 
-      // Modal: Aceptar → execute PUT
-      document.getElementById('btn-confirmar').addEventListener('click', async () => {
-        const justificacion = document.getElementById('input-justificacion').value.trim();
+          const data = Object.fromEntries(
+            new FormData(document.getElementById('kyc-form')).entries()
+          );
+          data.justificacion = justificacion;
 
-        if (!justificacion) {
-          document.getElementById('justif-error').style.display = 'block';
-          return;
-        }
-        document.getElementById('justif-error').style.display = 'none';
+          try {
+            const resp = await fetch(`/oficial/clientes/${clienteId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data),
+            });
 
-        const feedback = document.getElementById('kyc-feedback');
-        const btn      = document.getElementById('kyc-submit');
-        document.getElementById('modal-confirmacion').style.display = 'none';
+            const json = await resp.json();
 
-        btn.disabled    = true;
-        btn.textContent = 'Guardando...';
-        feedback.className    = 'kyc-feedback';
-        feedback.style.display = 'none';
-
-        const data = Object.fromEntries(
-          new FormData(document.getElementById('kyc-form')).entries()
-        );
-        data.justificacion = justificacion;
-
-        try {
-          const resp = await fetch(`/oficial/clientes/${clienteId}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-user-id':   sessionUserId,
-              'x-user-rol':  sessionUserRol,
-            },
-            body: JSON.stringify(data),
-          });
-
-          const json = await resp.json();
-
-          if (resp.ok) {
-            const sinCambios = json.mensaje === 'Sin cambios detectados';
-            feedback.className    = sinCambios ? 'kyc-feedback' : 'kyc-feedback success';
-            feedback.style.display = 'block';
-            feedback.textContent   = json.mensaje;
-
-            if (!sinCambios) {
-              btn.textContent = 'Guardado';
+            if (resp.ok) {
+              const sinCambios = json.mensaje === 'Sin cambios detectados';
+              feedback.className    = sinCambios ? 'kyc-feedback' : 'kyc-feedback success';
+              feedback.style.display = 'block';
+              feedback.textContent   = json.mensaje;
+              btn.textContent = sinCambios ? 'Guardar cambios' : 'Guardado';
+              if (sinCambios) btn.disabled = false;
             } else {
+              feedback.className    = 'kyc-feedback error';
+              feedback.style.display = 'block';
+              feedback.textContent   = json.error || 'Error al guardar';
               btn.disabled    = false;
               btn.textContent = 'Guardar cambios';
             }
-          } else {
+          } catch {
             feedback.className    = 'kyc-feedback error';
             feedback.style.display = 'block';
-            feedback.textContent   = json.error || 'Error al guardar';
+            feedback.textContent   = 'No se pudo conectar con el servidor.';
             btn.disabled    = false;
             btn.textContent = 'Guardar cambios';
           }
-        } catch {
-          feedback.className    = 'kyc-feedback error';
-          feedback.style.display = 'block';
-          feedback.textContent   = 'No se pudo conectar con el servidor.';
-          btn.disabled    = false;
-          btn.textContent = 'Guardar cambios';
-        }
+        });
       });
     }
 
@@ -544,57 +551,58 @@
       e.preventDefault();
       if (esEdicion) return; // edit mode uses button click handlers, not form submit
 
-      // ── RF-01: new client registration ─────────────────────────────────────
-      const feedback = document.getElementById('kyc-feedback');
-      const btn      = document.getElementById('kyc-submit');
+      // ── RF-01: show confirmation modal before registering ──────────────────
+      const formData = Object.fromEntries(new FormData(e.target).entries());
+      formData.tipo_persona = tipoActual;
 
-      btn.disabled    = true;
-      btn.textContent = 'Registrando...';
-      feedback.className    = 'kyc-feedback';
-      feedback.style.display = 'none';
+      abrirModal('¿Desea registrar al nuevo cliente?', false, async () => {
+        const feedback = document.getElementById('kyc-feedback');
+        const btn      = document.getElementById('kyc-submit');
 
-      const data = Object.fromEntries(new FormData(e.target).entries());
-      data.tipo_persona = tipoActual;
+        btn.disabled    = true;
+        btn.textContent = 'Registrando...';
+        feedback.className    = 'kyc-feedback';
+        feedback.style.display = 'none';
 
-      try {
-        const resp = await fetch('/api/clientes', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
+        try {
+          const resp = await fetch('/api/clientes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+          });
 
-        const json = await resp.json();
+          const json = await resp.json();
 
-        if (resp.ok) {
-          feedback.className    = 'kyc-feedback success';
-          feedback.style.display = 'block';
-          feedback.textContent   = 'Cliente registrado. Ahora suba los documentos requeridos.';
+          if (resp.ok) {
+            feedback.className    = 'kyc-feedback success';
+            feedback.style.display = 'block';
+            feedback.textContent   = 'Cliente registrado. Ahora suba los documentos requeridos.';
 
-          btn.textContent = 'Cliente registrado';
-          activarUploadDocs(json.idexpediente, json.idusuario);
-        } else {
-          const msg = json.errores
-            ? json.errores.join(' · ')
-            : (json.error || 'Error al registrar');
+            btn.textContent = 'Cliente registrado';
+            activarUploadDocs(json.idexpediente);
+          } else {
+            const msg = json.errores
+              ? json.errores.join(' · ')
+              : (json.error || 'Error al registrar');
+            feedback.className    = 'kyc-feedback error';
+            feedback.style.display = 'block';
+            feedback.textContent   = msg;
+            btn.disabled    = false;
+            btn.textContent = 'Guardar';
+          }
+        } catch {
           feedback.className    = 'kyc-feedback error';
           feedback.style.display = 'block';
-          feedback.textContent   = msg;
+          feedback.textContent   = 'No se pudo conectar con el servidor.';
           btn.disabled    = false;
           btn.textContent = 'Guardar';
         }
-      } catch {
-        feedback.className    = 'kyc-feedback error';
-        feedback.style.display = 'block';
-        feedback.textContent   = 'No se pudo conectar con el servidor.';
-        btn.disabled    = false;
-        btn.textContent = 'Guardar';
-      }
+      });
     });
 
     // ── RF-02: activate doc-cards after RF-01 registration ───────────────────
-    function activarUploadDocs(idExpediente, idUsuario) {
+    function activarUploadDocs(idExpediente) {
       sessionExpedId = idExpediente;
-      sessionUsrId   = idUsuario;
 
       document.querySelectorAll('.doc-card[data-tipo]').forEach(card => {
         card.classList.remove('doc-card--locked');
@@ -614,7 +622,7 @@
 
         input.addEventListener('change', () => {
           const file = input.files[0];
-          if (file) subirDocumento(card, input, file, sessionExpedId, sessionUsrId, 'cliente');
+          if (file) confirmarSubida(card, input, file, sessionExpedId, sessionUserId, sessionUserRol);
         });
       });
     }
@@ -637,9 +645,16 @@
 
         input.addEventListener('change', () => {
           const file = input.files[0];
-          if (file) subirDocumento(card, input, file, expedienteId, sessionUserId, sessionUserRol);
+          if (file) confirmarSubida(card, input, file, expedienteId, sessionUserId, sessionUserRol);
         });
       });
+    }
+
+    // ── Confirm before uploading ──────────────────────────────────────────────
+    function confirmarSubida(card, input, file, idExpediente, userId, userRol) {
+      abrirModal('¿Desea subir este documento?', false, () =>
+        subirDocumento(card, input, file, idExpediente, userId, userRol)
+      );
     }
 
     // ── Shared: upload a document to an expediente ────────────────────────────

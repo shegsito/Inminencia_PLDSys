@@ -7,7 +7,7 @@ const controller = require('../../controllers/api/expedientesController');
 // POST /api/expediente/:idExpediente/documentos
 router.post(
     '/:idExpediente/documentos',
-    auth(['cliente', 'operador', 'oficial']),
+    auth(['cliente', 'operador', 'oficial', 'admin']),
     upload.single('archivo'),
     controller.subirDocumento
 );

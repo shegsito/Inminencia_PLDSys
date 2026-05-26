@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('../partials/head') %>
+
+<body>
+  <div class="entire-container">
+
+    <%- include('../partials/sidebar') %>
+
+    <div class="right-container">
+
+      <%- include('../partials/header') %>
+
+      <div class="primary-content">
+
+        <!-- ── Filtros ── -->
+        <div class="gestionar-filtros">
+          <div class="gestionar-search">
+            <span class="gestionar-search-icon">&#128269;</span>
+            <input id="buscar-usuario" type="text" placeholder="Buscar usuario..." />
+          </div>
+          <select id="filtro-rol">
+            <option value="">Todos los roles</option>
+            <option value="admin">Admin</option>
+            <option value="oficial">Oficial</option>
+            <option value="operador">Operador</option>
+            <option value="auditor">Auditor</option>
+            <option value="cliente">Cliente</option>
+          </select>
+          <select id="filtro-activo">
+            <option value="">Todos los estatus</option>
+            <option value="true">Activo</option>
+            <option value="false">Inactivo</option>
+          </select>
+        </div>
+
+        <!-- ── Tabla ── -->
+        <table class="bitacora-tabla gestionar-tabla">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Rol</th>
+              <th>Activo</th>
+              <th>Creado</th>
+            </tr>
+          </thead>
+          <tbody id="usuarios-tbody">
+            <% usuarios.forEach(u => { %>
+              <tr
+                data-nombre="<%= u.nombre.toLowerCase() %>"
+                data-email="<%= u.email.toLowerCase() %>"
+                data-rol="<%= u.rol %>"
+                data-activo="<%= u.activo %>"
+              >
+                <td><%= u.nombre %></td>
+                <td><%= u.email %></td>
+                <td><%= u.rol.charAt(0).toUpperCase() + u.rol.slice(1) %></td>
+                <td>
+                  <% const esPropioAdmin = (u.idusuario === usuario.id); %>
+                  <% const esAdmin       = (u.rol === 'admin'); %>
+                  <% if (!esPropioAdmin && !esAdmin) { %>
+                    <span
+                      class="badge-activo <%= u.activo ? 'badge-activo--true' : 'badge-activo--false' %>"
+                      data-id="<%= u.idusuario %>"
+                      data-activo="<%= u.activo %>"
+                      title="Clic para <%= u.activo ? 'desactivar' : 'activar' %>"
+                    ><%= u.activo ? 'TRUE' : 'FALSE' %></span>
+                  <% } else { %>
+                    <span class="badge-activo badge-activo--readonly <%= u.activo ? 'badge-activo--true' : 'badge-activo--false' %>">
+                      <%= u.activo ? 'TRUE' : 'FALSE' %>
+                    </span>
+                  <% } %>
+                </td>
+                <td><%= new Date(u.created_at).toLocaleString('es-MX') %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+
+        <!-- ── Formulario nuevo usuario ── -->
+        <div class="gestionar-form-card">
+          <div class="gestionar-form-header">
+            <span class="gestionar-form-icon">&#128100;</span>
+            <h3>+ Nuevo Usuario</h3>
+          </div>
+
+          <form id="form-nuevo-usuario" novalidate>
+            <div class="gestionar-form-grid">
+              <div class="gestionar-form-field">
+                <label>Nombre</label>
+                <input id="f-nombre" type="text" placeholder="Ingresa su nombre completo" />
+              </div>
+              <div class="gestionar-form-field">
+                <label>Contraseña temporal</label>
+                <input id="f-password" type="password" placeholder="Ingresa su contraseña temporal" />
+              </div>
+              <div class="gestionar-form-field">
+                <label>Email</label>
+                <input id="f-email" type="email" placeholder="Ingresa su email" />
+              </div>
+              <div class="gestionar-form-field">
+                <label>Rol</label>
+                <select id="f-rol">
+                  <option value="">Selecciona su rol</option>
+                  <option value="oficial">Oficial</option>
+                  <option value="operador">Operador</option>
+                  <option value="auditor">Auditor</option>
+                  <option value="cliente">Cliente</option>
+                </select>
+              </div>
+            </div>
+            <p id="form-error" class="gestionar-form-error" style="display:none;"></p>
+            <div style="text-align:center; margin-top:1.2rem;">
+              <button type="button" id="btn-guardar-usuario" class="gestionar-btn-guardar">Guardar</button>
+            </div>
+          </form>
+        </div>
+
+      </div><!-- primary-content -->
+    </div><!-- right-container -->
+
+    <%- include('../partials/footer') %>
+
+  </div><!-- entire-container -->
+
+  <!-- ── Modal de confirmación ── -->
+  <div id="modal-confirmacion" style="display:none; position:fixed; inset:0;
+       background:rgba(0,0,0,.6); z-index:1000;
+       align-items:center; justify-content:center;">
+    <div style="background:#4d0100; padding:2.5rem 2rem; border-radius:12px;
+                max-width:400px; width:90%; box-shadow:0 8px 32px rgba(0,0,0,.5);
+                text-align:center;">
+
+      <svg width="80" height="72" viewBox="0 0 100 90" style="margin-bottom:1.2rem; display:block; margin-left:auto; margin-right:auto;">
+        <polygon points="50,8 92,82 8,82"
+                 fill="none" stroke="rgba(200,200,200,0.75)"
+                 stroke-width="5" stroke-linejoin="round"/>
+        <line x1="50" y1="34" x2="50" y2="58"
+              stroke="rgba(200,200,200,0.85)" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="50" cy="70" r="4" fill="rgba(200,200,200,0.85)"/>
+      </svg>
+
+      <p id="modal-mensaje" style="color:#fff; font-size:16px; font-weight:600; margin-bottom:1.8rem;"></p>
+
+      <div style="display:flex; gap:16px; justify-content:center;">
+        <button id="btn-cancelar"
+                style="padding:10px 28px; border:2px solid rgba(255,255,255,0.45);
+                       border-radius:6px; background:transparent; color:#fff;
+                       cursor:pointer; font-size:14px; font-family:inherit; font-weight:500;">
+          Cancelar
+        </button>
+        <button id="btn-confirmar"
+                style="padding:10px 28px; border:none; border-radius:6px;
+                       background:#fff; color:#4d0100; cursor:pointer;
+                       font-size:14px; font-family:inherit; font-weight:700;">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Filtros client-side ────────────────────────────────────────────────────
+    const tbody       = document.getElementById('usuarios-tbody');
+    const buscarInput = document.getElementById('buscar-usuario');
+    const filtroRol   = document.getElementById('filtro-rol');
+    const filtroActivo= document.getElementById('filtro-activo');
+
+    function filtrarTabla() {
+      const texto  = buscarInput.value.toLowerCase();
+      const rol    = filtroRol.value;
+      const activo = filtroActivo.value;
+
+      tbody.querySelectorAll('tr').forEach(tr => {
+        const nombre = tr.dataset.nombre || '';
+        const email  = tr.dataset.email  || '';
+        const matchTexto  = nombre.includes(texto) || email.includes(texto);
+        const matchRol    = !rol    || tr.dataset.rol    === rol;
+        const matchActivo = !activo || tr.dataset.activo === activo;
+        tr.style.display = (matchTexto && matchRol && matchActivo) ? '' : 'none';
+      });
+    }
+
+    buscarInput.addEventListener('input',  filtrarTabla);
+    filtroRol.addEventListener('change',   filtrarTabla);
+    filtroActivo.addEventListener('change',filtrarTabla);
+
+    // ── Modal helpers ──────────────────────────────────────────────────────────
+    const modal     = document.getElementById('modal-confirmacion');
+    const modalMsg  = document.getElementById('modal-mensaje');
+    const btnCancel = document.getElementById('btn-cancelar');
+    const btnOk     = document.getElementById('btn-confirmar');
+
+    let pendingAction = null;
+
+    function abrirModal(mensaje, accion) {
+      modalMsg.textContent = mensaje;
+      pendingAction = accion;
+      modal.style.display = 'flex';
+    }
+
+    function cerrarModal() {
+      modal.style.display = 'none';
+      pendingAction = null;
+    }
+
+    btnCancel.addEventListener('click', cerrarModal);
+    modal.addEventListener('click', e => { if (e.target === modal) cerrarModal(); });
+
+    btnOk.addEventListener('click', async () => {
+      if (!pendingAction) return;
+      const accion = pendingAction;
+      cerrarModal();
+      await accion();
+    });
+
+    // ── Toggle activo ──────────────────────────────────────────────────────────
+    tbody.addEventListener('click', e => {
+      const badge = e.target.closest('.badge-activo:not(.badge-activo--readonly)');
+      if (!badge) return;
+
+      const id     = badge.dataset.id;
+      const activo = badge.dataset.activo === 'true';
+      const accion = activo ? 'desactivar' : 'activar';
+
+      abrirModal(
+        `¿Estás seguro de ${accion} el usuario?`,
+        async () => {
+          try {
+            const res = await fetch(`/admin/usuarios/${id}/activo`, { method: 'PATCH' });
+            if (!res.ok) {
+              const data = await res.json();
+              alert(data.error || 'Error al cambiar estado');
+              return;
+            }
+            location.reload();
+          } catch {
+            alert('Error de red');
+          }
+        }
+      );
+    });
+
+    // ── Nuevo usuario ──────────────────────────────────────────────────────────
+    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const formError = document.getElementById('form-error');
+
+    function mostrarError(msg) {
+      formError.textContent = msg;
+      formError.style.display = 'block';
+    }
+
+    function limpiarError() {
+      formError.style.display = 'none';
+    }
+
+    document.getElementById('btn-guardar-usuario').addEventListener('click', () => {
+      limpiarError();
+      const nombre   = document.getElementById('f-nombre').value.trim();
+      const email    = document.getElementById('f-email').value.trim();
+      const password = document.getElementById('f-password').value;
+      const rol      = document.getElementById('f-rol').value;
+
+      if (!nombre)                       return mostrarError('El nombre es obligatorio');
+      if (!email || !EMAIL_RE.test(email)) return mostrarError('Email inválido');
+      if (!password || password.length < 8) return mostrarError('La contraseña debe tener mínimo 8 caracteres');
+      if (!rol)                          return mostrarError('Selecciona un rol');
+
+      abrirModal(
+        '¿Esta seguro de registrar a un nuevo usuario?',
+        async () => {
+          try {
+            const res = await fetch('/admin/usuarios', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ nombre, email, password, rol }),
+            });
+            if (!res.ok) {
+              const data = await res.json();
+              mostrarError(data.error || 'Error al crear usuario');
+              return;
+            }
+            location.reload();
+          } catch {
+            mostrarError('Error de red');
+          }
+        }
+      );
+    });
+  </script>
+
+</body>
+</html>

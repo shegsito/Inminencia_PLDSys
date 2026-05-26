@@ -12,6 +12,25 @@ const UsuarioModel = {
         return res.rows[0];
     },
 
+    // get all clients func
+    getAll: async() => {
+        const res = await pool.query(
+            `SELECT idusuario, nombre, email, rol, activo, created_at
+             FROM usuario
+             ORDER BY created_at DESC`
+        );
+        return res.rows;
+    },
+
+    // set activo to false or true
+    toggleActivo: async(idusuario, activo) => {
+        const res = await pool.query(
+            `UPDATE usuario SET activo = $1 WHERE idusuario = $2 RETURNING idusuario, activo`,
+            [activo, idusuario]
+        );
+        return res.rows[0];
+    },
+    
     // Find an active user by email (used for login)
     // Aliases password_hash → password so the controller can use usuario.password directly
     findByEmail: async (email) => {
