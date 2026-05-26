@@ -33,11 +33,25 @@ exports.operaciones = async (req, res) => {
     }
 };
 
-//new operacion form
-exports.registrarOperacion = async (req, res) => {
+//display client names in drop down format GET
+exports.getRegistrarOperacion = async (req, res) => {
+    try{
+        const cliente = await model.fetchAllClients();
+
+        res.render('oficial/forms/nueva-operacion-form', {
+        pageTitle: 'Nueva Operación',
+        clientes: cliente 
+    });
+    } catch(e) {
+        console.log(e);
+        res.status(500).send('Error al cargar formulario');
+    }
+};
+
+//new operacion form POST
+exports.postRegistrarOperacion = async (req, res) => {
     try {
-        const { nombre_completo, producto, tipo, monto } = req.body;
-        const { idcliente } = await model.findCliente(nombre_completo);
+        const { idcliente, producto, tipo, monto } = req.body;
         const { idcontrato } = await model.findContrato(producto, idcliente);
         const idusuario = req.session.idusuario;
         const ipusuario = req.ip;

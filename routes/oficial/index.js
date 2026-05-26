@@ -23,10 +23,8 @@ router.get('/kyc', (req, res) =>
         pageTitle: 'Nuevo cliente' }));
 router.post('/new-client', (req, res) => 
     res.redirect('/oficial/dashboard'));
-router.get('/registrar-operacion', (req, res) =>
-    res.render('oficial/forms/nueva-operacion-form', {
-        pageTitle: 'Nueva Operación' }));
-router.post('/new-operacion', operaciones.registrarOperacion);
+router.get('/registrar-operacion', operaciones.getRegistrarOperacion);
+router.post('/new-operacion', operaciones.postRegistrarOperacion);
 router.get('/registrar-contrato', contratos.getRegistrarContrato);
 router.post('/new-contrato', contratos.postRegistrarContrato);
 router.get('/evaluar-reporte', (req, res) =>

@@ -22,6 +22,19 @@ exports.fetchAll = async () => {
     return rows;
 };
 
+//fetch clients only
+exports.fetchAllClients = async () => {
+    const sql = `
+        SELECT TRIM(CONCAT(nombre, ' ', apellido_paterno,
+            CASE WHEN apellido_materno IS NOT NULL AND apellido_materno <> ''
+                THEN ' ' || apellido_materno ELSE '' END)) AS nombre_cliente, idcliente
+        FROM cliente
+        ORDER BY nombre_cliente ASC
+    `;
+    const { rows } = await pool.query(sql);
+    return rows;
+};
+
 //configure search bar
 exports.findByNameOrFolio = async (input) => {
     const sql = `SELECT TRIM(CONCAT(c.nombre, ' ', c.apellido_paterno,
