@@ -46,7 +46,7 @@ exports.reporteInterno = async (queja_desc, evidencia, fecha_int, idasignadoa, i
         await dbClient.query('COMMIT');
 
         return reporte_int;
-        
+
     } catch(e) {
         //any failures do not affect DB
         await dbClient.query('ROLLBACK');
@@ -72,13 +72,39 @@ exports.fetchAllOperador = async (userId) => {
 };
 
 //evaluate internal report
-exports.evaluateRI = async (idreporteint, estatus, resolucion) => {
-    const sql = `
-        UPDATE reporte_interno
-        SET estatus = $1, resolucion = $2
-        WHERE idreporteint = $3
-        RETURNING *
-    `;
-    const { rows } = await pool.query(sql, [estatus, resolucion, idreporteint]);
-    return rows;
+exports.evaluateRI = async (idreporteint, estatus, resolucion, idusuario, ipOrigin) => {
+    const dbClient = await pool.connect();
+    try{
+        const sql = `UPDATE reporte_interno
+                    SET estatus = $1, resolucion = $2
+                    WHERE idreporteint = $3
+                    RETURNING *`
+                    ;
+
+        const { rows } = await pool.query(sql, [estatus, resolucion, idreporteint]);
+        const eval = rows;
+
+         //extract internal report identifier
+        const idreporteInterno = eval.idreporteint;
+
+        //audit log register
+        const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
+             VALUES ($1, $2, $3, $4, $5, NOW())`
+
+        await dbClient.query(bitacora, [idusuario, 'EVALUAR REPORTE INTERNO', 'reporte interno', idreporteInterno, ipOrigin]);
+
+        //DB change if all succeeds
+        await dbClient.query('COMMIT');
+
+        return eval;
+
+    } catch(e) {
+        //any failures do not affect DB
+        await dbClient.query('ROLLBACK');
+        console.error('Error en transacción: ', e);
+        throw e;
+    } finally {
+        //evades saturation of DB conneections
+        dbClient.release();
+    }
 };
