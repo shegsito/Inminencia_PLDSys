@@ -39,7 +39,7 @@ exports.findByNameOrFolio = async (input) => {
 exports.findCliente = async (name) => {
     const sql = `SELECT idcliente
                  FROM cliente
-                 WHERE CONCAT(nombre, ' ', apellido_paterno, ' ', COALESCE(apellido_materno, '')) ILIKE $1`
+                 WHERE TRIM(CONCAT(nombre, ' ', apellido_paterno, ' ', COALESCE(apellido_materno, ''))) ILIKE $1`
                  ;
     const res = await pool.query(sql, [name]);
     return res.rows [0];
@@ -58,7 +58,7 @@ exports.createContrato = async (idcliente, tipo, fecha_init, fecha_fin, monto, e
                  RETURNING *`
                  ;
 
-        const res = await dbClient.query(sql, [idcliente, tipo, fecha_init, fecha_fin, monto, estatus, idusuario]);
+        const res = await dbClient.query(sql, [idcliente, tipo, fecha_init, fecha_fin, monto, estatus]);
         const contrato = res.rows [0];
 
         //extract contract identifier

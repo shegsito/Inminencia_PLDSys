@@ -36,14 +36,16 @@ exports.contratos = async (req, res) => {
 //new contrato form
 exports.registrarContrato = async (req, res) => {
     try {
-        const { nombre, producto, fecha_init, fecha_fin, monto, estatus } = req.body;
-        const { idcliente } = await model.findCliente(nombre);
+        const { nombre_completo, producto, fecha_init, fecha_fin, monto, estatus } = req.body;
+        const cliente = await model.findCliente(nombre_completo);
         const idusuario = req.session.idusuario;
         const ipusuario = req.ip;
 
-        if (!idcliente) {
-            return res.status(400).send('Error al obtener cliente');
+        if (!cliente) {
+            return res.status(400).send('Error al obtener cliente o cliente no existente.');
         }
+
+        const idcliente = cliente.idcliente;
 
         await model.createContrato(idcliente, producto, fecha_init, fecha_fin, monto, estatus, idusuario, ipusuario);
         res.redirect('/oficial/contratos?success=true')
