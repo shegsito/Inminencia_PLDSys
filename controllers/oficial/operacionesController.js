@@ -57,8 +57,6 @@ exports.registrarOperacion = async (req, res) => {
         await model.createOperacion(idcliente, idcontrato, tipo, monto, idusuario, ipusuario);
         res.redirect('/oficial/operaciones?success=true')
 
-
-        
     }
     catch(e) {
        console.log(e);

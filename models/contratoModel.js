@@ -58,7 +58,7 @@ exports.createContrato = async (idcliente, tipo, fecha_init, fecha_fin, monto, e
                  RETURNING *`
                  ;
 
-        const res = await dbClient.query(sql, [idcliente, tipo, fecha_init, fecha_fin, monto, estatus, idusuario, ipOrigin]);
+        const res = await dbClient.query(sql, [idcliente, tipo, fecha_init, fecha_fin, monto, estatus, idusuario]);
         const contrato = res.rows [0];
 
         //extract contract identifier
@@ -74,7 +74,7 @@ exports.createContrato = async (idcliente, tipo, fecha_init, fecha_fin, monto, e
         await dbClient.query('COMMIT');
 
         return contrato;
-        
+
     } catch(e) {
         //any failures do not affect DB
         await dbClient.query('ROLLBACK');
