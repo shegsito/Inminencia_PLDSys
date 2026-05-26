@@ -58,11 +58,42 @@ exports.findContrato = async (product, idcliente) => {
     return res.rows [0];
 };
 
-exports.createOperacion = async (idcliente, idcontrato, tipo, monto, idusuario) => {
-    const sql = `INSERT INTO operacion (idcliente, idcontrato, tipo_operacion, monto, idregistradapor, fecha)
+exports.createOperacion = async (idcliente, idcontrato, tipo, monto, idusuario, ipOrigin) => {
+    const dbClient = await pool.connect();
+    try{
+        //tracked transaction
+        await dbClient.query('BEGIN');
+
+        //operation register
+        const sql = `INSERT INTO operacion (idcliente, idcontrato, tipo_operacion, monto, idregistradapor, fecha)
                  VALUES ($1, $2, $3, $4, $5, NOW())
                  RETURNING *`
                  ;
-    const res = await pool.query(sql, [idcliente, idcontrato, tipo, monto, idusuario]);
-    return res.rows [0];
+
+        const res = await dbClient.query(sql, [idcliente, idcontrato, tipo, monto, idusuario, ipOrigin]);
+        const operacion = res.rows [0];
+
+        //extract operation identifier
+        const idoperacion = operacion.idoperacion;
+
+        //audit log register
+        const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
+             VALUES ($1, $2, $3, $4, $5, NOW())`
+
+        await dbClient.query(bitacora, [idusuario, 'CREAR OPERACION', 'operacion', idoperacion, ipOrigin]);
+
+        //DB change if all succeeds
+        await dbClient.query('COMMIT');
+
+        return operacion;
+
+    } catch(e) {
+        //any failures do not affect DB
+        await dbClient.query('ROLLBACK');
+        console.error('Error en transacción: ', e);
+        throw e;
+    } finally {
+        //evades saturation of DB conneections
+        dbClient.release();
+    }
 };
