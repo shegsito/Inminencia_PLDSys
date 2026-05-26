@@ -58,6 +58,7 @@ exports.findContrato = async (product, idcliente) => {
     return res.rows [0];
 };
 
+//new operation register inserts into bitacora
 exports.createOperacion = async (idcliente, idcontrato, tipo, monto, idusuario, ipOrigin) => {
     const dbClient = await pool.connect();
     try{

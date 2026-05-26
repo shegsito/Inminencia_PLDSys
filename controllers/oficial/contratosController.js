@@ -38,12 +38,14 @@ exports.registrarContrato = async (req, res) => {
     try {
         const { nombre, producto, fecha_init, fecha_fin, monto, estatus } = req.body;
         const { idcliente } = await model.findCliente(nombre);
+        const idusuario = req.session.idusuario;
+        const ipusuario = req.ip;
 
         if (!idcliente) {
             return res.status(400).send('Error al obtener cliente');
         }
 
-        await model.createContrato(idcliente, producto, fecha_init, fecha_fin, monto, estatus);
+        await model.createContrato(idcliente, producto, fecha_init, fecha_fin, monto, estatus, idusuario, ipusuario);
         res.redirect('/oficial/contratos?success=true')
     }
     catch(e) {
