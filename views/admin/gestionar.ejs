@@ -14,70 +14,8 @@
 
       <div class="primary-content">
 
-        <!-- ── Filtros ── -->
-        <div class="gestionar-filtros">
-          <div class="gestionar-search">
-            <span class="gestionar-search-icon">&#128269;</span>
-            <input id="buscar-usuario" type="text" placeholder="Buscar usuario..." />
-          </div>
-          <select id="filtro-rol">
-            <option value="">Todos los roles</option>
-            <option value="admin">Admin</option>
-            <option value="oficial">Oficial</option>
-            <option value="operador">Operador</option>
-            <option value="auditor">Auditor</option>
-            <option value="cliente">Cliente</option>
-          </select>
-          <select id="filtro-activo">
-            <option value="">Todos los estatus</option>
-            <option value="true">Activo</option>
-            <option value="false">Inactivo</option>
-          </select>
-        </div>
-
-        <!-- ── Tabla ── -->
-        <table class="bitacora-tabla gestionar-tabla">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Email</th>
-              <th>Rol</th>
-              <th>Activo</th>
-              <th>Creado</th>
-            </tr>
-          </thead>
-          <tbody id="usuarios-tbody">
-            <% usuarios.forEach(u => { %>
-              <tr
-                data-nombre="<%= u.nombre.toLowerCase() %>"
-                data-email="<%= u.email.toLowerCase() %>"
-                data-rol="<%= u.rol %>"
-                data-activo="<%= u.activo %>"
-              >
-                <td><%= u.nombre %></td>
-                <td><%= u.email %></td>
-                <td><%= u.rol.charAt(0).toUpperCase() + u.rol.slice(1) %></td>
-                <td>
-                  <% const esPropioAdmin = (u.idusuario === usuario.id); %>
-                  <% const esAdmin       = (u.rol === 'admin'); %>
-                  <% if (!esPropioAdmin && !esAdmin) { %>
-                    <span
-                      class="badge-activo <%= u.activo ? 'badge-activo--true' : 'badge-activo--false' %>"
-                      data-id="<%= u.idusuario %>"
-                      data-activo="<%= u.activo %>"
-                      title="Clic para <%= u.activo ? 'desactivar' : 'activar' %>"
-                    ><%= u.activo ? 'TRUE' : 'FALSE' %></span>
-                  <% } else { %>
-                    <span class="badge-activo badge-activo--readonly <%= u.activo ? 'badge-activo--true' : 'badge-activo--false' %>">
-                      <%= u.activo ? 'TRUE' : 'FALSE' %>
-                    </span>
-                  <% } %>
-                </td>
-                <td><%= new Date(u.created_at).toLocaleString('es-MX') %></td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
+        <!-- ── Tabla usuarios ── -->
+        <div id="gestionar-table"></div>
 
         <!-- ── Formulario nuevo usuario ── -->
         <div class="gestionar-form-card">
@@ -162,30 +100,88 @@
   </div>
 
   <script>
-    // ── Filtros client-side ────────────────────────────────────────────────────
-    const tbody       = document.getElementById('usuarios-tbody');
-    const buscarInput = document.getElementById('buscar-usuario');
-    const filtroRol   = document.getElementById('filtro-rol');
-    const filtroActivo= document.getElementById('filtro-activo');
+    // ── Tabla Grid.js ──────────────────────────────────────────────────────────
+    window.addEventListener('load', () => {
+      new gridjs.Grid({
+        columns: [
+          { id: 'id',        hidden: true },
+          { id: 'propio',    hidden: true },
+          { id: 'isAdmin',   hidden: true },
+          { id: 'activoRaw', hidden: true },
+          { name: 'Nombre' },
+          { name: 'Email' },
+          { name: 'Rol' },
+          {
+            name: 'Activo',
+            formatter: (cell, row) => {
+              const id     = row.cells[0].data;
+              const propio = row.cells[1].data;
+              const isAdm  = row.cells[2].data;
+              const activo = row.cells[3].data;
+              if (!propio && !isAdm) {
+                return gridjs.html(
+                  `<span class="badge-activo ${activo ? 'badge-activo--true' : 'badge-activo--false'}"
+                         data-id="${id}" data-activo="${activo}"
+                         title="Clic para ${activo ? 'desactivar' : 'activar'}"
+                   >${cell}</span>`
+                );
+              }
+              return gridjs.html(
+                `<span class="badge-activo badge-activo--readonly ${activo ? 'badge-activo--true' : 'badge-activo--false'}"
+                 >${cell}</span>`
+              );
+            }
+          },
+          { name: 'Creado' },
+        ],
+        data: <%- JSON.stringify(usuarios.map(u => [
+          u.idusuario,
+          u.idusuario === usuario.id,
+          u.rol === 'admin',
+          u.activo,
+          u.nombre,
+          u.email,
+          u.rol.charAt(0).toUpperCase() + u.rol.slice(1),
+          u.activo ? 'Activo' : 'Inactivo',
+          new Date(u.created_at).toLocaleDateString('es-MX')
+        ])) %>,
+        search: true,
+        sort:   true,
+        pagination: { limit: 10, summary: false },
+        style: {
+          table: { 'font-family': 'Cambria, serif' },
+          th:    { 'background-color': '#4d0100', 'color': 'white', 'font-size': '18px' },
+          td:    { 'font-size': '16px' }
+        }
+      }).render(document.getElementById('gestionar-table'));
 
-    function filtrarTabla() {
-      const texto  = buscarInput.value.toLowerCase();
-      const rol    = filtroRol.value;
-      const activo = filtroActivo.value;
+      // Badge click — delegation on container so persiste tras re-renders de Grid.js
+      document.getElementById('gestionar-table').addEventListener('click', e => {
+        const badge = e.target.closest('.badge-activo:not(.badge-activo--readonly)');
+        if (!badge) return;
 
-      tbody.querySelectorAll('tr').forEach(tr => {
-        const nombre = tr.dataset.nombre || '';
-        const email  = tr.dataset.email  || '';
-        const matchTexto  = nombre.includes(texto) || email.includes(texto);
-        const matchRol    = !rol    || tr.dataset.rol    === rol;
-        const matchActivo = !activo || tr.dataset.activo === activo;
-        tr.style.display = (matchTexto && matchRol && matchActivo) ? '' : 'none';
+        const id     = badge.dataset.id;
+        const activo = badge.dataset.activo === 'true';
+        const accion = activo ? 'desactivar' : 'activar';
+
+        abrirModal(
+          `¿Estás seguro de ${accion} el usuario?`,
+          async () => {
+            try {
+              const res = await fetch(`/admin/usuarios/${id}/activo`, { method: 'PATCH' });
+              if (!res.ok) {
+                const data = await res.json();
+                alert(data.error || 'Error al cambiar estado');
+                return;
+              }
+              location.reload();
+            } catch {
+              alert('Error de red');
+            }
+          }
+        );
       });
-    }
-
-    buscarInput.addEventListener('input',  filtrarTabla);
-    filtroRol.addEventListener('change',   filtrarTabla);
-    filtroActivo.addEventListener('change',filtrarTabla);
+    });
 
     // ── Modal helpers ──────────────────────────────────────────────────────────
     const modal     = document.getElementById('modal-confirmacion');
@@ -214,33 +210,6 @@
       const accion = pendingAction;
       cerrarModal();
       await accion();
-    });
-
-    // ── Toggle activo ──────────────────────────────────────────────────────────
-    tbody.addEventListener('click', e => {
-      const badge = e.target.closest('.badge-activo:not(.badge-activo--readonly)');
-      if (!badge) return;
-
-      const id     = badge.dataset.id;
-      const activo = badge.dataset.activo === 'true';
-      const accion = activo ? 'desactivar' : 'activar';
-
-      abrirModal(
-        `¿Estás seguro de ${accion} el usuario?`,
-        async () => {
-          try {
-            const res = await fetch(`/admin/usuarios/${id}/activo`, { method: 'PATCH' });
-            if (!res.ok) {
-              const data = await res.json();
-              alert(data.error || 'Error al cambiar estado');
-              return;
-            }
-            location.reload();
-          } catch {
-            alert('Error de red');
-          }
-        }
-      );
     });
 
     // ── Nuevo usuario ──────────────────────────────────────────────────────────
