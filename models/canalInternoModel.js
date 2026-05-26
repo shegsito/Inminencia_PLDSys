@@ -18,7 +18,7 @@ exports.fetchAll = async () => {
 };
 
 //new internal report
-exports.reporteInterno = async (queja_desc, evidencia, fecha_int, idasignadoa, idusuario, ipOrigin) => {
+exports.reporteInterno = async (queja_desc, evidencia, fecha_int, idasignadoa, ipOrigin) => {
     const dbClient = await pool.connect();
     try {
         //tracked transaction
@@ -37,10 +37,10 @@ exports.reporteInterno = async (queja_desc, evidencia, fecha_int, idasignadoa, i
         const idreporteInterno = reporte_int.idreporteint;
 
         //audit log register
-        const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
-             VALUES ($1, $2, $3, $4, $5, NOW())`
+        const bitacora = `INSERT INTO bitacora (accion, entidad_afect, id_entidad, ip_origen, fecha)
+             VALUES ($1, $2, $3, $4, NOW())`
 
-        await dbClient.query(bitacora, [idusuario, 'CREAR REPORTE INTERNO', 'reporte interno', reporte_int, ipOrigin]);
+        await dbClient.query(bitacora, ['CREAR REPORTE INTERNO', 'reporte interno', reporte_int, ipOrigin]);
 
         //DB change if all succeeds
         await dbClient.query('COMMIT');
