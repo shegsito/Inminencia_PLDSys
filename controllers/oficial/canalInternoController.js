@@ -69,6 +69,16 @@ exports.verEvidencia = async (req, res) => {
         if (!fs.existsSync(findPath)){
             return res.status(404).send('Archivo no encontrado en el servidor')};
 
+        //audit log captures this activity
+        const idusuario = req.session.idusuario;
+        const ipusuario = req.ip;
+
+        const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
+                          VALUES ($1, $2, $3, $4, $5, NOW())`
+                          ;
+
+        await pool.query(bitacora, [idusuario, 'CONSULTAR EVIDENCIA', 'reporte interno', id, ipusuario]);
+
         //formatting since this table does not have format column
         const format = path.extname(findPath).toLowerCase();
         let contentType = 'application/octet-stream';
