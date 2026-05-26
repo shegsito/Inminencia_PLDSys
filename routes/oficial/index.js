@@ -27,10 +27,8 @@ router.get('/registrar-operacion', (req, res) =>
     res.render('oficial/forms/nueva-operacion-form', {
         pageTitle: 'Nueva Operación' }));
 router.post('/new-operacion', operaciones.registrarOperacion);
-router.get('/registrar-contrato', (req, res) =>
-    res.render('oficial/forms/nuevo-contrato-form', {
-        pageTitle: 'Nuevo contrato' }));
-router.post('/new-contrato', contratos.registrarContrato);
+router.get('/registrar-contrato', contratos.getRegistrarContrato);
+router.post('/new-contrato', contratos.postRegistrarContrato);
 router.get('/evaluar-reporte', (req, res) =>
     res.render('oficial/forms/evaluar-caso-form', {
         pageTitle: 'Forma de evaluación' }));

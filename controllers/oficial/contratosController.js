@@ -33,19 +33,31 @@ exports.contratos = async (req, res) => {
     }
 };
 
-//new contrato form
-exports.registrarContrato = async (req, res) => {
+//display client names in drop down format GET
+exports.getRegistrarContrato = async (req, res) => {
+    try{
+        const cliente = await model.fetchAllClients();
+
+        res.render('oficial/forms/nuevo-contrato-form', {
+        pageTitle: 'Nuevo contrato',
+        clientes: cliente 
+    });
+    } catch(e) {
+        console.log(e);
+        res.status(500).send('Error al cargar formulario');
+    }
+};
+
+//new contrato form POST
+exports.postRegistrarContrato = async (req, res) => {
     try {
-        const { nombre_completo, producto, fecha_init, fecha_fin, monto, estatus } = req.body;
-        const cliente = await model.findCliente(nombre_completo);
+        const { idcliente, producto, fecha_init, fecha_fin, monto, estatus } = req.body;
         const idusuario = req.session.idusuario;
         const ipusuario = req.ip;
 
-        if (!cliente) {
+        if (!idcliente) {
             return res.status(400).send('Error al obtener cliente o cliente no existente.');
         }
-
-        const idcliente = cliente.idcliente;
 
         await model.createContrato(idcliente, producto, fecha_init, fecha_fin, monto, estatus, idusuario, ipusuario);
         res.redirect('/oficial/contratos?success=true')
