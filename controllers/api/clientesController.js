@@ -98,9 +98,13 @@ exports.registrar = async (req, res) => {
         // begin to make sure to handle errors while making expedients and getting mistakes
         await dbClient.query('BEGIN');
 
+        const userId  = req.headers['x-user-id'];
+        const userRol = req.headers['x-user-rol'];
+        const idusuario = userRol === 'cliente' ? (userId || null) : null;
+
         await ClienteModel.crear(dbClient, {
             idcliente,
-            idusuario: null,
+            idusuario,
             nombre:           nombre.trim(),
             apellido_paterno: apellido_paterno.trim(),
             apellido_materno: apellido_materno?.trim() || null,

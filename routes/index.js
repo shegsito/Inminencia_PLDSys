@@ -6,6 +6,7 @@ const { requireLogin, requireRol } = require('../middleware/session-auth');
 router.use('/oficial',   requireLogin, requireRol(['oficial']),  require('./oficial'));
 router.use('/admin',     requireLogin, requireRol(['admin']),     require('./admin'));
 router.use('/operador',  requireLogin, requireRol(['operador']),  require('./operador'));
+router.use('/cliente',   requireLogin, requireRol(['cliente']),   require('./cliente'));
 
 // Auth routes — no protection (login page must always be reachable)
 router.use('/usuarios',  require('./usuarios'));
