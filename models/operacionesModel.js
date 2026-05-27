@@ -22,6 +22,19 @@ exports.fetchAll = async () => {
     return rows;
 };
 
+//fetch clients only
+exports.fetchAllClients = async () => {
+    const sql = `
+        SELECT TRIM(CONCAT(nombre, ' ', apellido_paterno,
+            CASE WHEN apellido_materno IS NOT NULL AND apellido_materno <> ''
+                THEN ' ' || apellido_materno ELSE '' END)) AS nombre_cliente, idcliente
+        FROM cliente
+        ORDER BY nombre_cliente ASC
+    `;
+    const { rows } = await pool.query(sql);
+    return rows;
+};
+
 //configure search bar
 exports.findByNameOrFolio = async (input) => {
     const sql = `SELECT TRIM(CONCAT(c.nombre, ' ', c.apellido_paterno,
@@ -42,7 +55,7 @@ exports.findByNameOrFolio = async (input) => {
 exports.findCliente = async (name) => {
     const sql = `SELECT idcliente
                  FROM cliente
-                 WHERE CONCAT(nombre, ' ', apellido_paterno, ' ', COALESCE(apellido_materno, '')) ILIKE $1`
+                 WHERE TRIM(CONCAT(nombre, ' ', apellido_paterno, ' ', COALESCE(apellido_materno, ''))) ILIKE $1`
                  ;
     const res = await pool.query(sql, [name]);
     return res.rows [0];
@@ -58,11 +71,43 @@ exports.findContrato = async (product, idcliente) => {
     return res.rows [0];
 };
 
-exports.createOperacion = async (idcliente, idcontrato, tipo, monto, idusuario) => {
-    const sql = `INSERT INTO operacion (idcliente, idcontrato, tipo_operacion, monto, idregistradapor, fecha)
+//new operation register inserts into bitacora
+exports.createOperacion = async (idcliente, idcontrato, tipo, monto, idusuario, ipOrigin) => {
+    const dbClient = await pool.connect();
+    try{
+        //tracked transaction
+        await dbClient.query('BEGIN');
+
+        //operation register
+        const sql = `INSERT INTO operacion (idcliente, idcontrato, tipo_operacion, monto, idregistradapor, fecha)
                  VALUES ($1, $2, $3, $4, $5, NOW())
                  RETURNING *`
                  ;
-    const res = await pool.query(sql, [idcliente, idcontrato, tipo, monto, idusuario]);
-    return res.rows [0];
+
+        const res = await dbClient.query(sql, [idcliente, idcontrato, tipo, monto, idusuario]);
+        const operacion = res.rows [0];
+
+        //extract operation identifier
+        const idoperacion = operacion.idoperacion;
+
+        //audit log register
+        const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
+             VALUES ($1, $2, $3, $4, $5, NOW())`
+
+        await dbClient.query(bitacora, [idusuario, 'CREAR OPERACION', 'operacion', idoperacion, ipOrigin]);
+
+        //DB change if all succeeds
+        await dbClient.query('COMMIT');
+
+        return operacion;
+
+    } catch(e) {
+        //any failures do not affect DB
+        await dbClient.query('ROLLBACK');
+        console.error('Error en transacción: ', e);
+        throw e;
+    } finally {
+        //evades saturation of DB conneections
+        dbClient.release();
+    }
 };

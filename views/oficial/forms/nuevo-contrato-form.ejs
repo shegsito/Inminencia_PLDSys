@@ -23,9 +23,14 @@
               <!-- nombre y producto -->
               <div class="form-row" id="row-data">
               <div class="form-group">
-                <label for="nombre_completo">Nombre Completo</label>
-                <input type="text" id="nombre_completo" name="nombre_completo"
-                       placeholder="nuvia flores quiroga">
+                <label for="idcliente">Cliente</label>
+                <select id="idcliente" name="idcliente" required>
+                  <option value="" disabled selected>Seleccionar cliente</option>
+                  <% clientes.forEach(cliente => { %>
+                  <option value="<%= cliente.idcliente %>">
+                    <%= cliente.nombre_cliente %>
+                  </option>
+                <% }) %> </select>
               </div>
 
               <div class="form-group">

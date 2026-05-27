@@ -33,28 +33,44 @@ exports.operaciones = async (req, res) => {
     }
 };
 
-//new operacion form
-exports.registrarOperacion = async (req, res) => {
+//display client names in drop down format GET
+exports.getRegistrarOperacion = async (req, res) => {
+    try{
+        const cliente = await model.fetchAllClients();
+
+        res.render('oficial/forms/nueva-operacion-form', {
+        pageTitle: 'Nueva Operación',
+        clientes: cliente 
+    });
+    } catch(e) {
+        console.log(e);
+        res.status(500).send('Error al cargar formulario');
+    }
+};
+
+//new operacion form POST
+exports.postRegistrarOperacion = async (req, res) => {
     try {
-        const { nombre_completo, producto, tipo, monto } = req.body;
-        const { idcliente } = await model.findCliente(nombre_completo);
+        const { idcliente, producto, tipo, monto } = req.body;
         const { idcontrato } = await model.findContrato(producto, idcliente);
         const idusuario = req.session.idusuario;
+        const ipusuario = req.ip;
 
         if (!idcliente) {
-            return res.status(400).send('Error al obtener cliente');
+            return res.status(400).send('Error al obtener cliente o cliente no existente.');
         }
 
         if (!idcontrato) {
-            return res.status(400).send('Contrato no existente para ese cliente');
+            return res.status(400).send('Contrato no existente para ese cliente.');
         }
 
         if (!idusuario) {
             return res.status(400).send('Sesion incorrectamente iniciada');
         }
 
-        await model.createOperacion(idcliente, idcontrato, tipo, monto, idusuario);
+        await model.createOperacion(idcliente, idcontrato, tipo, monto, idusuario, ipusuario);
         res.redirect('/oficial/operaciones?success=true')
+
     }
     catch(e) {
        console.log(e);
