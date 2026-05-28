@@ -48,7 +48,7 @@ module.exports.do_login = async (req, res) =>{
                 return res.redirect ('/operador/dashboard');
 
             case 'cliente':
-                return res.redirect ('/oficial/kyc');
+                return res.redirect('/cliente');
         }
 
     } catch (e) {
