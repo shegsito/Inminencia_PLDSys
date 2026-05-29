@@ -1,12 +1,10 @@
-
 const testTable = document.getElementById("test-table");
-
 
 window.addEventListener("load", () => {
     gridTable = new gridjs.Grid({
         columns: ["Fecha", "Formato", "Estatus", { name: "Descargar", 
                 formatter:(_, row) => {
-                    return gridjs.html(`<a href="/oficial/evidencia/${row.cells[0].data}">Ver</a>`)}}
+                    return gridjs.html(`<a href="/oficial/descargar/${row.cells[0].data}">Ver</a>`)}}
                 ],
         search: false,
         sort: false,

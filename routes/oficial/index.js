@@ -31,6 +31,7 @@ router.get('/evaluar-reporte', (req, res) =>
     res.render('oficial/forms/evaluar-caso-form', {
         pageTitle: 'Forma de evaluación' }));
 router.post('/evaluar-caso', canalInterno.evaluation);
+router.get('/reportes/generar', reportes.dailyReport);
 
 //return the data
 router.get('/operaciones/operacionesCount', operaciones.count);
@@ -48,4 +49,5 @@ router.get('/clientes/:id',    clientes.getCliente);
 router.put('/clientes/:id',    clientes.actualizarCliente);
 router.get('/documentos/:id',  clientes.verDocumento);
 router.get('/evidencia/:id', canalInterno.verEvidencia);
+router.get('/descargar/:filename', reportes.downloadReport);
 module.exports = router;
