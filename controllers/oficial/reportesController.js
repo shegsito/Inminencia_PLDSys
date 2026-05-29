@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const pool = require('../../config/db');
 const model = require('../../models/reporteModel');
 
 //if not existing, create reports folder
@@ -30,15 +31,36 @@ exports.getReportesData = async (req, res) => {
 
 //way to download reports
 exports.downloadReport = async (req, res) => {
+    const { id } = req.params;
     try {
-        const filename = req.params.filename;
-        const filePath = path.join(uploadDir, filename);
+        const result = await pool.query(
+            `SELECT ruta_archivo
+            FROM reporte_regulatorio 
+            WHERE idreporter = $1::uuid`,
+            [id]
+        ); 
+        const doc = result.rows[0];
 
-        if (fs.existsSync(filePath)) {
-            return res.download(filePath);
-        } else {
-            return res.status(404).send('Archivo no existente');
-        }
+        if (!doc) {
+            return res.status(404).send('Documento no encontrado')};
+
+        const findPath = path.resolve(doc.ruta_archivo);
+                
+        if (!fs.existsSync(findPath)){
+            return res.status(404).send('Archivo no encontrado en el servidor')}; 
+
+        //audit log captures this activity
+        const idusuario = req.session.idusuario;
+        const ipusuario = req.ip;
+
+        const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
+                          VALUES ($1, $2, $3, $4, $5, NOW())`
+                          ;
+
+        await pool.query(bitacora, [idusuario, 'DESCARGAR REPORTE REGULATORIO', 'reporte regulatorio', id, ipusuario]);
+        
+        return res.download(findPath);
+
     } catch (e) {
         console.error(e);
         return res.status(500).send('Error al descargar archivo');
@@ -50,6 +72,8 @@ exports.dailyReport = async (req, res) => {
     try {
         const clients = await model.fetchDailyClients();
         const activity = await model.fetchDailyActivity();
+        const idusuario = req.session.idusuario;
+        const ipusuario = req.ip;
             
         const dateStr = new Date().toISOString().split('T')[0];
         const fileName = `reporte_diario_${dateStr}.txt`;
@@ -86,8 +110,8 @@ exports.dailyReport = async (req, res) => {
 
         const estatus = 'generado';
         const formato = 'TXT';
-        await model.reporteRegulatorio(fileName, formato, uploadDir, estatus, dateStr);
-
+        const tipo = 'REPORTE DIARIO';
+        await model.reporteRegulatorio(tipo, formato, filePath, estatus, dateStr, idusuario, ipusuario);
         return res.redirect('/oficial/reportes');
         
     } catch (e) {

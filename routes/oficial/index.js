@@ -49,5 +49,5 @@ router.get('/clientes/:id',    clientes.getCliente);
 router.put('/clientes/:id',    clientes.actualizarCliente);
 router.get('/documentos/:id',  clientes.verDocumento);
 router.get('/evidencia/:id', canalInterno.verEvidencia);
-router.get('/descargar/:filename', reportes.downloadReport);
+router.get('/descargar/:id', reportes.downloadReport);
 module.exports = router;
