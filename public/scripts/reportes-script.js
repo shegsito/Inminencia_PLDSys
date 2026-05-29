@@ -1,12 +1,11 @@
-
 const testTable = document.getElementById("test-table");
-
 
 window.addEventListener("load", () => {
     gridTable = new gridjs.Grid({
         columns: ["Fecha", "Formato", "Estatus", { name: "Descargar", 
                 formatter:(_, row) => {
-                    return gridjs.html(`<a href="/oficial/evidencia/${row.cells[0].data}">Ver</a>`)}}
+                    const idreporte = row.cells[3].data;
+                    return gridjs.html(`<a href="/oficial/descargar/${idreporte}">Ver</a>`)}}
                 ],
         search: false,
         sort: false,
@@ -19,7 +18,8 @@ window.addEventListener("load", () => {
             then: data => data.map(r => [
                 new Date(r.generado_en).toLocaleDateString('es-MX'),
                 r.formato, 
-                r.estatus
+                r.estatus,
+                r.idreporter
             ])
         },
         

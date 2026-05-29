@@ -85,7 +85,7 @@ exports.createOperacion = async (idcliente, idcontrato, tipo, monto, idusuario, 
                  ;
 
         const res = await dbClient.query(sql, [idcliente, idcontrato, tipo, monto, idusuario]);
-        const operacion = res.rows [0];
+        const operacion = res.rows[0];
 
         //extract operation identifier
         const idoperacion = operacion.idoperacion;
