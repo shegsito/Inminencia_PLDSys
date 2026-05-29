@@ -3,11 +3,14 @@ const fs = require('fs');
 const pool = require('../../config/db');
 const model = require('../../models/reporteModel');
 
-//if not existing, create reports folder
-const uploadDir = './reports';
-        if (!fs.existsSync(uploadDir)){
-            fs.mkdirSync(uploadDir, { recursive: true });
-        };
+// const uploadDir = './reports';
+// if (!fs.existsSync(uploadDir)){
+//     fs.mkdirSync(uploadDir, { recursive: true });
+// };
+const uploadDir = process.env.VERCEL
+    ? '/tmp/reports'
+    : path.join(__dirname, '..', '..', 'reports');
+try { fs.mkdirSync(uploadDir, { recursive: true }); } catch (_) {}
 
 //render page
 exports.index = (req, res) => {
