@@ -1,6 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 const { requireLogin, requireRol } = require('../middleware/session-auth');
+const usuarios = require('../controllers/usuariosController');
 
 // Page routes — protected by session login + role check
 router.use('/oficial',   requireLogin, requireRol(['oficial']),  require('./oficial'));
@@ -14,6 +15,9 @@ router.use('/usuarios',  require('./usuarios'));
 // API routes — protected per-route via header-based auth (middleware/auth.js)
 router.use('/api/clientes',   require('./api/clientes'));
 router.use('/api/expediente', require('./api/expedientes'));
+
+//end session
+router.use('/logout', usuarios.logout);
 
 module.exports = router;
 
