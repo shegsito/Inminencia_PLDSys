@@ -23,13 +23,14 @@ button {
     border: none;
     padding: 10px;
     cursor: pointer;
-    margin-left: 50px;
 }
 
 button:hover {
     box-shadow: rgba(39, 37, 37, 0.544) 5px 5px 8px;
 }
 
-.top-right-button {
-    text-align: right; 
+.logout-button{
+    margin-left: 25px;
+    background-color: var(--primary-color);
+    color: white;
 }

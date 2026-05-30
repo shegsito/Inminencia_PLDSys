@@ -23,18 +23,15 @@ router.get('/kyc', (req, res) =>
         pageTitle: 'Nuevo cliente' }));
 router.post('/new-client', (req, res) => 
     res.redirect('/oficial/dashboard'));
-router.get('/registrar-operacion', (req, res) =>
-    res.render('oficial/forms/nueva-operacion-form', {
-        pageTitle: 'Nueva Operación' }));
-router.post('/new-operacion', operaciones.registrarOperacion);
-router.get('/registrar-contrato', (req, res) =>
-    res.render('oficial/forms/nuevo-contrato-form', {
-        pageTitle: 'Nuevo contrato' }));
-router.post('/new-contrato', contratos.registrarContrato);
+router.get('/registrar-operacion', operaciones.getRegistrarOperacion);
+router.post('/new-operacion', operaciones.postRegistrarOperacion);
+router.get('/registrar-contrato', contratos.getRegistrarContrato);
+router.post('/new-contrato', contratos.postRegistrarContrato);
 router.get('/evaluar-reporte', (req, res) =>
     res.render('oficial/forms/evaluar-caso-form', {
         pageTitle: 'Forma de evaluación' }));
 router.post('/evaluar-caso', canalInterno.evaluation);
+router.get('/reportes/generar', reportes.dailyReport);
 
 //return the data
 router.get('/operaciones/operacionesCount', operaciones.count);
@@ -46,9 +43,11 @@ router.get(`/alertas/api/alertasData`, alertas.getAlertasData);
 router.get('/contratos/contratosCount', contratos.count);
 router.get('/contratos/contratosData', contratos.contratos);
 router.get('/canalInterno/canalInternoData', canalInterno.getCanalInternoData);
+router.get('/reportes/reportesData', reportes.getReportesData);
 
 router.get('/clientes/:id',    clientes.getCliente);
 router.put('/clientes/:id',    clientes.actualizarCliente);
 router.get('/documentos/:id',  clientes.verDocumento);
 router.get('/evidencia/:id', canalInterno.verEvidencia);
+router.get('/descargar/:id', reportes.downloadReport);
 module.exports = router;

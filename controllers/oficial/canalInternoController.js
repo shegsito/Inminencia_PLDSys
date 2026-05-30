@@ -29,6 +29,8 @@ module.exports.count = async (req, res) => {
 exports.evaluation = async (req, res) => {
     try {
         const { folio, estatus, resolucion } = req.body;
+        const idusuario = req.session.idusuario;
+        const ipusuario = req.ip;
 
         if (!folio) {
             return res.status(400).send('Favor de ingresar folio')
@@ -37,7 +39,7 @@ exports.evaluation = async (req, res) => {
             return res.status(400).send('Favor de ingresar resolución')
         }
 
-        await canalInterno.evaluateRI(folio, estatus, resolucion);
+        await canalInterno.evaluateRI(folio, estatus, resolucion, idusuario, ipusuario);
         res.redirect('/oficial/evaluar-reporte?success=true')
     }
     catch(e) {
@@ -66,6 +68,16 @@ exports.verEvidencia = async (req, res) => {
         
         if (!fs.existsSync(findPath)){
             return res.status(404).send('Archivo no encontrado en el servidor')};
+
+        //audit log captures this activity
+        const idusuario = req.session.idusuario;
+        const ipusuario = req.ip;
+
+        const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
+                          VALUES ($1, $2, $3, $4, $5, NOW())`
+                          ;
+
+        await pool.query(bitacora, [idusuario, 'CONSULTAR EVIDENCIA', 'reporte interno', id, ipusuario]);
 
         //formatting since this table does not have format column
         const format = path.extname(findPath).toLowerCase();

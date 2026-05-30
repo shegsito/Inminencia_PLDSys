@@ -29,7 +29,6 @@ module.exports.do_login = async (req, res) =>{
         }
 
         //load user permissions
-        //const permisos = await model.User.getPermisos(usuario.email);
         req.session.email = usuario.email;
         req.session.rol = usuario.rol;
         req.session.isLoggedIn = true;
@@ -48,7 +47,7 @@ module.exports.do_login = async (req, res) =>{
                 return res.redirect ('/operador/dashboard');
 
             case 'cliente':
-                return res.redirect ('/oficial/kyc');
+                return res.redirect('/cliente');
         }
 
     } catch (e) {
@@ -57,9 +56,17 @@ module.exports.do_login = async (req, res) =>{
     }
 };
 
-/*exports.get_logged = async (req, res) => {
-    const email = await model.User.findByEmail(req.session.email);
-    if (!email) return res.redirect('/usuarios/login');
-    res.render('usuarios/logged', { user: email });
-};*/
+//option to end session
+exports.logout = async (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Error al cerrar sesión");
+        }
+
+        //delete cookie
+        res.clearCookie('connect.sid');
+        res.redirect('/usuarios/login');
+    });
+}
 
