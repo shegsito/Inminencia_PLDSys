@@ -5,55 +5,28 @@
 
   <body>
 
-    <div class = "entire-container">
-
+    <div class="entire-container">
         <%- include('../partials/sidebar') %>
-
-        <div class = "right-container">
-
+    
+        <div class="right-container">
             <%- include('../partials/header') %>
-
-        <div class = "primary-content">
-
-                <table class = "list-table">
-                    <tr>
-                        <th>LISTA PEP</th>
-                        <th>LISTA LPB</th>
-                    </tr>
-
-                    <tr>
-                        <td>312 registrados cargados. Proxima validacion automatica en 6h.</td>
-                        <td>87 registros cargados. Ultima validacion hace 2h.</td>
-                    </tr>
-                </table>
-
-                <table class = "dashboard-table">
-                    <tr>
-                        <th>LISTA</th>
-                        <th>TIPO</th>
-                        <th>DETECTADA</th>
-                        <th>DECISION</th>
-                    </tr>
-
-                    <tr>
-                        <td>LPB</td>
-                        <td>Posible (score 78%)</td>
-                        <td>04/15/2026 08:30</td>
-                        <td>Pendiente</td>
-                    </tr>
-                    <tr>
-                        <td>PEP</td>
-                        <td>Confirmada</td>
-                        <td>03/04/2026 14:20</td>
-                        <td>Diligencia reforzada</td>
-                    </tr>
-                </table>
-
+    
+            <div class="primary-content">
+                 <div class="dashboard-cards-top">
+                      <div id="listas-PEP"></div>
+                      <div id="listas-LPB"></div>
+                 </div>
+                 <div class="dashboard-cards-bottom">
+                      <div id="historial-listas"></div>
+                 </div>
+            </div>
         </div>
 
-      </div>
+        <%- include('../partials/footer') %>
 
-      <%- include('../partials/footer') %>
+        <script src = "/scripts/listas-script.js">
+    
+        </script>
 
     </div>
 
