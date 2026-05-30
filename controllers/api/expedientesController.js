@@ -72,7 +72,7 @@ exports.subirDocumento = async (req, res) => {
         await dbClient.query(
             `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
              VALUES ($1, $2, $3, $4, $5, NOW())`,
-             [req.usuario.id, 'UPLOAD_DOCUMENTO', 'documento' , iddocumento, req.ip]
+             [req.usuario.id, 'Subió documento', 'documento', iddocumento, req.ip]
         );
 
         await dbClient.query('COMMIT');

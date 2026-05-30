@@ -1,7 +1,19 @@
 const pool = require('../config/db');
 
+const ACCIONES_POSIBLES = [
+    'Activó usuario',
+    'Desactivó usuario',
+    'Creó usuario',
+    'Registró cliente',
+    'Subió documento',
+    'Consultó evidencia',
+    'Descargó reporte regulatorio',
+    'Consultó expediente',
+    'Actualizó cliente',
+];
+
 const BitacoraModel = {
-    getAll: async ({ nombre, accion, entidad, fechaInicio, fechaFin } = {}) => {
+    getAll: async ({ nombre, accion, entidad, fecha } = {}) => {
         const conditions = [];
         const params = [];
 
@@ -10,20 +22,16 @@ const BitacoraModel = {
             conditions.push(`u.nombre ILIKE $${params.length}`);
         }
         if (accion?.trim()) {
-            params.push(accion.trim());
-            conditions.push(`b.accion = $${params.length}`);
+            params.push(`${accion.trim()}%`);
+            conditions.push(`b.accion ILIKE $${params.length}`);
         }
         if (entidad?.trim()) {
             params.push(entidad.trim());
             conditions.push(`b.entidad_afect = $${params.length}`);
         }
-        if (fechaInicio?.trim()) {
-            params.push(fechaInicio.trim());
-            conditions.push(`b.fecha >= $${params.length}::date`);
-        }
-        if (fechaFin?.trim()) {
-            params.push(fechaFin.trim());
-            conditions.push(`b.fecha < ($${params.length}::date + INTERVAL '1 day')`);
+        if (fecha?.trim()) {
+            params.push(fecha.trim());
+            conditions.push(`b.fecha::date = $${params.length}::date`);
         }
 
         const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
@@ -45,12 +53,7 @@ const BitacoraModel = {
         return rows;
     },
 
-    getAcciones: async () => {
-        const { rows } = await pool.query(
-            `SELECT DISTINCT accion FROM bitacora ORDER BY accion`
-        );
-        return rows.map(r => r.accion);
-    },
+    getAcciones: () => ACCIONES_POSIBLES,
 
     getEntidades: async () => {
         const { rows } = await pool.query(

@@ -77,7 +77,7 @@ exports.verEvidencia = async (req, res) => {
                           VALUES ($1, $2, $3, $4, $5, NOW())`
                           ;
 
-        await pool.query(bitacora, [idusuario, 'CONSULTAR EVIDENCIA', 'reporte interno', id, ipusuario]);
+        await pool.query(bitacora, [idusuario, 'Consultó evidencia', 'reporte interno', id, ipusuario]);
 
         //formatting since this table does not have format column
         const format = path.extname(findPath).toLowerCase();

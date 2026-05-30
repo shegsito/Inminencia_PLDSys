@@ -1,20 +1,19 @@
 const BitacoraModel = require('../../models/bitacoraModel');
 
 exports.bitacora = async (req, res) => {
-    const { nombre, accion, entidad, fechaInicio, fechaFin } = req.query;
+    const { nombre, accion, entidad, fecha } = req.query;
     try {
-        const [registros, acciones, entidades] = await Promise.all([
-            BitacoraModel.getAll({ nombre, accion, entidad, fechaInicio, fechaFin}),
-            BitacoraModel.getAcciones(),
+        const [registros, entidades] = await Promise.all([
+            BitacoraModel.getAll({ nombre, accion, entidad, fecha }),
             BitacoraModel.getEntidades(),
         ]);
 
         res.render('admin/bitacora', {
             pageTitle: 'Bitácora',
-            registros, 
-            acciones,
+            registros,
+            acciones: BitacoraModel.getAcciones(),
             entidades,
-            filtros: { nombre, accion, entidad, fechaInicio, fechaFin},
+            filtros: { nombre, accion, entidad, fecha },
         });
     } catch(e) {
         console.error('Error al obtener bitácora:', e);

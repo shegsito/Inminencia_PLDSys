@@ -60,7 +60,7 @@ exports.downloadReport = async (req, res) => {
                           VALUES ($1, $2, $3, $4, $5, NOW())`
                           ;
 
-        await pool.query(bitacora, [idusuario, 'DESCARGAR REPORTE REGULATORIO', 'reporte regulatorio', id, ipusuario]);
+        await pool.query(bitacora, [idusuario, 'Descargó reporte regulatorio', 'reporte regulatorio', id, ipusuario]);
         
         return res.download(findPath);
 
