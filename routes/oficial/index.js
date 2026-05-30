@@ -1,5 +1,7 @@
 const express  = require('express');
 const router   = express.Router();
+const multer   = require('multer');
+const upload   = multer({ dest: 'uploads/' });
 
 const dashboard    = require('../../controllers/oficial/dashboardController');
 const clientes     = require('../../controllers/oficial/clientesController');
@@ -32,6 +34,10 @@ router.get('/evaluar-reporte', (req, res) =>
         pageTitle: 'Forma de evaluación' }));
 router.post('/evaluar-caso', canalInterno.evaluation);
 router.get('/reportes/generar', reportes.dailyReport);
+router.get('/Subir-lista', (req, res) =>
+    res.render('oficial/forms/listas-form', {
+        pageTitle: 'Subir Lista' }));
+router.post('/listas/upload', upload.single('archivo'), listas.uploadLista);
 
 //return the data
 router.get('/operaciones/operacionesCount', operaciones.count);
@@ -44,6 +50,9 @@ router.get('/contratos/contratosCount', contratos.count);
 router.get('/contratos/contratosData', contratos.contratos);
 router.get('/canalInterno/canalInternoData', canalInterno.getCanalInternoData);
 router.get('/reportes/reportesData', reportes.getReportesData);
+router.get('/listas/api/listasPEPData', listas.listasPEP);
+router.get('/listas/api/listasLPBData', listas.listasLPB);
+router.get('/listas/api/historialListasData', listas.fetchHistorialListas);
 
 router.get('/clientes/:id',    clientes.getCliente);
 router.put('/clientes/:id',    clientes.actualizarCliente);

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('../../partials/head') %>
+
+<body>
+  <div class="entire-container">
+
+    <%- include('../../partials/sidebar') %>
+
+    <div class="right-container">
+
+      <%- include('../../partials/header') %>
+
+      <div class="primary-content">
+
+        <div style="margin-bottom: 24px;">
+            <h2 style="color: #4d0100; font-size: 24px; margin-bottom: 8px;">Subir lista</h2>
+            <p style="color: #666; font-size: 15px;">Seleccione el tipo de lista y cargue el archivo correspondiente en formato CSV.</p>
+        </div>
+
+        <div style="background: #fff; padding: 32px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); max-width: 600px;">
+          <form id="upload-lista-form">
+            
+            <div style="margin-bottom: 24px;">
+              <label for="tipo_lista" style="display: block; font-weight: 600; color: #333; margin-bottom: 8px;">Tipo de lista</label>
+              <select id="tipo_lista" name="tipo_lista" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; background-color: #f9f9f9; outline: none; cursor: pointer;">
+                <option value="" disabled selected>Seleccione el tipo de lista</option>
+                <option value="PEP">Lista PEP</option>
+                <option value="LPB">Lista LPB</option>
+              </select>
+            </div>
+
+            <div id="file-drop-area" style="border: 2px dashed #ccc; border-radius: 8px; padding: 40px 20px; text-align: center; cursor: pointer; background-color: #fafafa; transition: background-color 0.2s, border-color 0.2s; margin-bottom: 24px;">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 12px; pointer-events: none;">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="12" y1="18" x2="12" y2="12"></line>
+                  <line x1="9" y1="15" x2="15" y2="15"></line>
+              </svg>
+              <p style="margin: 0; color: #666; font-size: 15px; pointer-events: none;">
+                Arrastre y suelte su archivo CSV aquí o <span style="color: #4d0100; font-weight: 600;">busque su archivo</span>
+              </p>
+              <input type="file" id="archivo_csv" name="archivo_csv" accept=".csv" style="display: none;">
+              
+              <p id="file-name" style="margin-top: 12px; font-weight: 600; color: #4d0100; display: none; font-size: 14px;"></p>
+            </div>
+
+            <div id="upload-feedback" style="display: none; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; text-align: center;"></div>
+
+            <button type="submit" id="btn-cargar" style="width: 100%; padding: 14px; background: #4d0100; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; opacity: 0.5; transition: opacity 0.2s;" disabled>
+              Cargar Lista
+            </button>
+
+          </form>
+        </div>
+
+      </div></div><%- include('../../partials/footer') %>
+  </div><script>
+    const dropArea = document.getElementById('file-drop-area');
+    const fileInput = document.getElementById('archivo_csv');
+    const fileNameDisplay = document.getElementById('file-name');
+    const selectTipoLista = document.getElementById('tipo_lista');
+    const btnCargar = document.getElementById('btn-cargar');
+    const uploadFeedback = document.getElementById('upload-feedback');
+
+    dropArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    dropArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropArea.style.borderColor = '#4d0100';
+      dropArea.style.backgroundColor = '#fff5f5';
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+      dropArea.style.borderColor = '#ccc';
+      dropArea.style.backgroundColor = '#fafafa';
+    });
+
+    dropArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropArea.style.borderColor = '#ccc';
+      dropArea.style.backgroundColor = '#fafafa';
+      
+      if (e.dataTransfer.files.length > 0) {
+        const droppedFile = e.dataTransfer.files[0];
+        if (droppedFile.name.endsWith('.csv')) {
+            fileInput.files = e.dataTransfer.files;
+            handleFileChange();
+        } else {
+            showFeedback('Por favor, suba únicamente archivos en formato CSV.', 'error');
+        }
+      }
+    });
+
+    fileInput.addEventListener('change', handleFileChange);
+    selectTipoLista.addEventListener('change', validateForm);
+
+    function handleFileChange() {
+      if (fileInput.files.length > 0) {
+        fileNameDisplay.style.display = 'block';
+        fileNameDisplay.textContent = `Archivo seleccionado: ${fileInput.files[0].name}`;
+      } else {
+        fileNameDisplay.style.display = 'none';
+        fileNameDisplay.textContent = '';
+      }
+      validateForm();
+    }
+
+    function validateForm() {
+      if (selectTipoLista.value !== "" && fileInput.files.length > 0) {
+        btnCargar.disabled = false;
+        btnCargar.style.opacity = '1';
+      } else {
+        btnCargar.disabled = true;
+        btnCargar.style.opacity = '0.5';
+      }
+    }
+
+    function showFeedback(message, type) {
+        uploadFeedback.style.display = 'block';
+        uploadFeedback.textContent = message;
+        if (type === 'error') {
+            uploadFeedback.style.backgroundColor = '#ffebeb';
+            uploadFeedback.style.color = '#d93025';
+            uploadFeedback.style.border = '1px solid #f5c6c6';
+        } else if (type === 'success') {
+            uploadFeedback.style.backgroundColor = '#e6f4ea';
+            uploadFeedback.style.color = '#137333';
+            uploadFeedback.style.border = '1px solid #ceead6';
+        }
+    }
+
+    document.getElementById('upload-lista-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const file = fileInput.files[0];
+      const tipo = selectTipoLista.value;
+      
+      if (!file || !tipo) return;
+
+      btnCargar.disabled = true;
+      btnCargar.textContent = 'Cargando...';
+      uploadFeedback.style.display = 'none';
+
+      const formData = new FormData();
+      formData.append('archivo', file);
+      formData.append('tipo_lista', tipo);
+
+      try {
+        const response = await fetch('/oficial/listas/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          showFeedback(`La lista ${tipo} se ha cargado exitosamente.`, 'success');
+          document.getElementById('upload-lista-form').reset();
+          fileNameDisplay.style.display = 'none';
+          validateForm();
+        } else {
+          const errorData = await response.json();
+          showFeedback(errorData.error || 'Error al procesar el archivo CSV.', 'error');
+        }
+      } catch (err) {
+        showFeedback('Error de conexión con el servidor.', 'error');
+      } finally {
+        btnCargar.textContent = 'Cargar Lista';
+      }
+    });
+  </script>
+</body>
+</html>
