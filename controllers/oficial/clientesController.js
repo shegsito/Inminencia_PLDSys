@@ -64,7 +64,7 @@ exports.getCliente = async (req, res) => {
         await pool.query(
             `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
              VALUES ($1, $2, $3, $4, $5, NOW())`,
-            [req.usuario?.id || null, `Consultó expediente del cliente ${id}`, 'cliente', id, req.ip]
+            [req.usuario?.id || null, `Consultó expediente de ${cliente.nombre} ${cliente.apellido_paterno}`, 'cliente', id, req.ip]
         );
 
         res.render('oficial/forms/kyc-form', {
