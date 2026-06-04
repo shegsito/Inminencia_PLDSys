@@ -11,6 +11,11 @@ window.addEventListener("load", () => {
                 url: (prev, key) => `${prev}?search=${key}`
             }
         },
+        language: {
+      search: {
+        placeholder: 'Buscar por nombre del cliente'
+      }
+    },
         sort: true,
         pagination: {
             limit: 5,
@@ -27,19 +32,11 @@ window.addEventListener("load", () => {
                 op.estatus
             ])
         },
-        
-        style: {
-            table: {
-                'font-family': 'Cambria, serif'
-            },
-        th: {
-                'background-color': '#4d0100',
-                'color': 'white',
-                'font-size': '18px'
-        },
-        td: {
-                'font-size': '16px'
-            }
-    }
+        className: {
+            table: 'global-custom-table',
+            th: 'global-custom-th',
+            td: 'global-custom-td',
+            search: 'global-custom-search'
+        }
 }).render(testTable);
 });
