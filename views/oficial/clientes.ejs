@@ -50,7 +50,11 @@
           c.telefono     || '—',
           c.nivel_riesgo,
           c.estatus,
-          new Date(c.created_at).toLocaleDateString('es-MX')
+          new Date(c.created_at).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+})
         ])) %>,
         search: true,
         language: {

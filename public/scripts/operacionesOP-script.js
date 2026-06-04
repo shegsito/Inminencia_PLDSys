@@ -23,7 +23,11 @@ window.addEventListener("load", () => {
                 op.idoperacion, 
                 op.tipo_operacion, 
                 op.monto, 
-                new Date(op.fecha).toLocaleDateString('es-MX'), 
+                new Date(op.fecha).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+}), 
                 op.estatus
             ])
         },

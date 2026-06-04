@@ -18,7 +18,11 @@
                     alerta.tipo || 'N/A', 
                     alerta.nombre_cliente || 'N/A', 
                     alerta.motivo || 'N/A', 
-                    alerta.generada_en ? new Date(alerta.generada_en).toLocaleDateString() : 'N/A', 
+                    alerta.generada_en ? new Date(alerta.generada_en).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+}) : 'N/A', 
                     alerta.prioridad || 'N/A', 
                     alerta.estatus || 'N/A'
                 ])

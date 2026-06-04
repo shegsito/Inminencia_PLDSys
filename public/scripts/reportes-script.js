@@ -16,7 +16,11 @@ window.addEventListener("load", () => {
         server: {
             url: '/oficial/reportes/reportesData',
             then: data => data.map(r => [
-                new Date(r.generado_en).toLocaleDateString('es-MX'),
+                new Date(r.generado_en).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+}),
                 r.formato, 
                 r.estatus,
                 r.idreporter
