@@ -183,6 +183,55 @@
     font-weight: 600;
 }
 
+/* ── Dropdown for administrar ───────────────────────────────────────────────────── */
+
+.sidebar-dropdown-toggle {
+    width: 100%;
+    background: none;
+    border: none;
+    font-family: var(--font-family);
+    cursor: pointer;
+}
+
+.sidebar-dropdown-arrow {
+    margin-left: auto;
+    flex-shrink: 0;
+    width: 14px !important;
+    height: 14px !important;
+    transition: transform 0.25s;
+}
+
+.sidebar-dropdown.open .sidebar-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.sidebar.collapsed .sidebar-dropdown-arrow {
+    display: none;
+}
+
+.sidebar-dropdown-menu {
+    list-style: none;
+    padding: 0 0 0 10px;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.25s ease;
+}
+
+.sidebar-dropdown.open .sidebar-dropdown-menu {
+    max-height: 160px;
+}
+
+.sidebar-sublink {
+    padding: 7px 20px !important;
+    font-size: 0.85rem !important;
+}
+
+.sidebar-sublink--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 /* ── Footer ─────────────────────────────────────────────────────── */
 
 .sidebar-footer {

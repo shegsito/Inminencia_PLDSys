@@ -15,17 +15,37 @@
     <!-- Use the <i dara-lucide= ""> to get the icons from Lucide, check them on theiw webstie-->
     <div class="sidebar-section-label">Principal</div>
     <ul>
-      <!-- Sidebar for the admin, just include administrar ...-->
+      <!-- Sidebar for the admin: dropdown with sub-links -->
       <% if (usuario?.rol === 'admin') { %>
-      <li>
-        <a href="/admin/administrar" class="sidebar-link <%= currentPath?.startsWith('/admin') ? 'sidebar-link--active' : '' %>">
-          <i data-lucide="shield-check"></i><span>Administrar</span>
-        </a>
+      <li class="sidebar-dropdown <%= currentPath?.startsWith('/admin') ? 'open' : '' %>">
+        <button class="sidebar-link sidebar-dropdown-toggle">
+          <i data-lucide="shield-check"></i>
+          <span>Administrar</span>
+          <i data-lucide="chevron-down" class="sidebar-dropdown-arrow"></i>
+        </button>
+        <ul class="sidebar-dropdown-menu">
+          <li>
+            <a href="/admin/bitacora" class="sidebar-link sidebar-sublink <%= currentPath === '/admin/bitacora' ? 'sidebar-link--active' : '' %>">
+              <i data-lucide="scroll-text"></i><span>Bitácora</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/gestionar" class="sidebar-link sidebar-sublink <%= currentPath === '/admin/gestionar' ? 'sidebar-link--active' : '' %>">
+              <i data-lucide="users-round"></i><span>Gestionar usuarios</span>
+            </a>
+          </li>
+          <li>
+            <!-- Aplicar restriccion is disabled until the feature is ready, at the right side of that class {sidebar-sublink--disabled}-->
+            <a href="#" class="sidebar-link sidebar-sublink ">
+              <i data-lucide="shield-ban"></i><span>Aplicar restricción</span>
+            </a>
+          </li>
+        </ul>
       </li>
       <% } %>
       <li>
         <a href="/oficial/dashboard" class="sidebar-link <%= currentPath === '/oficial/dashboard' ? 'sidebar-link--active' : '' %>">
-          <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+          <i data-lucide="laptop-minimal"></i><span>Monitoreo</span>
         </a>
       </li>
       <li>
@@ -102,11 +122,25 @@
     toggle.addEventListener('click', function () {
       var collapsed = !sidebar.classList.contains('collapsed');
       sidebar.classList.toggle('collapsed', collapsed);
+      // Close all dropdowns when collapsing sidebar
+      if (collapsed) {
+        sidebar.querySelectorAll('.sidebar-dropdown').forEach(function (d) {
+          d.classList.remove('open');
+        });
+      }
       if (rc) {
         rc.style.transition = 'margin-left 0.25s ease';
         rc.style.marginLeft = collapsed ? '74px' : '230px';
       }
       localStorage.setItem('sb', collapsed ? '1' : '0');
+    });
+
+    // Dropdown toggle
+    sidebar.querySelectorAll('.sidebar-dropdown-toggle').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (sidebar.classList.contains('collapsed')) return;
+        btn.closest('.sidebar-dropdown').classList.toggle('open');
+      });
     });
   });
 })();
