@@ -1,6 +1,5 @@
-const path = require('path');
-const fs   = require('fs');
 const pool = require('../../config/db');
+const supabase = require('../../config/supabase');
 const canalInterno = require('../../models/canalInternoModel');
 
 exports.index = (req, res) => {
@@ -60,35 +59,22 @@ exports.verEvidencia = async (req, res) => {
         );
 
         const doc = result.rows[0];
+        if (!doc) return res.status(404).send('Documento no encontrado');
 
-        if (!doc) {
-            return res.status(404).send('Documento no encontrado')};
+        const { data, error } = await supabase.storage
+            .from('reportes')
+            .createSignedUrl(doc.ruta_evidencia, 120);
 
-        const findPath = path.resolve(doc.ruta_evidencia);
-        
-        if (!fs.existsSync(findPath)){
-            return res.status(404).send('Archivo no encontrado en el servidor')};
+        if (error) return res.status(500).send('Error al generar enlace de evidencia');
 
-        //audit log captures this activity
         const idusuario = req.session.idusuario;
-        const ipusuario = req.ip;
+        await pool.query(
+            `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
+             VALUES ($1, $2, $3, $4, $5, NOW())`,
+            [idusuario, 'Consultó evidencia', 'reporte interno', id, req.ip]
+        );
 
-        const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
-                          VALUES ($1, $2, $3, $4, $5, NOW())`
-                          ;
-
-        await pool.query(bitacora, [idusuario, 'Consultó evidencia', 'reporte interno', id, ipusuario]);
-
-        //formatting since this table does not have format column
-        const format = path.extname(findPath).toLowerCase();
-        let contentType = 'application/octet-stream';
-
-        if (format === '.pdf') contentType = 'application/pdf';
-        else if (format === '.png') contentType = 'image/png';
-        else if (format === '.jpg' || format === '.jpeg') contentType = 'image/jpeg';
-
-        res.setHeader('Content-Type', contentType);
-        res.sendFile(findPath);
+        return res.redirect(data.signedUrl);
 
     } catch (e) {
         console.error(e);

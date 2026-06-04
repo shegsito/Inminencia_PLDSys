@@ -1,6 +1,5 @@
-const path = require('path');
-const fs   = require('fs');
 const pool = require('../../config/db');
+const supabase = require('../../config/supabase');
 const ClienteModel = require('../../models/clienteModel');
 const ExpedienteModel = require('../../models/expedienteModel');
 
@@ -11,15 +10,19 @@ exports.verDocumento = async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query(
-            'SELECT ruta_archivo, formato FROM documento WHERE iddocumento = $1',
+            'SELECT ruta_archivo FROM documento WHERE iddocumento = $1',
             [id]
         );
         const doc = result.rows[0];
         if (!doc) return res.status(404).send('Documento no encontrado');
-        if (!fs.existsSync(doc.ruta_archivo))
-            return res.status(404).send('Archivo no encontrado en el servidor');
-        res.setHeader('Content-Type', doc.formato);
-        res.sendFile(path.resolve(doc.ruta_archivo));
+
+        const { data, error } = await supabase.storage
+            .from('expedientes')
+            .createSignedUrl(doc.ruta_archivo, 120);
+
+        if (error) return res.status(500).send('Error al generar enlace del documento');
+
+        return res.redirect(data.signedUrl);
     } catch (e) {
         console.error('Error al servir documento:', e);
         res.status(500).send('Error al obtener el documento');
