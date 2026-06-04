@@ -25,7 +25,10 @@ window.addEventListener("load", () => {
             then: data => data.map(co => [
                 co.nombre_cliente,
                 co.tipo_producto, 
-                co.monto,
+                new Intl.NumberFormat('es-MX', {
+                    style: 'currency', 
+                    currency: 'MXN' 
+                }).format(co.monto || 0),
                 co.estatus
             ])
         },

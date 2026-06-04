@@ -22,7 +22,11 @@ window.addEventListener("load", () => {
             then: data => data.map(ri => [
                 ri.idreporteint,
                 ri.descripcion, 
-                new Date(ri.fecha).toLocaleDateString('es-MX'),
+                new Date(ri.fecha).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+}),
                 ri.estatus
             ])
         },

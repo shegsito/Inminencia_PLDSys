@@ -27,7 +27,10 @@ window.addEventListener("load", () => {
                 op.nombre_cliente, 
                 op.idoperacion, 
                 op.tipo_operacion, 
-                op.monto, 
+                new Intl.NumberFormat('es-MX', {
+                    style: 'currency', 
+                    currency: 'MXN' 
+                }).format(op.monto || 0),
                 new Date(op.fecha).toLocaleDateString('es-MX', {
   day: '2-digit',
   month: '2-digit',

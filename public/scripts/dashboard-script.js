@@ -70,7 +70,10 @@ const operacionesGrid = new gridjs.Grid({
             then: data => data.map(op => [
                 op.nombre_cliente, 
                 op.tipo_operacion, 
-                op.monto, 
+                new Intl.NumberFormat('es-MX', {
+                    style: 'currency', 
+                    currency: 'MXN' 
+                }).format(op.monto || 0), 
                 new Date(op.fecha).toLocaleDateString('es-MX')
             ])
         },
