@@ -9,3 +9,9 @@ Actividad general (2026-05-29)
 ==================================================
 
 ID de usuario: 091088f1-1824-4465-bb3d-f07c7e4555e5 | Acción: CONSULTAR EVIDENCIA | Entidad afectada: reporte interno
+ID de usuario: 091088f1-1824-4465-bb3d-f07c7e4555e5 | Acción: GENERAR REPORTE REGULATORIO | Entidad afectada: reporte regulatorio
+ID de usuario: 091088f1-1824-4465-bb3d-f07c7e4555e5 | Acción: DESCARGAR REPORTE REGULATORIO | Entidad afectada: reporte regulatorio
+ID de usuario: 091088f1-1824-4465-bb3d-f07c7e4555e5 | Acción: Consultó expediente del cliente 482b9a57-6551-493a-9c12-b2f8ff8f1417 | Entidad afectada: cliente
+ID de usuario: 091088f1-1824-4465-bb3d-f07c7e4555e5 | Acción: Actualizó cliente: calle | Entidad afectada: cliente
+ID de usuario: 091088f1-1824-4465-bb3d-f07c7e4555e5 | Acción: DESCARGAR REPORTE REGULATORIO | Entidad afectada: reporte regulatorio
+ID de usuario: 091088f1-1824-4465-bb3d-f07c7e4555e5 | Acción: CONSULTAR EVIDENCIA | Entidad afectada: reporte interno

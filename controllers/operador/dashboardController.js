@@ -31,8 +31,8 @@ exports.operador_index = (req, res) => {
 
 exports.operador_reporte = (req, res) => {
     //route to connect internal report button with form
-    res.render('operador/forms/caso-sospechoso', {
-        pageTitle: "Reporte de caso sospechoso"
+    res.render('operador/forms/reporte-interno', {
+        pageTitle: "Creación de reporte interno"
     });
 };
 
