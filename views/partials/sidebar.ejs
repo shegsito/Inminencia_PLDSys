@@ -1,25 +1,113 @@
-        <div class = "sidebar">
-            <div class = "logo">INMINENCIA </div>
-            <nav>
-                <p>Principal</p>
-                <ul>
-                    <% if (usuario?.rol === 'admin') { %>
-                    <li><a href="/admin/administrar">Administrar</a></li>
-                    <% } %>
-                    <li><a href = "/oficial/dashboard">Dashboard</a></li>
-                    <li><a href = "/oficial/alertas">Alertas</a></li>
-                </ul>
-                <p>Clientes</p>
-                <ul>
-                    <li><a href = "/oficial/clientes">Clientes</a></li>
-                    <li><a href = "/oficial/contratos">Contratos</a></li>
-                    <li><a href = "/oficial/operaciones">Operaciones</a></li>
-                </ul>
-                <p>Cumplimiento</p>
-                <ul>
-                    <li><a href = "/oficial/listas">Listas</a></li>
-                    <li><a href = "/oficial/reportes">Reportes</a></li>
-                    <li><a href = "/oficial/canal-interno">Canal interno</a></li>
-                </ul>
-            </nav>
-        </div>
+<div class="sidebar" id="sidebar">
+
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-info">
+      <span class="sidebar-brand-title">INMINENCIA</span>
+      <span class="sidebar-brand-sub">SOFTWARE DEVELOPERS</span>
+    </div>
+    <button class="sidebar-toggle-btn" id="sidebarToggle" title="Contraer menú">
+      <i data-lucide="chevrons-left"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+
+    <!-- Use the <i dara-lucide= ""> to get the icons from Lucide, check them on theiw webstie-->
+    <div class="sidebar-section-label">Principal</div>
+    <ul>
+      <!-- Sidebar for the admin, just include administrar ...-->
+      <% if (usuario?.rol === 'admin') { %>
+      <li>
+        <a href="/admin/administrar" class="sidebar-link <%= currentPath?.startsWith('/admin') ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="shield-check"></i><span>Administrar</span>
+        </a>
+      </li>
+      <% } %>
+      <li>
+        <a href="/oficial/dashboard" class="sidebar-link <%= currentPath === '/oficial/dashboard' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="/oficial/alertas" class="sidebar-link <%= currentPath === '/oficial/alertas' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="bell"></i><span>Alertas</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-label">Clientes</div>
+    <ul>
+      <li>
+        <a href="/oficial/clientes" class="sidebar-link <%= currentPath?.startsWith('/oficial/clientes') ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="users"></i><span>Clientes</span>
+        </a>
+      </li>
+      <li>
+        <a href="/oficial/contratos" class="sidebar-link <%= currentPath === '/oficial/contratos' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="file-text"></i><span>Contratos</span>
+        </a>
+      </li>
+      <li>
+        <a href="/oficial/operaciones" class="sidebar-link <%= currentPath === '/oficial/operaciones' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="arrow-right-left"></i><span>Operaciones</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-label">Cumplimiento</div>
+    <ul>
+      <li>
+        <a href="/oficial/listas" class="sidebar-link <%= currentPath === '/oficial/listas' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="list-checks"></i><span>Listas PEB/LPB</span>
+        </a>
+      </li>
+      <li>
+        <a href="/oficial/reportes" class="sidebar-link <%= currentPath === '/oficial/reportes' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="bar-chart-2"></i><span>Reportes</span>
+        </a>
+      </li>
+      <li>
+        <a href="/oficial/canal-interno" class="sidebar-link <%= currentPath === '/oficial/canal-interno' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="megaphone"></i><span>Canal Interno</span>
+        </a>
+      </li>
+    </ul>
+
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="#" class="sidebar-link">
+      <i data-lucide="circle-help"></i><span>Ayuda</span>
+    </a>
+  </div>
+
+</div>
+
+<script>
+  //this function applies the collapsing sidebar view
+(function () {
+  var sidebar = document.getElementById('sidebar');
+  // Apply collapsed state immediately (sidebar is already in DOM)
+  if (localStorage.getItem('sb') === '1') sidebar.classList.add('collapsed');
+
+  document.addEventListener('DOMContentLoaded', function () {
+    lucide.createIcons();
+
+    var toggle = document.getElementById('sidebarToggle');
+    var rc = document.querySelector('.right-container');
+
+    // Set initial margin without animation
+    if (rc) rc.style.marginLeft = sidebar.classList.contains('collapsed') ? '74px' : '230px';
+
+    toggle.addEventListener('click', function () {
+      var collapsed = !sidebar.classList.contains('collapsed');
+      sidebar.classList.toggle('collapsed', collapsed);
+      if (rc) {
+        rc.style.transition = 'margin-left 0.25s ease';
+        rc.style.marginLeft = collapsed ? '74px' : '230px';
+      }
+      localStorage.setItem('sb', collapsed ? '1' : '0');
+    });
+  });
+})();
+</script>
