@@ -12,7 +12,7 @@ const NOMBRE_COMPLETO = `
 const ClienteModel = {
     getAll: async () => {
         const res = await pool.query(
-            `SELECT *, ${NOMBRE_COMPLETO} FROM cliente ORDER BY apellido_paterno, nombre`
+            `SELECT *, ${NOMBRE_COMPLETO} FROM cliente ORDER BY created_at DESC`
         );
         return res.rows;
     },

@@ -74,7 +74,11 @@ const operacionesGrid = new gridjs.Grid({
                     style: 'currency', 
                     currency: 'MXN' 
                 }).format(op.monto || 0), 
-                new Date(op.fecha).toLocaleDateString('es-MX')
+                new Date(op.fecha).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+})
             ])
         },
         className: {
