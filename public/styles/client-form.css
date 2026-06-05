@@ -45,6 +45,11 @@
     box-shadow: none;
 }
 
+.tipo-toggle-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
 /* Two-column wrapper */
 .kyc-wrapper {
     display: flex;

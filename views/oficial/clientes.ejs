@@ -36,16 +36,16 @@
             name: 'Riesgo',
             // Formatter to display risk level with color coding
             formatter: (cell) => {
-              const val = cell ? cell.toLowerCase().trim() : 'bajo';
-              if (val === 'alto') {
-                return gridjs.html(`<span style="color: #dc2626; font-weight: bold; text-transform: capitalize;">Alto</span>`);
-              } else if (val === 'medio') {
-                return gridjs.html(`<span style="color: #d97706; font-weight: bold; text-transform: capitalize;">Medio</span>`);
-              } else {
-                return gridjs.html(`<span style="color: #16a34a; font-weight: bold; text-transform: capitalize;">Bajo</span>`);
-              }
-            }
-          },
+                        const val = cell ? cell.toLowerCase().trim() : 'bajo';
+                        if (val === "alta") {
+                            return gridjs.html(`<span style="background-color: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Alta</span>`);
+                        } else if (val === "media") {
+                            return gridjs.html(`<span style="background-color: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Media</span>`);
+                        } else {
+                            return gridjs.html(`<span style="background-color: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Baja</span>`);
+                        }
+                    }
+            },
           { name: 'Estatus' },
           { name: 'Registrado' },
           {
@@ -63,17 +63,27 @@
           c.telefono     || '—',
           c.nivel_riesgo, // Passes live database calculation to the column formatter above
           c.estatus,
-          new Date(c.created_at).toLocaleDateString('es-MX')
+          new Date(c.created_at).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+})
         ])) %>,
         search: true,
+        language: {
+      search: {
+        placeholder: 'Buscar por nombre, RFC, correo...'
+      }
+    },
         sort:   true,
         pagination: { 
           summary: false,
           limit: 5 },
-        style: {
-          table: { 'font-family': 'Cambria, serif' },
-          th:    { 'background-color': '#4d0100', 'color': 'white', 'font-size': '18px' },
-          td:    { 'font-size': '16px' }
+          className: {
+            table: 'global-custom-table',
+            th: 'global-custom-th',
+            td: 'global-custom-td',
+            search: 'global-custom-search'
         }
       }).render(document.getElementById('clientes-table'));
     });

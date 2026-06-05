@@ -22,23 +22,19 @@ window.addEventListener("load", () => {
             then: data => data.map(ri => [
                 ri.idreporteint,
                 ri.descripcion, 
-                new Date(ri.fecha).toLocaleDateString('es-MX'),
+                new Date(ri.fecha).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+}),
                 ri.estatus
             ])
         },
-        
-        style: {
-            table: {
-                'font-family': 'Cambria, serif'
-            },
-        th: {
-                'background-color': '#4d0100',
-                'color': 'white',
-                'font-size': '18px'
-        },
-        td: {
-                'font-size': '16px'
-            }
-    }
+        className: {
+            table: 'global-custom-table',
+            th: 'global-custom-th',
+            td: 'global-custom-td',
+            search: 'global-custom-search'
+        }
 }).render(testTable);
 });

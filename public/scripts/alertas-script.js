@@ -11,7 +11,7 @@ window.addEventListener("load", () => {
                     name: "Prioridad",
                     width: "130px",
                     formatter: (cell) => {
-                        const val = cell ? cell.toLowerCase() : '';
+                        const val = cell ? cell.toLowerCase().trim() : 'bajo';
                         if (val === "alta") {
                             return gridjs.html(`<span style="background-color: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Alta</span>`);
                         } else if (val === "media") {

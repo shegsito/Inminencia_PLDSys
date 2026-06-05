@@ -3,13 +3,13 @@ const testTable = document.getElementById("test-table");
 window.addEventListener("load", () => {
     gridTable = new gridjs.Grid({
         columns: [
-            { id: 'idcontrato', hidden: true }, 
-            "Nombre", 
-            "Productos", 
-            "Monto", 
-            "Estatus",
+            { id: 'idcontrato', name: 'ID', hidden: true },
+            "Nombre",                                   
+            "Productos",                            
+            "Monto",                              
+            "Estatus",                                  
             {
-                name: "Perfil",
+                name: "Perfil",                         
                 formatter: (_, row) => {
                     const idContrato = row.cells[0].data;
                     return gridjs.html(`
@@ -23,9 +23,15 @@ window.addEventListener("load", () => {
         ],
         search: {
             enabled: true,
+            placeholder: "Buscar por nombre de cliente...",
             server: {
                 url: (prev, key) => `${prev}?search=${key}`
             },
+        },
+        language: {
+            search: {
+                placeholder: 'Buscar por nombre del cliente'
+            }
         },
         sort: false,
         pagination: {
@@ -37,23 +43,20 @@ window.addEventListener("load", () => {
             then: data => data.map(co => [
                 co.idcontrato,      
                 co.nombre_cliente,  
-                co.tipo_producto,   
-                co.monto,          
-                co.estatus          
+                co.tipo_producto,  
+                new Intl.NumberFormat('es-MX', {
+                    style: 'currency', 
+                    currency: 'MXN' 
+                }).format(co.monto || 0), 
+                co.estatus,         
+                null              
             ])
         },
-        style: {
-            table: {
-                'font-family': 'Cambria, serif'
-            },
-            th: {
-                'background-color': '#4d0100',
-                'color': 'white',
-                'font-size': '18px'
-            },
-            td: {
-                'font-size': '16px'
-            }
+        className: {
+            table: 'global-custom-table',
+            th: 'global-custom-th',
+            td: 'global-custom-td',
+            search: 'global-custom-search'
         }
     }).render(testTable);
 });

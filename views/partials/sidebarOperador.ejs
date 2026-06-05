@@ -1,14 +1,81 @@
-        <div class = "sidebar">
-            <div class = "logo">INMINENCIA </div>
-            <nav>
-                <p>Principal</p>
-                <ul>
-                    <li><a href = "/operador/dashboard">Dashboard</a></li>
-                </ul>
-                <p>Clientes</p>
-                <ul>
-                    <li><a href = "/operador/clientes">Clientes</a></li>
-                    <li><a href = "/operador/operaciones">Operaciones</a></li>
-                </ul>
-            </nav>
-        </div>
+<div class="sidebar" id="sidebar">
+
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-info">
+      <span class="sidebar-brand-title">INMINENCIA</span>
+      <span class="sidebar-brand-sub">SOFTWARE DEVELOPERS</span>
+    </div>
+    <button class="sidebar-toggle-btn" id="sidebarToggle" title="Contraer menú">
+      <i data-lucide="chevrons-left"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+
+    <div class="sidebar-section-label">Principal</div>
+    <ul>
+      <li>
+        <a href="/operador/dashboard" class="sidebar-link <%= currentPath === '/operador/dashboard' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="layout-dashboard"></i><span>Monitoreo</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-label">Clientes</div>
+    <ul>
+      <li>
+        <a href="/operador/clientes" class="sidebar-link <%= currentPath?.startsWith('/operador/clientes') ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="users"></i><span>Clientes</span>
+        </a>
+      </li>
+      <li>
+        <a href="/operador/operaciones" class="sidebar-link <%= currentPath === '/operador/operaciones' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="arrow-right-left"></i><span>Operaciones</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-label">Reportar</div>
+    <ul>
+      <li>
+        <a href="/operador/reportar" class="sidebar-link <%= currentPath === '/operador/reportar' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="megaphone"></i><span>Canal Interno</span>
+        </a>
+      </li>
+    </ul>
+
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="#" class="sidebar-link">
+      <i data-lucide="circle-help"></i><span>Ayuda</span>
+    </a>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var sidebar = document.getElementById('sidebar');
+  if (localStorage.getItem('sb') === '1') sidebar.classList.add('collapsed');
+
+  document.addEventListener('DOMContentLoaded', function () {
+    lucide.createIcons();
+
+    var toggle = document.getElementById('sidebarToggle');
+    var rc = document.querySelector('.right-container');
+
+    if (rc) rc.style.marginLeft = sidebar.classList.contains('collapsed') ? '74px' : '230px';
+
+    toggle.addEventListener('click', function () {
+      var collapsed = !sidebar.classList.contains('collapsed');
+      sidebar.classList.toggle('collapsed', collapsed);
+      if (rc) {
+        rc.style.transition = 'margin-left 0.25s ease';
+        rc.style.marginLeft = collapsed ? '74px' : '230px';
+      }
+      localStorage.setItem('sb', collapsed ? '1' : '0');
+    });
+  });
+})();
+</script>

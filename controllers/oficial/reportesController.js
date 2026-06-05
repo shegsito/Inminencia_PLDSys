@@ -81,8 +81,8 @@ exports.dailyReport = async (req, res) => {
         if (activity.length === 0) {
             fileContent += `Sin actividad.\n`;
         } else {
-            activity.forEach(a => {
-                fileContent += `ID de usuario: ${a.idusuario} | Acción: ${a.accion} | Entidad afectada: ${a.entidad_afect}\n`;
+            activity.forEach(act => {
+                fileContent += `ID de usuario: ${act.idusuario} | Accion: ${act.accion} | Entidad afectada: ${act.entidad_afect}\n`;
             });
         }
 
