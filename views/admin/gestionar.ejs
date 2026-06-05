@@ -144,10 +144,19 @@
           u.email,
           u.rol.charAt(0).toUpperCase() + u.rol.slice(1),
           u.activo ? 'Activo' : 'Inactivo',
-          new Date(u.created_at).toLocaleDateString('es-MX')
+          new Date(u.created_at).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+})
         ])) %>,
         search: true,
         sort:   true,
+        language: {
+      search: {
+        placeholder: 'Buscar por nombre, correo, rol...'
+      }
+    },
         pagination: { limit: 10, summary: false },
         style: {
           table: { 'font-family': 'Cambria, serif' },
