@@ -102,7 +102,7 @@ exports.dailyReport = async (req, res) => {
             fileContent += `Sin actividad.\n`;
         } else {
             activity.forEach(act => {
-                fileContent += `ID de usuario: ${act.idusuario} | Acción: ${act.accion} | Entidad afectada: ${act.entidad_afect}\n`;
+                fileContent += `ID de usuario: ${act.idusuario} | Accion: ${act.accion} | Entidad afectada: ${act.entidad_afect}\n`;
             });
         }
             

@@ -24,7 +24,7 @@
               <div class="form-row" id="row-data">
               <div class="form-group">
                 <label for="idcliente">Cliente</label>
-                <select id="idcliente" name="idcliente" required>
+                <select id="idcliente" name="idcliente" required required>
                   <option value="" disabled selected>Seleccionar cliente</option>
                   <% clientes.forEach(cliente => { %>
                   <option value="<%= cliente.idcliente %>">
@@ -35,7 +35,8 @@
 
               <div class="form-group">
                   <label for="producto">Producto relacionado</label>
-                  <select id="producto" name="producto">
+                  <select id="producto" name="producto" required>
+                    <option value="" disabled selected>Seleccionar producto relacionado</option>
                     <option value="credito_simple">Crédito simple</option>
                     <option value="credito_cuenta_corriente">Crédito cuenta corriente</option>
                   </select>
@@ -47,7 +48,8 @@
 
                 <div class="form-group">
                   <label for="tipo">Tipo de operación</label>
-                  <select id="tipo" name="tipo">
+                  <select id="tipo" name="tipo" required>
+                    <option value="" disabled selected>Seleccionar operación</option>
                     <option value="pago">Pago</option>
                     <option value="disposicion">Disposición</option>
                     <option value="desembolso">Desembolso</option>
@@ -57,7 +59,7 @@
                 <div class="form-group">
                   <label for="monto">Monto</label>
                   <input type="number" id="monto" name="monto" step="0.01" min="0"
-                         placeholder="Escriba el monto total">
+                         placeholder="Escriba el monto total" required>
                 </div>
               </div>
 
