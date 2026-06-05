@@ -96,9 +96,10 @@
   </nav>
 
   <div class="sidebar-footer">
-    <a href="#" class="sidebar-link">
-      <i data-lucide="circle-help"></i><span>Ayuda</span>
-    </a>
+   <!-- <a href="/logout" class="sidebar-link" id="logoutBtn">-->
+      <button class="sidebar-link" onclick="confirmLogout()">
+      <i data-lucide="log-out"></i><b><span>Salir de sesión</span></b></button>
+    <!--</a>-->
   </div>
 
 </div>
@@ -144,4 +145,18 @@
     });
   });
 })();
+
+//function to confirm logout
+function confirmLogout() {
+  /*alert("salir");
+  window.location(url) = "/logout";*/
+
+  if (confirm("Deseas salir de tu sesión? Los datos no quedan guardados.")) {
+    location.pathname='/logout';
+  } else {
+    null;
+  }
+  // yo estuve aquí :)
+  document.getElementById("logoutBtn");
+};
 </script>
