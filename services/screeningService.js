@@ -1,5 +1,5 @@
 const pool = require('../config/db');
-const { normalizeText } = require('../utils/normalize');
+const { normalizeText } = require('../utils/normalizer');
 
 const executeScreening = async (clientPayload) => {
     const { idcliente, nombre, apellido_paterno, apellido_materno, curp } = clientPayload;
