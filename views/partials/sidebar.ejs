@@ -96,12 +96,37 @@
   </nav>
 
   <div class="sidebar-footer">
-   <!-- <a href="/logout" class="sidebar-link" id="logoutBtn">-->
       <button class="sidebar-link" onclick="confirmLogout()">
       <i data-lucide="log-out"></i><b><span>Salir de sesión</span></b></button>
-    <!--</a>-->
   </div>
 
+</div>
+
+<!-- modal pop up like kyc-->
+<div id="logoutModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:1000; align-items:center; justify-content:center;">
+  
+  <div style="background:#4d0100; padding:2.5rem 2rem; border-radius:12px; max-width:440px; width:90%; box-shadow:0 8px 32px rgba(0,0,0,.5); text-align:center;">
+    
+    <svg width="80" height="72" viewBox="0 0 100 90" style="margin-bottom:1.2rem; display:block; margin-left:auto; margin-right:auto;">
+      <polygon points="50,8 92,82 8,82" fill="none" stroke="rgba(200,200,200,0.75)" stroke-width="5" stroke-linejoin="round"/>
+      <line x1="50" y1="34" x2="50" y2="58" stroke="rgba(200,200,200,0.85)" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="50" cy="70" r="4" fill="rgba(200,200,200,0.85)"/>
+    </svg>
+
+    <p id="logout-mensaje" style="color:#fff; font-size:18px; font-weight:600; margin-bottom:1.8rem; font-family:inherit;">
+      ¿Está seguro que desea cerrar sesión?
+    </p>
+
+    <div style="display:flex; gap:16px; justify-content:center;">
+      <button id="cancelLogout" style="padding:10px 28px; border:2px solid rgba(255,255,255,0.45); border-radius:6px; background:transparent; color:#fff; cursor:pointer; font-size:14px; font-family:inherit; font-weight:500;">
+        Cancelar
+      </button>
+      <button id="confirmLogout" style="padding:10px 28px; border:none; border-radius:6px; background:#fff; color:#4d0100; cursor:pointer; font-size:14px; font-family:inherit; font-weight:700;">
+        Cerrar Sesión
+      </button>
+    </div>
+
+  </div>
 </div>
 
 <script>
@@ -148,14 +173,23 @@
 
 //function to confirm logout
 function confirmLogout() {
-  /*alert("salir");
-  window.location(url) = "/logout";*/
+  const modal = document.getElementById("logoutModal");
+  const cancel = document.getElementById("cancelLogout");
+  const confirm = document.getElementById("confirmLogout");
 
-  if (confirm("Deseas salir de tu sesión? Los datos no quedan guardados.")) {
-    location.pathname='/logout';
-  } else {
-    null;
-  }
+  modal.style.display = 'flex';
+  
+//no logout
+  cancel.onclick = function() {
+    modal.style.display = 'none';
+  };
+
+  //logout confirm
+  confirm.onclick = function() {
+    modal.style.display = 'none';
+    location.pathname = '/logout';
+  };
+
   // yo estuve aquí :)
   document.getElementById("logoutBtn");
 };
