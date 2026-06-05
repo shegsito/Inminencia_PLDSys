@@ -2,7 +2,7 @@ const UsuarioModel = require('../models/usuarioModel');
 const bcrypt = require('bcryptjs');
 
 module.exports.render_login = async (req, res) =>{
-    res.render("usuarios/login", { registro: false });
+    res.render("usuarios/login", { error: null });
 }
 
 module.exports.do_login = async (req, res) =>{
@@ -11,21 +11,21 @@ module.exports.do_login = async (req, res) =>{
 
         //fields must be filled in
         if (!email || !password) {
-            return res.status(400).send('Please fill in all fields');
+            return res.render('usuarios/login', { error: 'Por favor completa todos los campos' });
         }
 
         const usuario = await UsuarioModel.findByEmail(req.body.email);
         //checking for existing user
         console.log("Usuario found:", usuario);
-        
+
         if (!usuario) {
-            return res.status(400).send('Username or password incorrect');
+            return res.render('usuarios/login', { error: 'Usuario o contraseña incorrectos' });
         }
 
         //verify password
         const doMatch = await bcrypt.compare(password, usuario.password);
         if (!doMatch) {
-            return res.status(400).send('Username or password incorrect');
+            return res.render('usuarios/login', { error: 'Usuario o contraseña incorrectos' });
         }
 
         //load user permissions
@@ -33,7 +33,7 @@ module.exports.do_login = async (req, res) =>{
         req.session.rol = usuario.rol;
         req.session.isLoggedIn = true;
         req.session.permisos = usuario.permisos;
-        req.session.idusuario = usuario.idusuario; 
+        req.session.idusuario = usuario.idusuario;
 
         //redirection based on role
         switch (usuario.rol) {
@@ -52,7 +52,7 @@ module.exports.do_login = async (req, res) =>{
 
     } catch (e) {
         console.error(e);
-        res.redirect('/usuarios/login');
+        res.render('usuarios/login', { error: 'Error interno, intenta de nuevo' });
     }
 };
 
