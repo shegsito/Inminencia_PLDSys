@@ -11,6 +11,11 @@ window.addEventListener("load", () => {
                 url: (prev, key) => `${prev}?search=${key}`
             },
         },
+        language: {
+      search: {
+        placeholder: 'Buscar por nombre, RFC, correo...'
+      }
+    },
         sort: true,
         pagination: {
             limit: 5,

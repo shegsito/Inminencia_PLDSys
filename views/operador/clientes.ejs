@@ -52,6 +52,11 @@
 })
         ])) %>,
         search: true,
+        language: {
+      search: {
+        placeholder: 'Buscar por nombre, RFC, correo...'
+      }
+    },
         sort:   true,
         pagination: { limit: 10 }
       }).render(document.getElementById('clientes-table'));

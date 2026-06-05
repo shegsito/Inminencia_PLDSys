@@ -19,7 +19,8 @@
     "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.19.0",
     "multer": "^2.1.1",
-    "pg": "^8.20.0"
+    "pg": "^8.20.0",
+    "supabase-js": "0.0.1-security"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
