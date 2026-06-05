@@ -1,23 +1,18 @@
 const pool = require('../config/db');
-const { fetchAllAlertas } = require('./dashboardModel');
 
-const AlertaModel = {
-    fetchAllAlertas: async () => {
-        const sql = `
-            SELECT a.regla_rota AS tipo,
-                        TRIM(CONCAT(c.nombre, ' ', c.apellido_paterno,
-                            CASE WHEN c.apellido_materno IS NOT NULL AND c.apellido_materno <> ''
-                                THEN ' ' || c.apellido_materno ELSE '' END)) AS nombre_cliente,
-                        a.motivo,
-                        a.generada_en,
-                        a.prioridad,
-                        a.estatus FROM alerta a
-            JOIN cliente c ON a.idcliente = c.idcliente
-            ORDER BY a.generada_en DESC`;
-            
-        const { rows } = await pool.query(sql);
-        return rows;
-                }
+exports.fetchAllAlertas = async () => {
+    const sql = `
+        SELECT 
+            a.idalerta AS id,
+            TRIM(CONCAT(c.nombre, ' ', c.apellido_paterno, ' ', COALESCE(c.apellido_materno, ''))) AS cliente_evaluado,
+            a.motivo AS motivo_excepcion,
+            a.prioridad,
+            a.estatus AS estado
+        FROM public.alerta a
+        JOIN public.cliente c ON a.idcliente = c.idcliente
+        WHERE a.estatus = 'pendiente'
+        ORDER BY a.prioridad ASC, a.generada_en DESC
+    `;
+    const { rows } = await pool.query(sql);
+    return rows;
 };
-
-module.exports = AlertaModel;
