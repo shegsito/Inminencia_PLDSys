@@ -1,27 +1,17 @@
-const path = require('path');
-const fs = require('fs');
 const pool = require('../../config/db');
+const supabase = require('../../config/supabase');
 const model = require('../../models/reporteModel');
 
-// const uploadDir = './reports';
-// if (!fs.existsSync(uploadDir)){
-//     fs.mkdirSync(uploadDir, { recursive: true });
-// };
-const uploadDir = process.env.VERCEL
-    ? '/tmp/reports'
-    : path.join(__dirname, '..', '..', 'reports');
-try { fs.mkdirSync(uploadDir, { recursive: true }); } catch (_) {}
+const BUCKET = 'reportes';
 
-//render page
 exports.index = (req, res) => {
-    res.render('oficial/reportes', { 
+    res.render('oficial/reportes', {
         pageTitle: 'Reportes',
-        buttonText: 'Generar reporte', 
+        buttonText: 'Generar reporte',
         buttonLink: '/oficial/reportes/generar'
     });
 };
 
-//fill table
 exports.getReportesData = async (req, res) => {
     try {
         const data = await model.fetchAll();
@@ -32,72 +22,62 @@ exports.getReportesData = async (req, res) => {
     }
 };
 
-//way to download reports
 exports.downloadReport = async (req, res) => {
     const { id } = req.params;
     try {
         const result = await pool.query(
-            `SELECT ruta_archivo
-            FROM reporte_regulatorio 
-            WHERE idreporter = $1::uuid`,
+            `SELECT ruta_archivo FROM reporte_regulatorio WHERE idreporter = $1::uuid`,
             [id]
-        ); 
+        );
         const doc = result.rows[0];
+        if (!doc) return res.status(404).send('Documento no encontrado');
 
-        if (!doc) {
-            return res.status(404).send('Documento no encontrado')};
+        // generate a signed URL valid for 60 seconds
+        const { data, error } = await supabase.storage
+            .from(BUCKET)
+            .createSignedUrl(doc.ruta_archivo, 60);
 
-        const findPath = path.resolve(doc.ruta_archivo);
-                
-        if (!fs.existsSync(findPath)){
-            return res.status(404).send('Archivo no encontrado en el servidor')}; 
+        if (error) throw error;
 
-        //audit log captures this activity
         const idusuario = req.session.idusuario;
-        const ipusuario = req.ip;
+        await pool.query(
+            `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
+             VALUES ($1, $2, $3, $4, $5, NOW())`,
+            [idusuario, 'Descargó reporte regulatorio', 'reporte regulatorio', id, req.ip]
+        );
 
-        const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
-                          VALUES ($1, $2, $3, $4, $5, NOW())`
-                          ;
-
-        await pool.query(bitacora, [idusuario, 'Descargó reporte regulatorio', 'reporte regulatorio', id, ipusuario]);
-        
-        return res.download(findPath);
-
+        return res.redirect(data.signedUrl);
     } catch (e) {
         console.error(e);
         return res.status(500).send('Error al descargar archivo');
     }
 };
 
-//daily report generation
 exports.dailyReport = async (req, res) => {
     try {
-        const clients = await model.fetchDailyClients();
+        const clients  = await model.fetchDailyClients();
         const activity = await model.fetchDailyActivity();
         const idusuario = req.session.idusuario;
-        const ipusuario = req.ip;
-            
-        const dateStr = new Date().toISOString().split('T')[0];
+
+        const dateStr  = new Date().toISOString().split('T')[0];
         const fileName = `reporte_diario_${dateStr}.txt`;
 
         let fileContent = `Clientes registrados (${dateStr})\n`;
         fileContent += `==================================================\n\n`;
-            
+
         if (clients.length === 0) {
             fileContent += `Sin clientes nuevos hoy.\n`;
         } else {
-            clients.forEach(client => {
-                fileContent += `ID: ${client.idcliente} | Nombre: ${client.nombre_cliente} | Email: ${client.email}\n`;
+            clients.forEach(c => {
+                fileContent += `ID: ${c.idcliente} | Nombre: ${c.nombre_cliente} | Email: ${c.email}\n`;
             });
         }
 
         fileContent += '\n\n';
-
         fileContent += `==================================================\n`;
         fileContent += `Actividad general (${dateStr})\n`;
         fileContent += `==================================================\n\n`;
-            
+
         if (activity.length === 0) {
             fileContent += `Sin actividad.\n`;
         } else {
@@ -105,27 +85,28 @@ exports.dailyReport = async (req, res) => {
                 fileContent += `ID de usuario: ${act.idusuario} | Accion: ${act.accion} | Entidad afectada: ${act.entidad_afect}\n`;
             });
         }
-            
-        const filePath = path.join(uploadDir, fileName);
 
-        fs.writeFileSync(filePath, fileContent, 'utf8');
-        console.log(`Report successfully generated at: ${filePath}`);
+        const { error: uploadError } = await supabase.storage
+            .from(BUCKET)
+            .upload(fileName, Buffer.from(fileContent, 'utf8'), {
+                contentType: 'text/plain',
+                upsert: true,
+            });
 
-        const estatus = 'generado';
-        const formato = 'TXT';
-        const tipo = 'REPORTE DIARIO';
-        await model.reporteRegulatorio(tipo, formato, filePath, estatus, dateStr, idusuario, ipusuario);
+        if (uploadError) throw uploadError;
+
+        await model.reporteRegulatorio('REPORTE DIARIO', 'TXT', fileName, 'generado', dateStr, idusuario, req.ip);
+
         return res.redirect('/oficial/reportes');
-        
     } catch (e) {
         console.error(e);
-        return res.status(500).send('Error al descargar archivo');
+        return res.status(500).send(`Error al generar reporte: ${e?.message || String(e)}`);
     }
 };
 
 exports.getCanalInternoData = async (req, res) => {
     try {
-        const data = await reporteModel.fetchAll();
+        const data = await model.fetchAll();
         res.status(200).json(data);
     } catch (e) {
         console.error("Error al obtener los reportes:", e);
@@ -134,6 +115,10 @@ exports.getCanalInternoData = async (req, res) => {
 };
 
 module.exports.count = async (req, res) => {
-    const resultados = await reporteModel.count();
-    res.status(200).json({ total : resultados });
+    try {
+        const resultados = await model.count();
+        res.status(200).json({ total: resultados });
+    } catch (e) {
+        res.status(500).json({ total: 0 });
+    }
 };

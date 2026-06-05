@@ -1,25 +1,8 @@
-const path = require('path');
 const multer = require('multer');
-const fs = require('fs');
+const supabase = require('../../config/supabase');
 const canalInterno = require('../../models/canalInternoModel');
 
-//create uploads folder if not existing
-const uploadDir = './uploads';
-if (!fs.existsSync(uploadDir)){
-    fs.mkdirSync(uploadDir, { recursive: true });
-};
-
-//uploading of evidence files
-const storage = multer.diskStorage({
-    destination: function (req, file, callback){
-        callback(null, "./uploads");
-    },
-    filename: function (req, file, callback){
-        callback(null, file.originalname);
-    }
-});
-
-exports.upload = multer({ storage: storage }).single('evidencia');
+exports.upload = multer({ storage: multer.memoryStorage() }).single('evidencia');
 
 exports.operador_index = (req, res) => { 
     res.render('operador/dashboard', {
@@ -58,13 +41,20 @@ exports.createInternal = async (req, res) => {
         }
         
         //user MUST upload evidence, if not message pops up
-        if (!req.file){
-            res.status(400).send('Evidencia debe ser entregada.');
+        if (!req.file) {
+            return res.status(400).send('Evidencia debe ser entregada.');
         }
 
-        const ruta_evidencia = req.file.path;
+        const ext = req.file.originalname.split('.').pop().toLowerCase();
+        const storagePath = `canal-interno/${Date.now()}_${userId}.${ext}`;
 
-        await canalInterno.reporteInterno(queja_desc, ruta_evidencia, fecha_int, userId);
+        const { error: uploadError } = await supabase.storage
+            .from('reportes')
+            .upload(storagePath, req.file.buffer, { contentType: req.file.mimetype, upsert: false });
+
+        if (uploadError) throw uploadError;
+
+        await canalInterno.reporteInterno(queja_desc, storagePath, fecha_int, userId);
         res.redirect('/operador/reportar?success=true')
     }
     catch(e) {
