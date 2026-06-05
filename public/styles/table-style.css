@@ -25,7 +25,6 @@
   min-width: 170px;
 }
 
-/* Body cell styles matching your td config */
 .gridjs-td {
   padding: 10px 18px !important;
   text-align: left !important;
@@ -63,7 +62,6 @@
   background: #fff;
 }
 
-/* Ensure the placeholder color is clearly legible against the white input background */
 .gridjs-search input.gridjs-input::placeholder {
   color: #8a7a5f !important;
   opacity: 1 !important;
