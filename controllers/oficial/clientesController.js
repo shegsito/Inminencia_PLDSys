@@ -3,6 +3,7 @@ const supabase = require('../../config/supabase');
 const ClienteModel = require('../../models/clienteModel');
 const ExpedienteModel = require('../../models/expedienteModel');
 const { executeScreening } = require('../../services/screeningService');
+const { evaluateClientRisk } = require('../../utils/riskEngine');
 
 // -------------- Document viewer
 
@@ -204,6 +205,13 @@ exports.actualizarCliente = async (req, res) => {
             }
         } catch (screeningErr) {
             console.error("Screening en background falló, pero el cliente fue actualizado:", screeningErr);
+        }
+
+        // Recalculate risk profile after update
+        try {
+            await evaluateClientRisk(updatedClient.idcliente, null, "Actualización de perfil KYC");
+        } catch (riskErr) {
+            console.error("Error interno al recalcular la matriz de riesgo:", riskErr);
         }
 
         res.status(200).json({ mensaje: 'Cliente actualizado con éxito' });
