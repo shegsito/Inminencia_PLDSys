@@ -42,6 +42,7 @@ router.post('/listas/upload', upload.single('archivo'), listas.uploadLista);
 router.get('/listas/download/:tipo', listas.downloadLista);
 router.get('/evaluar-alerta', alertas.getEvaluarAlerta);
 router.post('/evaluar-alerta', alertas.postEvaluarAlerta);
+router.get('/notificaciones-tiempo-real', operaciones.streamNotifications);
 
 //return the data
 router.get('/operaciones/operacionesCount', operaciones.count);

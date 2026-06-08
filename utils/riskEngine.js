@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const notificationEmitter = require('./notifier');
 
 const evaluateClientRisk = async (idCliente, idOperacion = null, triggerReason = "Evaluación de rutina") => {
     const clientDb = await pool.connect();
@@ -71,6 +72,12 @@ const evaluateClientRisk = async (idCliente, idOperacion = null, triggerReason =
                 INSERT INTO public.alerta (idcliente, idoperacion, motivo, regla_rota, prioridad)
                 VALUES ($1, $2, $3, 'Matriz Transaccional > 2.50', $4);
             `, [idCliente, idOperacion, alertaMotivo, prioridadAlerta]);
+
+            // Emit real-time notification for high-risk alert
+            notificationEmitter.emit('nuevaAlertaAlta', {
+                motivo: alertaMotivo,
+                fecha: new Date().toLocaleTimeString('es-MX')
+            });
         }
 
         // Only evaluate transactional rules if an operation ID was passed
@@ -89,10 +96,6 @@ const evaluateClientRisk = async (idCliente, idOperacion = null, triggerReason =
                 // Expected profile values
                 const esperadoMonto = Number(opRows.rows[0].monto_mensual_esperado || 0);
                 const esperadoFreq = Number(opRows.rows[0].frecuencia_mensual_esperada || 0);
-
-                // Fetch Global configuration rules
-                const confRows = await clientDb.query('SELECT * FROM configuracion_pld LIMIT 1');
-                const configGlobal = confRows.rows[0];
 
                 // Fetch client's real statistics for this contract in the last 30 days
                 const statsRows = await clientDb.query(`
@@ -115,19 +118,6 @@ const evaluateClientRisk = async (idCliente, idOperacion = null, triggerReason =
                     requiereAlertaTx = true; motivosTx.push(`Frecuencia mensual: ${freqMensualReal} ops (Esperado: ${esperadoFreq})`);
                 }
 
-                // Global Institutional Rules Evaluation
-                if (configGlobal) {
-                    if (montoOperacion >= Number(configGlobal.monto_inusual_unico)) { 
-                        requiereAlertaTx = true; prioridadTx = 'alta'; motivosTx.push(`Monto único inusual de $${montoOperacion}`); 
-                    }
-                    if (montoMensualReal >= Number(configGlobal.umbral_monto_mensual)) { 
-                        requiereAlertaTx = true; prioridadTx = 'alta'; motivosTx.push(`Supera umbral mensual general`); 
-                    }
-                    if (freqMensualReal >= Number(configGlobal.umbral_frecuencia_mensual)) { 
-                        requiereAlertaTx = true; prioridadTx = 'alta'; motivosTx.push(`Supera frecuencia mensual general`); 
-                    }
-                }
-
                 // Automatic alert generation for transactional threshold breaches
                 if (requiereAlertaTx) {
                     await clientDb.query(`
@@ -138,8 +128,7 @@ const evaluateClientRisk = async (idCliente, idOperacion = null, triggerReason =
             }
         }
 
-        await clientDb.query('COMMIT');
-        return { scoreGlobal, nivelRiesgo };
+        await clientDb.query('COMMIT'); 
 
     } catch (error) {
         await clientDb.query('ROLLBACK');

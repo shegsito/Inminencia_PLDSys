@@ -21,12 +21,13 @@ const executeScreening = async (clientPayload) => {
         };
     }
 
-//Scan of the LPB list
+// Scan of the LPB list (Requiere bloqueo inmediato)
     if (cleanCURP) {
-        const lpbCurpSQL = `SELECT id_lpb, nombre_completo, acuerdo, no_oficio_uif FROM public.lista_lpb_nueva WHERE curp = $1 LIMIT 1;`;
+        const lpbCurpSQL = `SELECT id_lpb, nombre_completo, acuerdo, no_oficio_uif FROM public.lista_lpb_nueva WHERE UPPER(curp) = UPPER($1) LIMIT 1;`;
         const { rows: lpbCurpHits } = await pool.query(lpbCurpSQL, [cleanCURP]);
         if (lpbCurpHits.length > 0) {
             await createAlertRecord(idcliente, null, lpbCurpHits[0].id_lpb, 'LPB', 'CURP_EXACT_MATCH');
+            await suspendClient(idcliente); // <-- BLOQUEO AUTOMÁTICO
             return formatComplianceOutput('LPB', 'CURP_EXACT', lpbCurpHits[0]);
         }
     }
@@ -36,6 +37,7 @@ const executeScreening = async (clientPayload) => {
         const { rows: lpbSegmentHits } = await pool.query(lpbSegmentSQL, [cleanNombre, cleanPaterno, cleanMaterno]); 
         if (lpbSegmentHits.length > 0) { 
             await createAlertRecord(idcliente, null, lpbSegmentHits[0].id_lpb, 'LPB', 'STRUCTURAL_NAME_MATCH'); 
+            await suspendClient(idcliente); // <-- BLOQUEO AUTOMÁTICO
             return formatComplianceOutput('LPB', 'STRUCTURAL_NAME', lpbSegmentHits[0]); 
         }
     }
@@ -44,10 +46,11 @@ const executeScreening = async (clientPayload) => {
     const { rows: lpbFullNameHits } = await pool.query(lpbFullNameSQL, [cleanFullName]); 
     if (lpbFullNameHits.length > 0) { 
         await createAlertRecord(idcliente, null, lpbFullNameHits[0].id_lpb, 'LPB', 'FULL_NAME_MATCH'); 
+        await suspendClient(idcliente); // <-- BLOQUEO AUTOMÁTICO
         return formatComplianceOutput('LPB', 'FULL_NAME', lpbFullNameHits[0]); 
     }
 
-//Scan of the PEP list
+// Scan of the PEP list (Requiere escalamiento y alerta, no bloqueo)
     if (cleanCURP) { 
         const pepCurpSQL = `SELECT id_pep, nombre_completo FROM public.lista_pep_nueva WHERE curp = $1 LIMIT 1;`; 
         const { rows: pepCurpHits } = await pool.query(pepCurpSQL, [cleanCURP]); 
@@ -73,7 +76,7 @@ const executeScreening = async (clientPayload) => {
         return formatComplianceOutput('PEP', 'FULL_NAME', pepFullNameHits[0]);
     }
 
-//If no matches
+// If no matches
     return {
         matchFound: false, 
         action: 'ALLOW_PROCEED', 
@@ -84,6 +87,12 @@ const executeScreening = async (clientPayload) => {
 const createAlertRecord = async (idcliente, idPep, idLpb, tipoLista, metodoCoincidencia) => { 
     const insertSQL = `INSERT INTO public.registro_screening_pld (idcliente, id_pep, id_lpb, tipo_lista, metodo_coincidencia, estatus) VALUES ($1, $2, $3, $4, $5, 'pendiente');`;
     await pool.query(insertSQL, [idcliente, idPep, idLpb, tipoLista, metodoCoincidencia]);
+};
+
+// Function to suspend client immediately upon LPB match
+const suspendClient = async (idcliente) => {
+    const updateSQL = `UPDATE public.cliente SET estatus = 'suspendido', bloqueado = true WHERE idcliente = $1;`;
+    await pool.query(updateSQL, [idcliente]);
 };
 
 const formatComplianceOutput = (tipoLista, matchType, hitDetails) => { 

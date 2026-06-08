@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<%- include('../partials/head') %>
+
+<body>
+  <div class="entire-container">
+
+    <%- include('../partials/sidebar') %>
+
+    <div class="right-container">
+
+      <%- include('../partials/header') %>
+
+      <div class="primary-content">
+        <%- include('../partials/back-button') %>
+        
+        <div style="display: flex; justify-content: center; align-items: center; margin-top: 40px; padding: 0 20px;">
+            <div style="background: white; padding: 50px 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; max-width: 550px; border-top: 5px solid #5b0e1b; width: 100%;">
+                
+                <div style="color: #5b0e1b; font-size: 50px; margin-bottom: 20px;">
+                </div>
+                
+                <h1 style="font-family: Georgia, 'Times New Roman', serif; color: #000; font-size: 26px; margin-bottom: 20px; font-weight: bold;">
+                    <%= pageTitle %>
+                </h1>
+                
+                <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; margin-bottom: 35px; font-family: sans-serif;">
+                    <%= mensaje %>
+                </p>
+                
+                <a href="/oficial/operaciones" style="display: inline-block; background-color: #5b0e1b; color: white; text-decoration: none; padding: 12px 30px; font-size: 15px; border-radius: 4px; font-family: sans-serif; border: none; cursor: pointer; transition: opacity 0.2s;">
+                    Regresar a Operaciones
+                </a>
+                
+            </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/scripts/forms-script.js"></script>
+
+</body>
+</html>
