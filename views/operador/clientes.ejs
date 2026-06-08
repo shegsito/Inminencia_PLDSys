@@ -18,8 +18,9 @@
 
       </div>
 
+      <%- include('../partials/footer') %>
+
     </div>
-    <%- include('../partials/footer') %>
   </div>
 
   <script>
@@ -45,15 +46,20 @@
           c.telefono     || '—',
           c.nivel_riesgo,
           c.estatus,
-          new Date(c.created_at).toLocaleDateString('es-MX')
+          new Date(c.created_at).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+})
         ])) %>,
         search: true,
+        language: {
+      search: {
+        placeholder: 'Buscar por nombre, RFC, correo...'
+      }
+    },
         sort:   true,
-        pagination: { limit: 10 },
-        style: {
-          table: { 'font-family': 'Cambria, serif' },
-          th:    { 'background-color': '#4d0100', 'color': 'white' }
-        }
+        pagination: { limit: 10 }
       }).render(document.getElementById('clientes-table'));
     });
   </script>

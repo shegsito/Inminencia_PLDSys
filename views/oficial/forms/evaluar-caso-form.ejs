@@ -13,6 +13,7 @@
       <%- include('../../partials/header') %>
 
       <div class="primary-content">
+        <%- include('../../partials/back-button') %>
         
         <form action="/oficial/evaluar-caso" method="POST" id="new-form">
           <div class="form-wrapper">
@@ -24,13 +25,13 @@
               <div class="form-row" id="row-data">
               <div class="form-group">
                 <label for="folio">Folio de reporte</label>
-                <input type="text" id="folio" name="folio"
-                       placeholder="Folio completo de caso">
+                <input type="text" id="folio" name="folio" placeholder="Folio completo de caso" required>
               </div>
 
               <div class="form-group">
                   <label for="estatus">Estatus</label>
-                  <select id="estatus" name="estatus">
+                  <select id="estatus" name="estatus" required>
+                    <option value="" disabled selected>Seleccionar estatus</option>
                     <option value="recibido">Recibido</option>
                     <option value="en_revision">En revisión</option>
                     <option value="investigando">Investigando</option>

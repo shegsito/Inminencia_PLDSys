@@ -6,7 +6,19 @@ const operacionesRecientes = document.getElementById("operaciones-recientes");
 window.addEventListener("load", () => {
 
     const alertasGrid = new gridjs.Grid({
-        columns: ["Alertas recientes", "Prioridad"],
+        columns: ["Alertas recientes", 
+            { name: "Prioridad",
+                formatter: (cell) => {
+                        const val = cell ? cell.toLowerCase() : '';
+                        if (val === "alta") {
+                            return gridjs.html(`<span style="background-color: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Alta</span>`);
+                        } else if (val === "media") {
+                            return gridjs.html(`<span style="background-color: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Media</span>`);
+                        } else {
+                            return gridjs.html(`<span style="background-color: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Baja</span>`);
+                        }
+                    }
+    }],
         sort: true,
         pagination: {
             limit: 5,
@@ -22,24 +34,27 @@ window.addEventListener("load", () => {
                 alerta.prioridad
             ])
         },
-        
-        style: {
-            table: {
-                'font-family': 'Cambria, serif',
-            },
-            th: {
-                'background-color': '#4d0100',
-                'color': 'white',
-                'font-size': '18px'
-            },
-            td: {
-                'font-size': '16px'
-            }
+        className: {
+            table: 'global-custom-table',
+            th: 'global-custom-th',
+            td: 'global-custom-td',
+            search: 'global-custom-search'
         }
 }).render(alertasRecientes);
 
 const clientesGrid = new gridjs.Grid({
-        columns: ["Clientes recientes", "Riesgo"],
+        columns: ["Clientes recientes", 
+            { name: "Riesgo",
+            formatter: (cell) => {
+                        const val = cell ? cell.toLowerCase() : '';
+                        if (val === "alta") {
+                            return gridjs.html(`<span style="background-color: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Alta</span>`);
+                        } else if (val === "media") {
+                            return gridjs.html(`<span style="background-color: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Media</span>`);
+                        } else {
+                            return gridjs.html(`<span style="background-color: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Baja</span>`);
+                        }
+                    }}],
         sort: true,
         pagination: {
             limit: 5,
@@ -55,19 +70,11 @@ const clientesGrid = new gridjs.Grid({
                 cliente.nivel_riesgo
             ])
         },
-        
-        style: {
-            table: {
-                'font-family': 'Cambria, serif'
-            },
-            th: {
-                'background-color': '#4d0100',
-                'color': 'white',
-                'font-size': '18px'
-            },
-            td: {
-                'font-size': '16px'
-            }
+        className: {
+            table: 'global-custom-table',
+            th: 'global-custom-th',
+            td: 'global-custom-td',
+            search: 'global-custom-search'
         }
 }).render(clientesRecientes);
 
@@ -86,23 +93,22 @@ const operacionesGrid = new gridjs.Grid({
             then: data => data.map(op => [
                 op.nombre_cliente, 
                 op.tipo_operacion, 
-                op.monto, 
-                new Date(op.fecha).toLocaleDateString('es-MX')
+                new Intl.NumberFormat('es-MX', {
+                    style: 'currency', 
+                    currency: 'MXN' 
+                }).format(op.monto || 0), 
+                new Date(op.fecha).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+})
             ])
         },
-        
-        style: {
-            table: {
-                'font-family': 'Cambria, serif'
-            },
-            th: {
-                'background-color': '#4d0100',
-                'color': 'white',
-                'font-size': '18px'
-            },
-            td: {
-                'font-size': '16px'
-            }
+        className: {
+            table: 'global-custom-table',
+            th: 'global-custom-th',
+            td: 'global-custom-td',
+            search: 'global-custom-search'
         }
 }).render(operacionesRecientes);
 });

@@ -8,12 +8,16 @@ const pool = require('./config/db');
 
 const app = express();
 
+app.set('trust proxy', 1);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//middleware that exposes the views
+app.use((req, _res, next) => { _res.locals.currentPath = req.path; next(); });
 
 app.use(session({
     store: new pgSession({

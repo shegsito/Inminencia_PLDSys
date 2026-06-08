@@ -39,8 +39,7 @@
             <% }) %>
           </select>
 
-          <input type="date" name="fechaInicio" value="<%= filtros.fechaInicio || '' %>" />
-          <input type="date" name="fechaFin"    value="<%= filtros.fechaFin    || '' %>" />
+          <input type="date" name="fecha" value="<%= filtros.fecha || '' %>" />
 
           <button type="submit" class="bitacora-btn-filtrar">Filtrar</button>
           <a href="/admin/bitacora" class="bitacora-btn-limpiar">Limpiar</a>
@@ -50,9 +49,9 @@
         <div id="bitacora-table"></div>
 
       </div>
-    </div>
 
-    <%- include('../partials/footer') %>
+      <%- include('../partials/footer') %>
+    </div>
 
   </div>
 
@@ -68,7 +67,15 @@
           { name: 'IP Origen' },
         ],
         data: <%- JSON.stringify(registros.map(r => [
-          new Date(r.fecha).toLocaleString('es-MX'),
+          new Date(r.fecha).toLocaleString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: true
+}),
           r.nombre_usuario,
           r.accion,
           r.entidad_afect || '—',

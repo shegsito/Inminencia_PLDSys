@@ -50,6 +50,7 @@
               </div>
             </div>
             <p id="form-error" class="gestionar-form-error" style="display:none;"></p>
+            <p id="form-success" style="display:none; color:#1a7a1a; font-weight:600; margin-top:.6rem; text-align:center;"></p>
             <div style="text-align:center; margin-top:1.2rem;">
               <button type="button" id="btn-guardar-usuario" class="gestionar-btn-guardar">Guardar</button>
             </div>
@@ -57,9 +58,10 @@
         </div>
 
       </div><!-- primary-content -->
-    </div><!-- right-container -->
 
-    <%- include('../partials/footer') %>
+      <%- include('../partials/footer') %>
+
+    </div><!-- right-container -->
 
   </div><!-- entire-container -->
 
@@ -143,10 +145,19 @@
           u.email,
           u.rol.charAt(0).toUpperCase() + u.rol.slice(1),
           u.activo ? 'Activo' : 'Inactivo',
-          new Date(u.created_at).toLocaleDateString('es-MX')
+          new Date(u.created_at).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+})
         ])) %>,
         search: true,
         sort:   true,
+        language: {
+      search: {
+        placeholder: 'Buscar por nombre, correo, rol...'
+      }
+    },
         pagination: { limit: 10, summary: false },
         style: {
           table: { 'font-family': 'Cambria, serif' },
@@ -214,15 +225,23 @@
 
     // ── Nuevo usuario ──────────────────────────────────────────────────────────
     const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const formError = document.getElementById('form-error');
+    const formError   = document.getElementById('form-error');
+    const formSuccess = document.getElementById('form-success');
 
     function mostrarError(msg) {
+      formSuccess.style.display = 'none';
       formError.textContent = msg;
       formError.style.display = 'block';
     }
 
     function limpiarError() {
       formError.style.display = 'none';
+    }
+
+    function mostrarExito(email) {
+      formError.style.display = 'none';
+      formSuccess.textContent = `${email} registrado exitosamente`;
+      formSuccess.style.display = 'block';
     }
 
     document.getElementById('btn-guardar-usuario').addEventListener('click', () => {
@@ -251,7 +270,12 @@
               mostrarError(data.error || 'Error al crear usuario');
               return;
             }
-            location.reload();
+            mostrarExito(email);
+            document.getElementById('f-nombre').value   = '';
+            document.getElementById('f-email').value    = '';
+            document.getElementById('f-password').value = '';
+            document.getElementById('f-rol').value      = '';
+            setTimeout(() => location.reload(), 2000);
           } catch {
             mostrarError('Error de red');
           }

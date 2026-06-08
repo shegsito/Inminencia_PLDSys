@@ -1,25 +1,196 @@
-        <div class = "sidebar">
-            <div class = "logo">INMINENCIA </div>
-            <nav>
-                <p>Principal</p>
-                <ul>
-                    <% if (usuario?.rol === 'admin') { %>
-                    <li><a href="/admin/administrar">Administrar</a></li>
-                    <% } %>
-                    <li><a href = "/oficial/dashboard">Dashboard</a></li>
-                    <li><a href = "/oficial/alertas">Alertas</a></li>
-                </ul>
-                <p>Clientes</p>
-                <ul>
-                    <li><a href = "/oficial/clientes">Clientes</a></li>
-                    <li><a href = "/oficial/contratos">Contratos</a></li>
-                    <li><a href = "/oficial/operaciones">Operaciones</a></li>
-                </ul>
-                <p>Cumplimiento</p>
-                <ul>
-                    <li><a href = "/oficial/listas">Listas</a></li>
-                    <li><a href = "/oficial/reportes">Reportes</a></li>
-                    <li><a href = "/oficial/canal-interno">Canal interno</a></li>
-                </ul>
-            </nav>
-        </div>
+<div class="sidebar" id="sidebar">
+
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-info">
+      <span class="sidebar-brand-title">INMINENCIA</span>
+      <span class="sidebar-brand-sub">SOFTWARE DEVELOPERS</span>
+    </div>
+    <button class="sidebar-toggle-btn" id="sidebarToggle" title="Contraer menú">
+      <i data-lucide="chevrons-left"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+
+    <!-- Use the <i dara-lucide= ""> to get the icons from Lucide, check them on theiw webstie-->
+    <div class="sidebar-section-label">Principal</div>
+    <ul>
+      <!-- Sidebar for the admin: dropdown with sub-links -->
+      <% if (usuario?.rol === 'admin') { %>
+      <li class="sidebar-dropdown <%= currentPath?.startsWith('/admin') ? 'open' : '' %>">
+        <button class="sidebar-link sidebar-dropdown-toggle">
+          <i data-lucide="shield-check"></i>
+          <span>Administrar</span>
+          <i data-lucide="chevron-down" class="sidebar-dropdown-arrow"></i>
+        </button>
+        <ul class="sidebar-dropdown-menu">
+          <li>
+            <a href="/admin/bitacora" class="sidebar-link sidebar-sublink <%= currentPath === '/admin/bitacora' ? 'sidebar-link--active' : '' %>">
+              <i data-lucide="scroll-text"></i><span>Bitácora</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/gestionar" class="sidebar-link sidebar-sublink <%= currentPath === '/admin/gestionar' ? 'sidebar-link--active' : '' %>">
+              <i data-lucide="users-round"></i><span>Gestionar usuarios</span>
+            </a>
+          </li>
+          <li>
+            <!-- Aplicar restriccion is disabled until the feature is ready, at the right side of that class {sidebar-sublink--disabled}-->
+            <a href="#" class="sidebar-link sidebar-sublink ">
+              <i data-lucide="shield-ban"></i><span>Aplicar restricción</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <% } %>
+      <li>
+        <a href="/oficial/dashboard" class="sidebar-link <%= currentPath === '/oficial/dashboard' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="laptop-minimal"></i><span>Monitoreo</span>
+        </a>
+      </li>
+      <li>
+        <a href="/oficial/alertas" class="sidebar-link <%= currentPath === '/oficial/alertas' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="bell"></i><span>Alertas</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-label">Clientes</div>
+    <ul>
+      <li>
+        <a href="/oficial/clientes" class="sidebar-link <%= currentPath?.startsWith('/oficial/clientes') ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="users"></i><span>Clientes</span>
+        </a>
+      </li>
+      <li>
+        <a href="/oficial/contratos" class="sidebar-link <%= currentPath === '/oficial/contratos' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="file-text"></i><span>Contratos</span>
+        </a>
+      </li>
+      <li>
+        <a href="/oficial/operaciones" class="sidebar-link <%= currentPath === '/oficial/operaciones' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="arrow-right-left"></i><span>Operaciones</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-section-label">Cumplimiento</div>
+    <ul>
+      <li>
+        <a href="/oficial/listas" class="sidebar-link <%= currentPath === '/oficial/listas' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="list-checks"></i><span>Listas PEB/LPB</span>
+        </a>
+      </li>
+      <li>
+        <a href="/oficial/reportes" class="sidebar-link <%= currentPath === '/oficial/reportes' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="bar-chart-2"></i><span>Reportes</span>
+        </a>
+      </li>
+      <li>
+        <a href="/oficial/canal-interno" class="sidebar-link <%= currentPath === '/oficial/canal-interno' ? 'sidebar-link--active' : '' %>">
+          <i data-lucide="megaphone"></i><span>Canal Interno</span>
+        </a>
+      </li>
+    </ul>
+
+  </nav>
+
+  <div class="sidebar-footer">
+      <button class="sidebar-link" onclick="confirmLogout()">
+      <i data-lucide="log-out"></i><b><span>Salir de sesión</span></b></button>
+  </div>
+
+</div>
+
+<!-- modal pop up like kyc-->
+<div id="logoutModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:1000; align-items:center; justify-content:center;">
+  
+  <div style="background:#4d0100; padding:2.5rem 2rem; border-radius:12px; max-width:440px; width:90%; box-shadow:0 8px 32px rgba(0,0,0,.5); text-align:center;">
+    
+    <svg width="80" height="72" viewBox="0 0 100 90" style="margin-bottom:1.2rem; display:block; margin-left:auto; margin-right:auto;">
+      <polygon points="50,8 92,82 8,82" fill="none" stroke="rgba(200,200,200,0.75)" stroke-width="5" stroke-linejoin="round"/>
+      <line x1="50" y1="34" x2="50" y2="58" stroke="rgba(200,200,200,0.85)" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="50" cy="70" r="4" fill="rgba(200,200,200,0.85)"/>
+    </svg>
+
+    <p id="logout-mensaje" style="color:#fff; font-size:18px; font-weight:600; margin-bottom:1.8rem; font-family:inherit;">
+      ¿Está seguro que desea cerrar sesión?
+    </p>
+
+    <div style="display:flex; gap:16px; justify-content:center;">
+      <button id="cancelLogout" style="padding:10px 28px; border:2px solid rgba(255,255,255,0.45); border-radius:6px; background:transparent; color:#fff; cursor:pointer; font-size:14px; font-family:inherit; font-weight:500;">
+        Cancelar
+      </button>
+      <button id="confirmLogout" style="padding:10px 28px; border:none; border-radius:6px; background:#fff; color:#4d0100; cursor:pointer; font-size:14px; font-family:inherit; font-weight:700;">
+        Cerrar Sesión
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  //this function applies the collapsing sidebar view
+(function () {
+  var sidebar = document.getElementById('sidebar');
+  // Apply collapsed state immediately (sidebar is already in DOM)
+  if (localStorage.getItem('sb') === '1') sidebar.classList.add('collapsed');
+
+  document.addEventListener('DOMContentLoaded', function () {
+    lucide.createIcons();
+
+    var toggle = document.getElementById('sidebarToggle');
+    var rc = document.querySelector('.right-container');
+
+    // Set initial margin without animation
+    if (rc) rc.style.marginLeft = sidebar.classList.contains('collapsed') ? '74px' : '230px';
+
+    toggle.addEventListener('click', function () {
+      var collapsed = !sidebar.classList.contains('collapsed');
+      sidebar.classList.toggle('collapsed', collapsed);
+      // Close all dropdowns when collapsing sidebar
+      if (collapsed) {
+        sidebar.querySelectorAll('.sidebar-dropdown').forEach(function (d) {
+          d.classList.remove('open');
+        });
+      }
+      if (rc) {
+        rc.style.transition = 'margin-left 0.25s ease';
+        rc.style.marginLeft = collapsed ? '74px' : '230px';
+      }
+      localStorage.setItem('sb', collapsed ? '1' : '0');
+    });
+
+    // Dropdown toggle
+    sidebar.querySelectorAll('.sidebar-dropdown-toggle').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (sidebar.classList.contains('collapsed')) return;
+        btn.closest('.sidebar-dropdown').classList.toggle('open');
+      });
+    });
+  });
+})();
+
+//function to confirm logout
+function confirmLogout() {
+  const modal = document.getElementById("logoutModal");
+  const cancel = document.getElementById("cancelLogout");
+  const confirm = document.getElementById("confirmLogout");
+
+  modal.style.display = 'flex';
+  
+//no logout
+  cancel.onclick = function() {
+    modal.style.display = 'none';
+  };
+
+  //logout confirm
+  confirm.onclick = function() {
+    modal.style.display = 'none';
+    location.pathname = '/logout';
+  };
+
+  // yo estuve aquí :)
+  document.getElementById("logoutBtn");
+};
+</script>

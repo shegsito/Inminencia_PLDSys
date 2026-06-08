@@ -16,25 +16,21 @@ window.addEventListener("load", () => {
         server: {
             url: '/oficial/reportes/reportesData',
             then: data => data.map(r => [
-                new Date(r.generado_en).toLocaleDateString('es-MX'),
+                new Date(r.generado_en).toLocaleDateString('es-MX', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+}),
                 r.formato, 
                 r.estatus,
                 r.idreporter
             ])
         },
-        
-        style: {
-            table: {
-                'font-family': 'Cambria, serif'
-            },
-        th: {
-                'background-color': '#4d0100',
-                'color': 'white',
-                'font-size': '18px'
-        },
-        td: {
-                'font-size': '16px'
-            }
-    }
+        className: {
+            table: 'global-custom-table',
+            th: 'global-custom-th',
+            td: 'global-custom-td',
+            search: 'global-custom-search'
+        }
 }).render(testTable);
 });

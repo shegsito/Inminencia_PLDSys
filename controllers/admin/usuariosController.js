@@ -37,7 +37,7 @@ exports.toggleActivo = async (req, res) => {
         const nuevoEstado = !rows[0].activo;
         await UsuarioModel.toggleActivo(id, nuevoEstado);
 
-        const accion = nuevoEstado ? 'ACTIVAR_USUARIO' : 'DESACTIVAR_USUARIO';
+        const accion = nuevoEstado ? 'Activó usuario' : 'Desactivó usuario';
         await pool.query(
             `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
              VALUES ($1, $2, $3, $4, $5, NOW())`,
@@ -77,7 +77,7 @@ exports.crearUsuario = async (req, res) => {
         await pool.query(
             `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
              VALUES ($1, $2, $3, $4, $5, NOW())`,
-            [adminId, 'CREATE_USUARIO', 'usuario', idusuario, req.ip]
+            [adminId, 'Creó usuario', 'usuario', idusuario, req.ip]
         );
 
         res.status(201).json({ ok: true });

@@ -20,10 +20,11 @@
 
       <div class="primary-content">
 
+        <%- include('../../partials/back-button') %>
+
         <!-- ── Action bar (edit mode: Editar / Guardar cambios buttons top-right) ── -->
         <% if (esEdicion) { %>
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-          <p class="kyc-required-note" style="margin-bottom:0;">*Campo obligatorio</p>
           <div style="display:flex; gap:10px;">
             <button type="button" class="kyc-submit-btn" id="btn-editar"
                     style="padding:8px 22px; font-size:14px;">
@@ -35,8 +36,6 @@
             </button>
           </div>
         </div>
-        <% } else { %>
-        <p class="kyc-required-note">*Campo obligatorio</p>
         <% } %>
 
         <% if (esEdicion) { %>
@@ -71,7 +70,7 @@
                   <input type="text" id="nombre" name="nombre"
                          value="<%= esEdicion ? (cliente.nombre || '') : '' %>"
                          class="campo-editable"
-                         <%= esEdicion ? 'readonly' : '' %>
+                         <%= esEdicion ? 'readonly' : 'required' %>
                          placeholder="Nombre(s)">
                 </div>
                 <div class="kyc-group">
@@ -79,7 +78,7 @@
                   <input type="text" id="apellido_paterno" name="apellido_paterno"
                          value="<%= esEdicion ? (cliente.apellido_paterno || '') : '' %>"
                          class="campo-editable"
-                         <%= esEdicion ? 'readonly' : '' %>
+                         <%= esEdicion ? 'readonly' : 'required' %>
                          placeholder="Apellido paterno">
                 </div>
               </div>
@@ -136,7 +135,7 @@
                 <input type="text" id="calle" name="calle"
                        value="<%= esEdicion ? (cliente.calle || '') : '' %>"
                        class="campo-editable"
-                       <%= esEdicion ? 'readonly' : '' %>
+                       <%= esEdicion ? 'readonly' : 'required' %>
                        placeholder="Av. Juárez 400 Int. 3">
               </div>
 
@@ -157,7 +156,7 @@
                   <input type="text" id="municipio" name="municipio"
                          value="<%= esEdicion ? (cliente.municipio || '') : '' %>"
                          class="campo-editable"
-                         <%= esEdicion ? 'readonly' : '' %>
+                         <%= esEdicion ? 'readonly' : 'required' %>
                          placeholder="Municipio">
                 </div>
               </div>
@@ -168,7 +167,7 @@
                   <input type="text" id="estado" name="estado"
                          value="<%= esEdicion ? (cliente.estado || '') : '' %>"
                          class="campo-editable"
-                         <%= esEdicion ? 'readonly' : '' %>
+                         <%= esEdicion ? 'readonly' : 'required' %>
                          placeholder="Estado">
                 </div>
                 <div class="kyc-group">
@@ -176,18 +175,21 @@
                   <input type="text" id="cp" name="cp"
                          value="<%= esEdicion ? (cliente.cp || '') : '' %>"
                          class="campo-editable"
-                         <%= esEdicion ? 'readonly' : '' %>
+                         <%= esEdicion ? 'readonly' : 'required' %>
                          placeholder="00000" maxlength="5">
                 </div>
               </div>
 
               <div class="kyc-group">
                 <label for="pais">País *</label>
-                <input type="text" id="pais" name="pais"
-                       value="<%= esEdicion ? (cliente.pais || 'México') : 'México' %>"
-                       class="campo-editable"
-                       <%= esEdicion ? 'readonly' : '' %>
-                       placeholder="México">
+                <% if (esEdicion) { %>
+                  <select id="pais" name="pais" class="campo-editable" disabled
+                          data-selected="<%= cliente.pais || 'México' %>"></select>
+                  <input type="hidden" id="pais-hidden" name="pais" value="<%= cliente.pais || 'México' %>">
+                <% } else { %>
+                  <select id="pais" name="pais" required
+                          data-selected="México"></select>
+                <% } %>
               </div>
 
               <p class="form-section-title" style="margin-top:20px;">Datos de contacto</p>
@@ -229,6 +231,11 @@
                 <!-- RF-01: new registration button -->
                 <button type="submit" class="kyc-submit-btn" id="kyc-submit">
                   Guardar
+                </button>
+                <button type="button" class="kyc-submit-btn" id="btn-reset"
+                        style="display:none; margin-top:8px; background:#555;"
+                        onclick="location.reload()">
+                  Limpiar y registrar otro
                 </button>
               <% } %>
 
@@ -308,7 +315,13 @@
 
               <% } else { %>
                 <!-- RF-01: locked cards that activate after registration -->
-                <p style="font-size:11px; color:#aaa; margin-bottom:10px;">Disponibles tras registrar al cliente</p>
+                <div style="background:#fff3cd; border:1px solid #ffc107; border-radius:6px;
+                            padding:8px 12px; margin-bottom:12px;
+                            display:flex; align-items:center; gap:8px;
+                            font-size:12px; color:#856404;">
+                  <i data-lucide="lock" style="width:14px; height:14px; flex-shrink:0;"></i>
+                  Se desbloquea después de registrar al cliente
+                </div>
 
                 <p class="doc-label">Identificación Oficial (INE, pasaporte)</p>
                 <div class="doc-card doc-card--locked" data-tipo="ine">
@@ -567,7 +580,11 @@
         try {
           const resp = await fetch('/api/clientes', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'x-user-id':  sessionUserId,
+              'x-user-rol': sessionUserRol,
+            },
             body: JSON.stringify(formData),
           });
 
@@ -580,6 +597,9 @@
 
             btn.textContent = 'Cliente registrado';
             activarUploadDocs(json.idexpediente);
+            document.getElementById('btn-reset').style.display = 'inline-block';
+            document.getElementById('btn-fisica').disabled = true;
+            document.getElementById('btn-moral').disabled  = true;
           } else {
             const msg = json.errores
               ? json.errores.join(' · ')
@@ -697,6 +717,32 @@
         input.value = '';
       }
     }
+
+    // ── Populate país dropdown ────────────────────────────────────────────
+    (function () {
+      const PAISES = [
+        'México', 'Estados Unidos', 'Canadá',
+        'Argentina', 'Bolivia', 'Brasil', 'Chile', 'Colombia', 'Costa Rica',
+        'Cuba', 'Ecuador', 'El Salvador', 'Guatemala', 'Honduras', 'Nicaragua',
+        'Panamá', 'Paraguay', 'Perú', 'Puerto Rico', 'República Dominicana',
+        'Uruguay', 'Venezuela',
+        'Alemania', 'Austria', 'Bélgica', 'España', 'Francia', 'Irlanda',
+        'Italia', 'Países Bajos', 'Portugal', 'Reino Unido', 'Rusia', 'Suecia', 'Suiza',
+        'Arabia Saudita', 'China', 'Corea del Sur', 'Emiratos Árabes Unidos',
+        'Filipinas', 'India', 'Indonesia', 'Israel', 'Japón', 'Singapur', 'Turquía',
+        'Australia', 'Nueva Zelanda', 'Nigeria', 'Sudáfrica', 'Otro',
+      ];
+      const select = document.getElementById('pais');
+      if (!select) return;
+      const current = select.dataset.selected || 'México';
+      PAISES.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.textContent = p;
+        if (p === current) opt.selected = true;
+        select.appendChild(opt);
+      });
+    })();
   </script>
 
 </body>

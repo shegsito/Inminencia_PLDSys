@@ -128,7 +128,7 @@ exports.registrar = async (req, res) => {
         await dbClient.query(
              `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
               VALUES ($1, $2, $3, $4, $5, NOW())`,
-              [req.usuario?.id || null, 'CREAR_CLIENTE', 'cliente', idcliente, req.ip]
+              [req.usuario?.id || null, 'Registró cliente', 'cliente', idcliente, req.ip]
         );
 
         // Commit the action

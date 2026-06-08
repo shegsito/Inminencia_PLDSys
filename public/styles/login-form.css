@@ -1,53 +1,255 @@
-.login-container {
+/* ============================================================
+   LOGIN — Split-panel layout
+   ============================================================ */
+
+.login-split {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ---------- Left: form panel ---------- */
+.login-panel {
+    width: 420px;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    background-color: var(--background-color);
+    padding: 48px 40px;
+    background: var(--background-color);
+    overflow-y: auto;
 }
 
-.login-card {
-    border: 3px solid var(--primary-color);
-    border-radius: 25px;
-    padding: 50px 70px;
-    background-color: var(--background-color);
-    width: 100%;
-    max-width: 600px;
-    text-align: center;
+/* Brand */
+.login-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 28px;
 }
 
-.login-card h1 {
-    margin-bottom: 35px;
+.login-brand-title {
+    font-family: var(--font-family);
+    font-size: 1.15rem;
+    font-weight: 700;
     letter-spacing: 2px;
+    color: var(--primary-color);
 }
 
-.input-group {
+.login-brand-sub {
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    color: #888;
+    text-transform: uppercase;
+}
+
+/* Avatar icon */
+.login-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #f0e8e8;
+    border: 2px solid #d9c4c4;
     display: flex;
     align-items: center;
-    margin-bottom: 25px;
+    justify-content: center;
+    margin-bottom: 18px;
+    color: var(--primary-color);
 }
 
-.input-group label {
+.login-avatar i {
+    width: 36px;
+    height: 36px;
+}
+
+/* Heading */
+.login-heading {
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    font-family: var(--font-family);
+}
+
+/* Error banner */
+.login-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff4e5;
+    border: 1px solid #f5a623;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    color: #7a4500;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+/* Form takes full width of panel */
+#loginForm {
+    width: 100%;
+}
+
+/* Fields */
+.login-field {
+    margin-bottom: 14px;
+}
+
+.login-input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    padding: 0 12px;
+    transition: border-color 0.15s;
+}
+
+.login-input-wrap:focus-within {
+    border-color: var(--primary-color);
+}
+
+.login-input-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: #999;
+    margin-right: 10px;
+}
+
+.login-input-wrap input {
     flex: 1;
-    text-align: left;
-    font-size: 20px;;
-    font-weight: bold;
-}
-
-.input-group input {
-    flex: 2;
-    border: 1px solid var(--primary-color);
-    border-radius: 30px; 
-    padding: 10px 20px;
+    border: none;
     outline: none;
+    padding: 12px 0;
+    font-family: var(--font-family);
+    font-size: 0.9rem;
+    background: transparent;
+    color: #1a1a1a;
 }
 
-input[type=submit] {
-    border-radius: 10px;
-    padding: 10px 30px;
-    background-color: var(--secondary-color);
-    font-size: 15px;
-    margin-top: 10px;
+/* Show/hide password button */
+.login-show-pw {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    color: #aaa;
+    margin-left: 8px;
+    transition: color 0.15s;
+}
+
+.login-show-pw:hover {
+    color: var(--primary-color);
+}
+
+.login-show-pw i {
+    width: 16px;
+    height: 16px;
+}
+
+/* Forgot password */
+.login-links {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    margin-top: 2px;
+}
+
+.login-forgot {
+    font-size: 0.82rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-family: var(--font-family);
+}
+
+.login-forgot:hover {
+    text-decoration: underline;
+}
+
+/* Submit button */
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-family);
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+.login-btn:hover {
+    opacity: 0.9;
+}
+
+.login-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* ---------- Right: decorative panel ---------- */
+/* i thought this could be done in css instead of attaching an img */
+/* preventing errors getting the img or that stuff. Deco mzade by gemini.*/
+
+.login-deco {
+    flex: 1;
+    background: linear-gradient(135deg, #4d0100 0%, #8b1a1a 60%, #c9453a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-deco-content {
+    text-align: center;
+    color: #fff;
+    padding: 40px;
+    z-index: 1;
+}
+
+.login-deco-content h1 {
+    font-size: 3.5rem;
+    font-family: var(--font-family);
+    font-weight: 700;
     letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.login-deco-content p {
+    font-size: 0.95rem;
+    opacity: 0.75;
+    letter-spacing: 0.5px;
+    font-family: var(--font-family);
+}
+
+/* Subtle decorative circles */
+.login-deco::before {
+    content: '';
+    position: absolute;
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    top: -120px;
+    right: -120px;
+}
+
+.login-deco::after {
+    content: '';
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    bottom: -80px;
+    left: -60px;
 }
