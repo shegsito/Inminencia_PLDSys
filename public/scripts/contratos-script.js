@@ -1,5 +1,10 @@
 const testTable = document.getElementById("test-table");
 
+const TIPO_PRODUCTO_LABEL = {
+    credito_simple:            'Crédito simple',
+    credito_cuenta_corriente:  'Crédito cuenta corriente',
+};
+
 window.addEventListener("load", () => {
     gridTable = new gridjs.Grid({
         columns: [
@@ -43,7 +48,7 @@ window.addEventListener("load", () => {
             then: data => data.map(co => [
                 co.idcontrato,      
                 co.nombre_cliente,  
-                co.tipo_producto,  
+                TIPO_PRODUCTO_LABEL[co.tipo_producto] || co.tipo_producto,
                 new Intl.NumberFormat('es-MX', {
                     style: 'currency', 
                     currency: 'MXN' 
