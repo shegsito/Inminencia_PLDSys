@@ -21,7 +21,7 @@ exports.operador_reporte = (req, res) => {
 
 exports.operador_estatus = async (req, res) => {
     res.render('operador/caso-estatus', {
-        pageTitle: "Consultar estatus de caso"
+        pageTitle: "Consultar estatus de reporte"
     });
 };
 
