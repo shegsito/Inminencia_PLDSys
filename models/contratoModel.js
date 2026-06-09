@@ -77,7 +77,7 @@ exports.createContrato = async (idcliente, tipo, fecha_init, fecha_fin, monto, e
         const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
              VALUES ($1, $2, $3, $4, $5, NOW())`;
 
-        await dbClient.query(bitacora, [idusuario, 'CREAR CONTRATO', 'contrato', idcontrato, ipOrigin]);
+        await dbClient.query(bitacora, [idusuario, 'Creó contrato', 'contrato', idcontrato, ipOrigin]);
 
         //DB change if all succeeds
         await dbClient.query('COMMIT');

@@ -57,7 +57,7 @@ exports.reporteRegulatorio = async (tipo, formato, ruta_archivo, estatus, genera
     const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
         VALUES ($1, $2, $3, $4, $5, NOW())`
 
-    await dbClient.query(bitacora, [idusuario, 'GENERAR REPORTE REGULATORIO', 'reporte regulatorio', idreporter, ipOrigin]);
+    await dbClient.query(bitacora, [idusuario, 'Generó reporte regulatorio', 'reporte regulatorio', idreporter, ipOrigin]);
 
     //DB change if all succeeds
     await dbClient.query('COMMIT');
