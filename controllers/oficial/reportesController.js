@@ -6,7 +6,7 @@ const BUCKET = 'reportes';
 
 exports.index = (req, res) => {
     res.render('oficial/reportes', {
-        pageTitle: 'Reportes',
+        pageTitle: 'Reportes regulatorios',
         buttonText: 'Generar reporte',
         buttonLink: '/oficial/reportes/generar'
     });
