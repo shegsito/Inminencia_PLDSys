@@ -19,7 +19,7 @@ window.addEventListener("load", () => {
                         }
                     }
     }],
-        sort: true,
+        sort: false,
         pagination: {
             limit: 5,
             prevButton: false,
@@ -55,7 +55,7 @@ const clientesGrid = new gridjs.Grid({
                             return gridjs.html(`<span style="background-color: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Baja</span>`);
                         }
                     }}],
-        sort: true,
+        sort: false,
         pagination: {
             limit: 5,
             prevButton: false,
@@ -80,7 +80,7 @@ const clientesGrid = new gridjs.Grid({
 
 const operacionesGrid = new gridjs.Grid({
         columns: ["Cliente", "Producto", "Monto", "Fecha"],
-        sort: true,
+        sort: false,
         pagination: {
             limit: 5,
             prevButton: false,
