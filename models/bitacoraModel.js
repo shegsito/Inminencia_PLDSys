@@ -10,6 +10,11 @@ const ACCIONES_POSIBLES = [
     'Descargó reporte regulatorio',
     'Consultó expediente',
     'Actualizó cliente',
+    'Generó reporte regulatorio',
+    'Creó nueva operación',
+    'Generó reporte interno',
+    'Evaluó reporte interno',
+    'Creó contrato',
 ];
 
 const BitacoraModel = {

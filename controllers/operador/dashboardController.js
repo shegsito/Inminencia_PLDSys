@@ -54,7 +54,7 @@ exports.createInternal = async (req, res) => {
 
         if (uploadError) throw uploadError;
 
-        await canalInterno.reporteInterno(queja_desc, storagePath, fecha_int, userId);
+        await canalInterno.reporteInterno(queja_desc, storagePath, fecha_int, userId, req.ip);
         res.redirect('/operador/reportar?success=true')
     }
     catch(e) {
