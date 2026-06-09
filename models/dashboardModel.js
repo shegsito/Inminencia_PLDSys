@@ -3,16 +3,16 @@ const pool = require('../config/db');
 
 //queries for alertas table
 exports.countAlertas = async () => {
-    const { rows } = await pool.query('SELECT COUNT(*)::int AS total FROM alerta');
+    const { rows } = await pool.query("SELECT COUNT(*)::int AS total FROM alerta WHERE estatus = 'pendiente'");
     return rows[0].total;
 };
 
 exports.fetchAllAlertas = async () => {
     const sql = `
-        SELECT motivo, prioridad, generada_en
+        SELECT motivo, prioridad
         FROM alerta
-        WHERE prioridad IN ('alta')
-        ORDER BY generada_en DESC
+        WHERE estatus = 'pendiente'
+        ORDER BY prioridad DESC
     `;
     const { rows } = await pool.query(sql);
     return rows;

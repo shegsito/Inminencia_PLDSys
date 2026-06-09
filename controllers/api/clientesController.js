@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const pool = require('../../config/db');
 const ClienteModel = require('../../models/clienteModel');
 const ExpedienteModel = require('../../models/expedienteModel');
+const { evaluateClientRisk } = require('../../utils/riskEngine');
 
 // here I implemented a regex to validate a RFC, CURP and EMAIL, this can handle correctly the format input of those atributes
 
@@ -133,6 +134,13 @@ exports.registrar = async (req, res) => {
 
         // Commit the action
         await dbClient.query('COMMIT');
+
+        // Calculate initial risk profile for the new client 
+        try {
+            await evaluateClientRisk(idcliente, null, "Alta de nuevo cliente");
+        } catch (riskErr) {
+            console.error('Error interno al calcular matriz de riesgo inicial:', riskErr);
+        }
 
         return res.status(201).json({
             message: 'Cliente registrado exitosamente',

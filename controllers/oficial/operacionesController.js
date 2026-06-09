@@ -1,4 +1,8 @@
+const pool = require('../../config/db');
 const model = require('../../models/operacionesModel');
+const notificationEmitter = require('../../utils/notifier');
+const { evaluateClientRisk } = require('../../utils/riskEngine');
+const { executeScreening } = require('../../services/screeningService');
 
 exports.index = (req, res) => {
     res.render('oficial/operaciones', { 
@@ -59,21 +63,63 @@ exports.postRegistrarOperacion = async (req, res) => {
         if (!idcliente) {
             return res.status(400).send('Error al obtener cliente o cliente no existente.');
         }
-
         if (!idcontrato) {
             return res.status(400).send('Contrato no existente para ese cliente.');
         }
-
         if (!idusuario) {
             return res.status(400).send('Sesion incorrectamente iniciada');
         }
 
-        await model.createOperacion(idcliente, idcontrato, tipo, monto, idusuario, ipusuario);
-        res.redirect('/oficial/operaciones?success=true')
+        // Obtain client details for screening
+        const clienteQuery = await pool.query('SELECT idcliente, nombre, apellido_paterno, apellido_materno, curp FROM public.cliente WHERE idcliente = $1', [idcliente]);
+        const datosCliente = clienteQuery.rows[0];
+
+        // Run screening before registering the operation
+        if (datosCliente) {
+            await executeScreening(datosCliente);
+        }
+
+        // Check if client is blocked or suspended after screening results
+        const statusCheck = await pool.query(`SELECT bloqueado, estatus FROM public.cliente WHERE idcliente = $1`, [idcliente]);
+
+        if (statusCheck.rows.length > 0 && (statusCheck.rows[0].bloqueado === true || statusCheck.rows[0].estatus === 'suspendido')) {
+            return res.status(403).render('oficial/operacion-denegada', {
+                pageTitle: 'Operación Denegada',
+                mensaje: 'Operación denegada. El cliente se encuentra suspendido o bloqueado por coincidencias en listas de riesgo.'
+            });
+        }
+
+        // If screening passed, proceed to register the operation and evaluate risk
+        const operacionGuardada = await model.createOperacion(idcliente, idcontrato, tipo, monto, idusuario, ipusuario);
+
+        const motivoEvaluacion = `Nueva operación registrada: ${tipo} por el monto de $${monto}`;
+        await evaluateClientRisk(idcliente, operacionGuardada.idoperacion, motivoEvaluacion);
+
+        res.redirect('/oficial/operaciones?success=true');
 
     }
     catch(e) {
        console.log(e);
        res.status(500).send('Favor de verificar contrato existente de cliente existente.'); 
     }
+};
+
+exports.streamNotifications = (req, res) => {
+    // Configure headers for Server-Sent Events (SSE)
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    // Function to send notifications to the client
+    const enviarAlerta = (data) => {
+        res.write(`data: ${JSON.stringify(data)}\n\n`);
+    };
+
+    // Listen for 'nuevaAlertaAlta' events and send them to the client
+    notificationEmitter.on('nuevaAlertaAlta', enviarAlerta);
+
+    // Clean up memory if the user closes the tab
+    req.on('close', () => {
+        notificationEmitter.off('nuevaAlertaAlta', enviarAlerta);
+    });
 };
