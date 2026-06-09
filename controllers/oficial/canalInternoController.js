@@ -19,7 +19,12 @@ exports.getCanalInternoData = async (req, res) => {
     }
 };
 
-exports.getEvaluarReporte = async (req, res) => {
+module.exports.count = async (req, res) => {
+    const resultados = await canalInterno.count();
+    res.status(200).json({ total : resultados });
+};
+
+exports.getEvaluation = async (req, res) => {
     try {
         const folio = await canalInterno.fetchAll();
 
@@ -33,26 +38,21 @@ exports.getEvaluarReporte = async (req, res) => {
     }
 };
 
-module.exports.count = async (req, res) => {
-    const resultados = await canalInterno.count();
-    res.status(200).json({ total : resultados });
-};
-
 //updating internal report through evaluation form
-exports.evaluation = async (req, res) => {
+exports.postEvaluation = async (req, res) => {
     try {
-        const { folio, estatus, resolucion } = req.body;
+        const { idreporteint, estatus, resolucion } = req.body;
         const idusuario = req.session.idusuario;
         const ipusuario = req.ip;
 
-        if (!folio) {
+        if (!idreporteint) {
             return res.status(400).send('Favor de ingresar folio')
         }
         if (!resolucion) {
             return res.status(400).send('Favor de ingresar resolución')
         }
 
-        await canalInterno.evaluateRI(folio, estatus, resolucion, idusuario, ipusuario);
+        await canalInterno.evaluateRI(idreporteint, estatus, resolucion, idusuario, ipusuario);
         res.redirect('/oficial/evaluar-reporte?success=true')
     }
     catch(e) {

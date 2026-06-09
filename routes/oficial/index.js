@@ -30,8 +30,8 @@ router.get('/registrar-operacion', operaciones.getRegistrarOperacion);
 router.post('/new-operacion', operaciones.postRegistrarOperacion);
 router.get('/registrar-contrato', contratos.getRegistrarContrato);
 router.post('/new-contrato', contratos.postRegistrarContrato);
-router.get('/evaluar-reporte', canalInterno.getEvaluarReporte);
-router.post('/evaluar-caso', canalInterno.evaluation);
+router.get('/evaluar-reporte', canalInterno.getEvaluation);
+router.post('/evaluar-caso', canalInterno.postEvaluation);
 router.get('/reportes/generar', reportes.dailyReport);
 router.get('/Subir-lista', (req, res) =>
     res.render('oficial/forms/listas-form', {
