@@ -19,6 +19,20 @@ exports.getCanalInternoData = async (req, res) => {
     }
 };
 
+exports.getEvaluarReporte = async (req, res) => {
+    try {
+        const folio = await canalInterno.fetchAll();
+
+        res.render('oficial/forms/evaluar-caso-form', {
+        pageTitle: 'Forma de evaluación',
+        folios: folio });
+
+    } catch(e) {
+        console.log(e);
+        res.status(500).send('Error al cargar formulario de evaluación');
+    }
+};
+
 module.exports.count = async (req, res) => {
     const resultados = await canalInterno.count();
     res.status(200).json({ total : resultados });

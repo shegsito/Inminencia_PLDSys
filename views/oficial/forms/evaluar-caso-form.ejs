@@ -21,11 +21,16 @@
             <div class="form-fields">
               <p class="form-section-title">Datos de evaluación</p>
 
-              <!-- nombre y producto -->
+              <!-- Folio y estatus -->
               <div class="form-row" id="row-data">
               <div class="form-group">
-                <label for="folio">Folio de reporte</label>
-                <input type="text" id="folio" name="folio" placeholder="Folio completo de caso" required>
+                <label for="idreporteint">Folio de reporte</label>
+                <select id="idreporteint" name="idreporteint" required>
+                  <option value="" disabled selected>Seleccionar folio</option>
+                  <% folios.forEach(folio => { %>
+                    <option value="<%= folio.idreporteint %>">
+                      <%= folio.idreporteint %> </option>
+                      <% }) %> </select>
               </div>
 
               <div class="form-group">
@@ -41,7 +46,7 @@
                 </div>
                 </div>
 
-              <!-- tipo y monto -->
+              <!-- resolucion -->
               <div class="form-row" id="row-data">
 
                 <div class="form-group">
