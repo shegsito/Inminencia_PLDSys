@@ -4,7 +4,7 @@ window.addEventListener("load", () => {
     if (alertasContainer) {
         new gridjs.Grid({
             columns: [
-                { name: "Folio / ID", width: "100px" },
+                { name: "ID", width: "100px" },
                 { name: "Cliente Evaluado", width: "220px" },
                 { name: "Motivo de Excepción / Alerta", width: "400px" },
                 {
@@ -50,7 +50,7 @@ window.addEventListener("load", () => {
             server: {
                 url: '/oficial/alertas/api/alertasData', 
                 then: data => data.data.map(alerta => [
-                    alerta.id.substring(0,8) + '...', 
+                    gridjs.html(`<span title="${alerta.id}" style="font-family:Cambria,Cochin,Georgia,Times,'Times New Roman',serif;font-size:0.85em;color:#555;">${alerta.id.substring(0,8)}...</span>`),
                     alerta.cliente_evaluado,
                     alerta.motivo_excepcion,
                     alerta.prioridad,
