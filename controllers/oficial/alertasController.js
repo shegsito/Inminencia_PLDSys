@@ -1,5 +1,6 @@
 const pool = require('../../config/db');
 const AlertaModel = require('../../models/alertaModel');
+const BitacoraModel = require('../../models/bitacoraModel');
 
 exports.index = (req, res) => {
     res.render('oficial/alertas', { 
@@ -68,6 +69,15 @@ exports.postEvaluarAlerta = async (req, res) => {
             WHERE idalerta = $4
         `;
         await pool.query(updateSql, [estatus, resolucion, idusuario, idalerta]);
+
+        // Log this action in the bitácora
+        await BitacoraModel.registrarAccion({
+            idusuario: idusuario,
+            accion: 'Evaluó alerta',
+            entidad_afect: 'alerta',
+            id_entidad: idalerta,
+            ip_origen: req.ip
+        });
 
         res.redirect('/oficial/alertas?success=true');
     } catch (error) {

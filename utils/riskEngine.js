@@ -20,36 +20,36 @@ const evaluateClientRisk = async (idCliente, idOperacion = null, triggerReason =
         
         if (idOperacion) {
             const opQuery = await clientDb.query(`
-                SELECT c.producto, o.tipo as canal 
+                SELECT c.tipo_producto, o.tipo_operacion as canal 
                 FROM operacion o 
                 LEFT JOIN contrato c ON o.idcontrato = c.idcontrato 
                 WHERE o.idoperacion = $1
             `, [idOperacion]);
             if (opQuery.rows.length > 0) {
-                productoNombre = opQuery.rows[0].producto?.toLowerCase() || 'default';
+                productoNombre = opQuery.rows[0].tipo_producto?.toLowerCase() || 'default';
                 canalNombre = opQuery.rows[0].canal?.toLowerCase() || 'default';
             }
         }
        
         // Risk calculation based on the risk matrix configuration
 
-        // Client-related risk factors
-        let valClienteEdad = riskMatrix.values.cliente_edad['edad_26-60']; 
+        // Client-related risk factors (Agregado || 1 como fallback de seguridad)
+        let valClienteEdad = riskMatrix.values.cliente_edad['edad_26-60'] || 1; 
         if (cliente.curp && cliente.curp.length >= 10 && cliente.tipo_persona === 'fisica') {
             let year = parseInt(cliente.curp.substring(4, 6));
             year += (year >= 0 && year <= 24) ? 2000 : 1900; 
             const age = new Date().getFullYear() - year;
             
             if (age >= 18 && age <= 25) {
-                valClienteEdad = riskMatrix.values.cliente_edad['edad_18-25'];
+                valClienteEdad = riskMatrix.values.cliente_edad['edad_18-25'] || 1;
             } else if (age >= 60) {
-                valClienteEdad = riskMatrix.values.cliente_edad['edad_60-75'];
+                valClienteEdad = riskMatrix.values.cliente_edad['edad_60-75'] || 1;
             } else {
-                valClienteEdad = riskMatrix.values.cliente_edad['edad_26-60'];
+                valClienteEdad = riskMatrix.values.cliente_edad['edad_26-60'] || 1;
             }
         }
         
-        const valTipoPersona = riskMatrix.values.cliente_tipo_persona[cliente.tipo_persona?.toLowerCase()] || riskMatrix.values.cliente_tipo_persona.default;
+        const valTipoPersona = riskMatrix.values.cliente_tipo_persona[cliente.tipo_persona?.toLowerCase()] || riskMatrix.values.cliente_tipo_persona.default || 1;
         
         // Avereging the client-related factors
         const subScoreCliente = (valClienteEdad + valTipoPersona) / 2;
@@ -58,22 +58,22 @@ const evaluateClientRisk = async (idCliente, idOperacion = null, triggerReason =
         const paisCliente = cliente.pais?.toLowerCase() || 'default';
         const estadoCliente = cliente.estado?.toLowerCase() || 'default';
 
-        const valPais = riskMatrix.values.jurisdiccion_pais[paisCliente] || riskMatrix.values.jurisdiccion_pais.default;
-        const valEstado = riskMatrix.values.jurisdiccion_estado[estadoCliente] || riskMatrix.values.jurisdiccion_estado.default;
+        const valPais = riskMatrix.values.jurisdiccion_pais[paisCliente] || riskMatrix.values.jurisdiccion_pais.default || 1;
+        const valEstado = riskMatrix.values.jurisdiccion_estado[estadoCliente] || riskMatrix.values.jurisdiccion_estado.default || 1;
 
         // Avereging the location-related factors
         const subScoreJurisdiccion = (valPais + valEstado) / 2;
 
         // Products and channels risk factors
-        const subScoreProducto = riskMatrix.values.producto[productoNombre] || riskMatrix.values.producto.default;
-        const subScoreCanal = riskMatrix.values.canal[canalNombre] || riskMatrix.values.canal.default;
+        const subScoreProducto = riskMatrix.values.producto[productoNombre] || riskMatrix.values.producto.default || 1;
+        const subScoreCanal = riskMatrix.values.canal[canalNombre] || riskMatrix.values.canal.default || 1;
 
         // Final score for acceptance phase based on the weighted average of sub-scores
-        const scoreAceptacion = 
-            (subScoreCliente * riskMatrix.weights.aceptacion.cliente) + 
-            (subScoreJurisdiccion * riskMatrix.weights.aceptacion.jurisdiccion) + 
-            (subScoreProducto * riskMatrix.weights.aceptacion.producto) + 
-            (subScoreCanal * riskMatrix.weights.aceptacion.canal);
+        let scoreAceptacion = 
+            (subScoreCliente * (riskMatrix.weights.aceptacion.cliente || 0)) + 
+            (subScoreJurisdiccion * (riskMatrix.weights.aceptacion.jurisdiccion || 0)) + 
+            (subScoreProducto * (riskMatrix.weights.aceptacion.producto || 0)) + 
+            (subScoreCanal * (riskMatrix.weights.aceptacion.canal || 0));
 
         // Operation monitoring risk factors
         let monitoreoQuery = await clientDb.query(`SELECT * FROM public.cliente_monitoreo_perfil WHERE idcliente = $1`, [idCliente]);
@@ -87,7 +87,7 @@ const evaluateClientRisk = async (idCliente, idOperacion = null, triggerReason =
         // Helper function to get the value for monitoring factors, using the config mapping or defaulting to 1
         const getMonitoreoVal = (dbValue, configObject) => isNaN(Number(dbValue)) ? (configObject[dbValue?.toLowerCase()] || 1) : Number(dbValue);
 
-        const scoreMonitoreo = 
+        let scoreMonitoreo = 
             (getMonitoreoVal(monitoreo.cambio_estatus, riskMatrix.values.cambio_estatus) * 0.20) + 
             (getMonitoreoVal(monitoreo.senal_alerta_historica, riskMatrix.values.sign_alerta_historica) * 0.25) + 
             (Number(monitoreo.instrumento_monetario || 1) * 0.15) + 
@@ -96,24 +96,40 @@ const evaluateClientRisk = async (idCliente, idOperacion = null, triggerReason =
             (getMonitoreoVal(monitoreo.incremento_monto, riskMatrix.values.incremento_monto) * 0.15);
 
         // Final global score combining acceptance and monitoring scores
-        const scoreGlobal = 
-            (scoreAceptacion * riskMatrix.weights.global.aceptacion) + 
-            (scoreMonitoreo * riskMatrix.weights.global.monitoreo);
+        let scoreGlobal = 
+            (scoreAceptacion * (riskMatrix.weights.global.aceptacion || 0)) + 
+            (scoreMonitoreo * (riskMatrix.weights.global.monitoreo || 0));
+
+        // Safety checks to ensure no NaN values are stored in the database, defaulting to 1.0 if any score is invalid
+        if (isNaN(scoreAceptacion) || scoreAceptacion === null) scoreAceptacion = 1.0;
+        if (isNaN(scoreMonitoreo) || scoreMonitoreo === null) scoreMonitoreo = 1.0;
+        if (isNaN(scoreGlobal) || scoreGlobal === null || scoreGlobal === undefined) {
+            console.warn(`Advertencia: Se generó un NaN para el cliente ${idCliente}. Asignando riesgo base 1.0`);
+            scoreGlobal = 1.0;
+        }
 
         let nivelRiesgo = 'bajo';
         let prioridadAlerta = 'baja';
         if (scoreGlobal >= 2.50) { nivelRiesgo = 'alto'; prioridadAlerta = 'alta'; } 
         else if (scoreGlobal >= 1.75) { nivelRiesgo = 'medio'; prioridadAlerta = 'media'; }
 
+        const SCORE_MAXIMO_ESPERADO = 3.0; 
+        
+        let scoreAdaptado = scoreGlobal / SCORE_MAXIMO_ESPERADO;
+        
+        scoreAdaptado = Math.min(scoreAdaptado, 1.0);
+        
+        const scoreParaDB = parseFloat(scoreAdaptado.toFixed(3));
+
         // Update client's risk score and level in the database
         await clientDb.query(`
             UPDATE public.cliente 
             SET score_riesgo = $1, nivel_riesgo = $2 
             WHERE idcliente = $3;
-        `, [scoreGlobal.toFixed(4), nivelRiesgo, idCliente]);
+        `, [scoreParaDB, nivelRiesgo, idCliente]);
 
         // Insert the risk evaluation into the historical table
-        await clientDb.query(`
+            await clientDb.query(`
             INSERT INTO public.evaluacion_riesgo_historico 
             (idcliente, idoperacion, score_aceptacion, score_monitoreo, score_global, nivel_riesgo_final, motivo)
             VALUES ($1, $2, $3, $4, $5, $6, $7);
@@ -159,17 +175,24 @@ const evaluateClientRisk = async (idCliente, idOperacion = null, triggerReason =
                 let prioridadTx = 'media';
 
                 if (esperadoMonto > 0 && montoMensualReal > (esperadoMonto * 1.20)) {
-                    requiereAlertaTx = true; motivosTx.push(`Acumuló $${montoMensualReal} (Esperado: $${esperadoMonto})`);
+                    requiereAlertaTx = true; 
+                    motivosTx.push(`Acumuló $${montoMensualReal} (El límite esperado era $${esperadoMonto})`);
                 }
                 if (esperadoFreq > 0 && freqMensualReal > esperadoFreq) {
-                    requiereAlertaTx = true; motivosTx.push(`Frecuencia mensual: ${freqMensualReal} ops (Esperado: ${esperadoFreq})`);
+                    requiereAlertaTx = true; 
+                    motivosTx.push(`Realizó ${freqMensualReal} operaciones (Solo se esperaba ${esperadoFreq})`);
                 }
 
                 if (requiereAlertaTx) {
                     await clientDb.query(`
                         INSERT INTO alerta (idcliente, idoperacion, motivo, regla_rota, prioridad)
                         VALUES ($1, $2, $3, 'Umbrales Transaccionales', $4)
-                    `, [idCliente, idOperacion, `Desviación transaccional: ${motivosTx.join(' | ')}`, prioridadTx]);
+                    `, [
+                        idCliente, 
+                        idOperacion, 
+                        `Comportamiento inusual en el perfil | ${motivosTx.join(' | ')}`, 
+                        prioridadTx
+                    ]);
                 }
             }
         }

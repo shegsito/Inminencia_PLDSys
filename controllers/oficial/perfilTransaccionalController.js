@@ -1,4 +1,5 @@
 const pool = require('../../config/db');
+const BitacoraModel = require('../../models/bitacoraModel');
 
 exports.getPerfil = async (req, res) => {
     const idcontrato = req.params.id;
@@ -40,6 +41,17 @@ exports.postPerfil = async (req, res) => {
                 actualizado_en = NOW()
         `;
         await pool.query(sql, [idcliente, idcontrato, monto_mensual_esperado, frecuencia_mensual_esperada]);
+
+        // Log this action in the bitácora
+        if (idUsuario) {
+            await BitacoraModel.registrarAccion({
+                idusuario: idUsuario,
+                accion: 'Actualizó perfil transaccional',
+                entidad_afect: 'perfil_transaccional',
+                id_entidad: idcontrato,
+                ip_origen: req.ip
+            });
+        }
         
         res.redirect(`/oficial/contratos/perfil/${idcontrato}?success=true`);
     } catch (error) {

@@ -15,6 +15,10 @@ const ACCIONES_POSIBLES = [
     'Generó reporte interno',
     'Evaluó reporte interno',
     'Creó contrato',
+    'Evaluó alerta',      
+    'Subió lista',       
+    'Descargó lista',
+    'Actualizó perfil transaccional'
 ];
 
 const BitacoraModel = {
@@ -66,6 +70,20 @@ const BitacoraModel = {
         );
         return rows.map(r => r.entidad_afect);
     },
+
+    registrarAccion: async ({ idusuario, accion, entidad_afect, id_entidad, ip_origen }) => {
+        try {
+            const sql = `
+                INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen)
+                VALUES ($1, $2, $3, $4, $5)
+            `;
+            const ip = ip_origen ? ip_origen.replace(/^.*:/, '') : null; 
+
+            await pool.query(sql, [idusuario, accion, entidad_afect, id_entidad, ip]);
+        } catch (error) {
+            console.error('Error al registrar en la bitácora:', error);
+        }
+    }
 };
 
 module.exports = BitacoraModel;

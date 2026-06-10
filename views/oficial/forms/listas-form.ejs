@@ -14,6 +14,8 @@
 
       <div class="primary-content">
 
+        <%- include('../../partials/back-button') %>
+
         <div style="margin-bottom: 24px;">
             <h2 style="color: #4d0100; font-size: 24px; margin-bottom: 8px;">Subir lista</h2>
             <p style="color: #666; font-size: 15px;">Seleccione el tipo de lista y cargue el archivo correspondiente en formato CSV.</p>
@@ -55,8 +57,12 @@
           </form>
         </div>
 
-      </div></div><%- include('../../partials/footer') %>
-  </div><script>
+      </div>
+      <%- include('../../partials/footer') %>
+    </div>
+  </div>
+  
+  <script>
     const dropArea = document.getElementById('file-drop-area');
     const fileInput = document.getElementById('archivo_csv');
     const fileNameDisplay = document.getElementById('file-name');

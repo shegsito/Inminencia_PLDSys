@@ -11,14 +11,27 @@ window.addEventListener("load", () => {
                     name: "Prioridad",
                     width: "130px",
                     formatter: (cell) => {
-                        const val = cell ? cell.toLowerCase().trim() : 'bajo';
-                        if (val === "alta") {
-                            return gridjs.html(`<span style="background-color: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Alta</span>`);
-                        } else if (val === "media") {
-                            return gridjs.html(`<span style="background-color: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Media</span>`);
-                        } else {
-                            return gridjs.html(`<span style="background-color: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 12px;">Baja</span>`);
+                        if (!cell) return '';
+                        
+                        if (cell.includes('|')) {
+                            const partes = cell.split('|').map(p => p.trim());
+                            const titulo = partes.shift(); 
+                            
+                            let html = `<div style="display: flex; flex-direction: column; gap: 6px; padding: 4px 0;">`;
+                            html += `<strong style="color: #4d0100; font-size: 14px;">${titulo}</strong>`;
+                            
+                            partes.forEach(parte => {
+                                html += `
+                                    <span style="background-color: #f8fafc; padding: 6px 10px; border-left: 3px solid #b91c1c; border-radius: 4px; font-size: 13px; color: #475569; display: block;">
+                                        • ${parte}
+                                    </span>`;
+                            });
+                            
+                            html += `</div>`;
+                            return gridjs.html(html);
                         }
+                        
+                        return gridjs.html(`<span style="font-size: 13px;">${cell}</span>`);
                     }
                 },
                 { 

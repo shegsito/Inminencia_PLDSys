@@ -7,6 +7,8 @@
     <div class="right-container">
       <%- include('../../partials/header') %>
       <div class="primary-content">
+
+        <%- include('../../partials/back-button') %>
         
         <form action="/oficial/evaluar-alerta" method="POST" id="new-form">
           <input type="hidden" name="idalerta" value="<%= alerta.idalerta %>">

@@ -1,6 +1,7 @@
 const pool = require('../../config/db');
 const listas = require('../../models/listasModel');
 const { processWatchlistUpload } = require('../api/watchlistIngestionController');
+const BitacoraModel = require('../../models/bitacoraModel');
 
 exports.index = (req, res) => {
     res.render('oficial/listas', { 
@@ -28,6 +29,15 @@ exports.uploadLista = async (req, res) => {
         }
 
         await processWatchlistUpload(req.file.buffer, tipoLista, originalFileName, idUsuario);
+
+        // Log this action in the bitácora
+        await BitacoraModel.registrarAccion({
+            idusuario: idUsuario,
+            accion: 'Subió lista',
+            entidad_afect: 'lista_' + tipoLista.toLowerCase(),
+            id_entidad: 'Nueva versión: ' + originalFileName,
+            ip_origen: req.ip
+        });
 
         return res.status(200).json({ mensaje: `La lista ${tipoLista} se ha cargado exitosamente.` });
 
@@ -139,6 +149,11 @@ const sql = `
 
 exports.downloadLista = async (req, res) => {
     const { tipo } = req.params;
+
+    const idUsuario = (req.session && req.session.user && req.session.user.idusuario)
+                        || (req.user && req.user.idusuario)
+                        || null;
+
     try {
         if (tipo == 'LPB') {
             const { rows } = await pool.query(`
@@ -146,6 +161,15 @@ exports.downloadLista = async (req, res) => {
                 FROM public.lista_lpb_nueva
                 ORDER BY creado_en DESC;
             `);
+
+            // Log this action in the bitácora
+            await BitacoraModel.registrarAccion({
+                idusuario: idUsuario,
+                accion: 'Descargó lista',
+                entidad_afect: 'lista_lpb',
+                id_entidad: 'Descarga completa',
+                ip_origen: req.ip
+            });
 
             res.setHeader('Content-Type', 'text/csv; charset=utf-8');
             res.setHeader('Content-Disposition', 'attachment; filename=lista_lpb_actual.csv');
@@ -177,6 +201,15 @@ exports.downloadLista = async (req, res) => {
                 FROM public.lista_pep_nueva 
                 ORDER BY nombre_completo ASC;
             `);
+
+            // Log this action in the bitácora
+            await BitacoraModel.registrarAccion({
+                idusuario: idUsuario,
+                accion: 'Descargó lista',
+                entidad_afect: 'lista_pep',
+                id_entidad: 'Descarga completa',
+                ip_origen: req.ip
+            });
             
             res.setHeader('Content-Type', 'text/csv; charset=utf-8');
             res.setHeader('Content-Disposition', 'attachment; filename=lista_pep_actual.csv');
