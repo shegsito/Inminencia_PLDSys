@@ -21,8 +21,10 @@ exports.uploadLista = async (req, res) => {
         const originalFileName = req.file.originalname;
         const tipoLista = req.body.tipo_lista;
 
-        const idUsuario = (req.session && req.session.user && req.session.user.idusuario)
-                        || (req.user && req.user.idusuario)
+        const idUsuario = req.session?.usuario?.idusuario 
+                        || req.session?.user?.idusuario 
+                        || req.user?.idusuario 
+                        || req.session?.idusuario 
                         || null;
 
         if (!tipoLista) {
@@ -35,8 +37,8 @@ exports.uploadLista = async (req, res) => {
         await BitacoraModel.registrarAccion({
             idusuario: idUsuario,
             accion: 'Subió lista',
-            entidad_afect: 'lista_' + tipoLista.toLowerCase(),
-            id_entidad: 'Nueva versión: ' + originalFileName,
+            entidad_afect: `Lista ${tipoLista} (${originalFileName})`,
+            id_entidad: null,
             ip_origen: req.ip
         });
 
@@ -151,8 +153,10 @@ const sql = `
 exports.downloadLista = async (req, res) => {
     const { tipo } = req.params;
 
-    const idUsuario = (req.session && req.session.user && req.session.user.idusuario)
-                        || (req.user && req.user.idusuario)
+    const idUsuario = req.session?.usuario?.idusuario 
+                        || req.session?.user?.idusuario 
+                        || req.user?.idusuario 
+                        || req.session?.idusuario 
                         || null;
 
     try {
@@ -167,8 +171,8 @@ exports.downloadLista = async (req, res) => {
             await BitacoraModel.registrarAccion({
                 idusuario: idUsuario,
                 accion: 'Descargó lista',
-                entidad_afect: 'lista_lpb',
-                id_entidad: 'Descarga completa',
+                entidad_afect: 'Lista LPB (Descarga de CSV)',
+                id_entidad: null,
                 ip_origen: req.ip
             });
 
@@ -207,8 +211,8 @@ exports.downloadLista = async (req, res) => {
             await BitacoraModel.registrarAccion({
                 idusuario: idUsuario,
                 accion: 'Descargó lista',
-                entidad_afect: 'lista_pep',
-                id_entidad: 'Descarga completa',
+                entidad_afect: 'Lista PEP (Descarga de CSV)',
+                id_entidad: null,
                 ip_origen: req.ip
             });
             
