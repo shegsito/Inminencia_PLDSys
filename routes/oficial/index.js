@@ -3,6 +3,11 @@ const router   = express.Router();
 const multer   = require('multer');
 const upload   = multer({ storage: multer.memoryStorage() });
 
+const blockAuditor = (req, res, next) => {
+    if (req.session?.rol === 'auditor') return res.status(403).send('Acción no permitida para auditor');
+    next();
+};
+
 const dashboard    = require('../../controllers/oficial/dashboardController');
 const clientes     = require('../../controllers/oficial/clientesController');
 const alertas      = require('../../controllers/oficial/alertasController');
@@ -24,22 +29,22 @@ router.get('/reportes',      reportes.index);
 router.get('/kyc', (req, res) => 
     res.render('oficial/forms/kyc-form', { 
         pageTitle: 'Nuevo cliente' }));
-router.post('/new-client', (req, res) => 
+router.post('/new-client', blockAuditor, (req, res) =>
     res.redirect('/oficial/dashboard'));
 router.get('/registrar-operacion', operaciones.getRegistrarOperacion);
-router.post('/new-operacion', operaciones.postRegistrarOperacion);
+router.post('/new-operacion', blockAuditor, operaciones.postRegistrarOperacion);
 router.get('/registrar-contrato', contratos.getRegistrarContrato);
-router.post('/new-contrato', contratos.postRegistrarContrato);
+router.post('/new-contrato', blockAuditor, contratos.postRegistrarContrato);
 router.get('/evaluar-reporte', canalInterno.getEvaluation);
-router.post('/evaluar-caso', canalInterno.postEvaluation);
+router.post('/evaluar-caso', blockAuditor, canalInterno.postEvaluation);
 router.get('/reportes/generar', reportes.dailyReport);
 router.get('/Subir-lista', (req, res) =>
     res.render('oficial/forms/listas-form', {
         pageTitle: 'Subir Lista' }));
-router.post('/listas/upload', upload.single('archivo'), listas.uploadLista);
+router.post('/listas/upload', blockAuditor, upload.single('archivo'), listas.uploadLista);
 router.get('/listas/download/:tipo', listas.downloadLista);
 router.get('/evaluar-alerta', alertas.getEvaluarAlerta);
-router.post('/evaluar-alerta', alertas.postEvaluarAlerta);
+router.post('/evaluar-alerta', blockAuditor, alertas.postEvaluarAlerta);
 router.get('/notificaciones-tiempo-real', operaciones.streamNotifications);
 
 //return the data
@@ -58,11 +63,11 @@ router.get('/listas/api/listasLPBData', listas.listasLPB);
 router.get('/listas/api/historialListasData', listas.fetchHistorialListas);
 
 router.get('/clientes/:id',    clientes.getCliente);
-router.put('/clientes/:id',    clientes.actualizarCliente);
+router.put('/clientes/:id',    blockAuditor, clientes.actualizarCliente);
 router.get('/documentos/:id',  clientes.verDocumento);
 router.get('/evidencia/:id', canalInterno.verEvidencia);
 router.get('/descargar/:id', reportes.downloadReport);
 router.get('/contratos/perfil/:id', perfilController.getPerfil);
-router.post('/contratos/perfil/:id', perfilController.postPerfil);
+router.post('/contratos/perfil/:id', blockAuditor, perfilController.postPerfil);
 
 module.exports = router;

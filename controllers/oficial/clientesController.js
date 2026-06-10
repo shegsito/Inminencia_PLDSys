@@ -40,6 +40,7 @@ exports.index = async (_req, res) => {
 
         res.render('oficial/clientes', {
             pageTitle: 'Clientes',
+            pageIcon: 'users',
             clientes,
             buttonText: '+ Nuevo cliente',
             buttonLink: '/oficial/kyc',
@@ -74,6 +75,7 @@ exports.getCliente = async (req, res) => {
 
         res.render('oficial/forms/kyc-form', {
             pageTitle: 'Expediente Cliente',
+            pageIcon: 'user-round',
             cliente,
             expediente,
             documentos,

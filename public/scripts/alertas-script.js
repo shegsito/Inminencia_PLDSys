@@ -52,7 +52,7 @@ window.addEventListener("load", () => {
                     name: "Acción",
                     width: "120px",
                     formatter: (_, row) => {
-                        // Only show "Resolver" button for pending alerts
+                        if (window.isAuditor) return gridjs.html('');
                         return gridjs.html(`<button class="btn-resolver" onclick="window.location.href='/oficial/evaluar-alerta?alerta=${row.cells[5].data}'" style="background-color: #4d0100; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;">Resolver</button>`);
                     }
                 }

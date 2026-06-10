@@ -3,8 +3,9 @@ const supabase = require('../../config/supabase');
 const canalInterno = require('../../models/canalInternoModel');
 
 exports.index = (req, res) => {
-    res.render('oficial/canal-interno', { 
-                pageTitle: 'Canal Interno', 
+    res.render('oficial/canal-interno', {
+                pageTitle: 'Canal Interno',
+                pageIcon: 'megaphone',
                 buttonText: 'Evaluar reporte',
                 buttonLink: '/oficial/evaluar-reporte' });
 };
@@ -30,6 +31,7 @@ exports.getEvaluation = async (req, res) => {
 
         res.render('oficial/forms/evaluar-caso-form', {
         pageTitle: 'Forma de evaluación',
+        pageIcon: 'megaphone',
         folios: folio });
 
     } catch(e) {

@@ -5,7 +5,8 @@ const BitacoraModel = require('../../models/bitacoraModel');
 
 exports.index = (req, res) => {
     res.render('oficial/listas', { 
-        pageTitle: 'Listas PEP/LPB', 
+        pageTitle: 'Listas PEP/LPB',
+        pageIcon: 'list-checks',
         buttonText: 'Subir Lista',
         buttonLink: '/oficial/subir-lista'
     });

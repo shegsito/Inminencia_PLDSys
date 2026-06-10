@@ -7,6 +7,7 @@ exports.upload = multer({ storage: multer.memoryStorage() }).single('evidencia')
 exports.operador_index = (req, res) => { 
     res.render('operador/dashboard', {
         pageTitle: 'Dashboard Principal',
+        pageIcon: 'laptop-minimal',
         buttonText: '+ Nuevo cliente',
         buttonLink: '/operador/kyc'
     });
@@ -15,13 +16,15 @@ exports.operador_index = (req, res) => {
 exports.operador_reporte = (req, res) => {
     //route to connect internal report button with form
     res.render('operador/forms/reporte-interno', {
-        pageTitle: "Creación de reporte interno"
+        pageTitle: "Creación de reporte interno",
+        pageIcon: 'megaphone'
     });
 };
 
 exports.operador_estatus = async (req, res) => {
     res.render('operador/caso-estatus', {
-        pageTitle: "Consultar estatus de reporte"
+        pageTitle: "Consultar estatus de reporte",
+        pageIcon: 'megaphone'
     });
 };
 

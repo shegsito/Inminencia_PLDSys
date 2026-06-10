@@ -3,8 +3,9 @@ const AlertaModel = require('../../models/alertaModel');
 const BitacoraModel = require('../../models/bitacoraModel');
 
 exports.index = (req, res) => {
-    res.render('oficial/alertas', { 
-        pageTitle: 'Alertas y Monitoreo (EBR)'
+    res.render('oficial/alertas', {
+        pageTitle: 'Alertas y Monitoreo (EBR)',
+        pageIcon: 'bell'
     });
 };
 
@@ -41,6 +42,7 @@ exports.getEvaluarAlerta = async (req, res) => {
 
         res.render('oficial/forms/evaluar-alertas-form', {
             pageTitle: 'Resolución de Alerta EBR',
+            pageIcon: 'bell',
             alerta: rows[0]
         });
     } catch (error) {

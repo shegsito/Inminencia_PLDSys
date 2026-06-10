@@ -4,8 +4,8 @@ const { requireLogin, requireRol } = require('../middleware/session-auth');
 const usuarios = require('../controllers/usuariosController');
 
 // Page routes — protected by session login + role check
-router.use('/oficial',   requireLogin, requireRol(['oficial']),  require('./oficial'));
-router.use('/admin',     requireLogin, requireRol(['admin']),     require('./admin'));
+router.use('/oficial',   requireLogin, requireRol(['oficial', 'auditor']),  require('./oficial'));
+router.use('/admin',     requireLogin, requireRol(['admin', 'auditor']),    require('./admin'));
 router.use('/operador',  requireLogin, requireRol(['operador']),  require('./operador'));
 router.use('/cliente',   requireLogin, requireRol(['cliente']),   require('./cliente'));
 

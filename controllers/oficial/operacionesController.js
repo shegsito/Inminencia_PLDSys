@@ -5,9 +5,10 @@ const { evaluateClientRisk } = require('../../utils/riskEngine');
 const { executeScreening } = require('../../services/screeningService');
 
 exports.index = (req, res) => {
-    res.render('oficial/operaciones', { 
-        pageTitle: 'Operaciones', 
-        buttonText: 'Nueva operación', 
+    res.render('oficial/operaciones', {
+        pageTitle: 'Operaciones',
+        pageIcon: 'arrow-right-left',
+        buttonText: 'Nueva operación',
         buttonLink: '/oficial/registrar-operacion'
     });
 };
@@ -44,7 +45,8 @@ exports.getRegistrarOperacion = async (req, res) => {
 
         res.render('oficial/forms/nueva-operacion-form', {
         pageTitle: 'Nueva Operación',
-        clientes: cliente 
+        pageIcon: 'arrow-right-left',
+        clientes: cliente
     });
     } catch(e) {
         console.log(e);
@@ -85,6 +87,7 @@ exports.postRegistrarOperacion = async (req, res) => {
         if (statusCheck.rows.length > 0 && (statusCheck.rows[0].bloqueado === true || statusCheck.rows[0].estatus === 'suspendido')) {
             return res.status(403).render('oficial/operacion-denegada', {
                 pageTitle: 'Operación Denegada',
+                pageIcon: 'circle-slash-2',
                 mensaje: 'Operación denegada. El cliente se encuentra suspendido o bloqueado por coincidencias en listas de riesgo.'
             });
         }

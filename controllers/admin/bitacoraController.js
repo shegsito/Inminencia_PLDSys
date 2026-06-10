@@ -10,6 +10,7 @@ exports.bitacora = async (req, res) => {
 
         res.render('admin/bitacora', {
             pageTitle: 'Bitácora',
+            pageIcon: 'scroll-text',
             registros,
             acciones: BitacoraModel.getAcciones(),
             entidades,

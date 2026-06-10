@@ -26,9 +26,8 @@
       
     </div>
 
-    <script src = "/scripts/contratos-script.js">
-
-    </script>
+    <script>window.isAuditor = <%- locals.readOnly ? 'true' : 'false' %>;</script>
+    <script src = "/scripts/contratos-script.js"></script>
 
 </body>
 </html>

@@ -3,6 +3,7 @@ const model = require('../../models/dashboardModel');
 exports.index = (req, res) => {
     res.render('oficial/dashboard', {
         pageTitle: 'Dashboard Principal',
+        pageIcon: 'laptop-minimal',
         buttonText: '+ Nuevo cliente',
         buttonLink: '/oficial/kyc'
     });

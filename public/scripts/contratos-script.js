@@ -14,11 +14,12 @@ window.addEventListener("load", () => {
             "Monto",                              
             "Estatus",                                  
             {
-                name: "Perfil",                         
+                name: "Perfil",
                 formatter: (_, row) => {
+                    if (window.isAuditor) return gridjs.html('');
                     const idContrato = row.cells[0].data;
                     return gridjs.html(`
-                        <a href="/oficial/contratos/perfil/${idContrato}" 
+                        <a href="/oficial/contratos/perfil/${idContrato}"
                            style="background-color: #4d0100; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: bold;">
                            Configurar
                         </a>

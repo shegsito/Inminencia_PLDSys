@@ -17,6 +17,7 @@ exports.getPerfil = async (req, res) => {
 
         res.render('oficial/forms/perfil-transaccional-form', {
             pageTitle: 'Establecer Perfil Transaccional',
+            pageIcon: 'user-round',
             contrato: rows[0],
             success: req.query.success === 'true'
         });
