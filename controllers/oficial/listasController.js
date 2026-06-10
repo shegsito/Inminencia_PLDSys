@@ -1,5 +1,3 @@
-const path = require('path');
-const fs   = require('fs');
 const pool = require('../../config/db');
 const listas = require('../../models/listasModel');
 const { processWatchlistUpload } = require('../api/watchlistIngestionController');
@@ -18,31 +16,23 @@ exports.uploadLista = async (req, res) => {
             return res.status(400).json({ error: 'No se ha subido ningún archivo' });
         }
         
-        const filePath = req.file.path;
         const originalFileName = req.file.originalname;
         const tipoLista = req.body.tipo_lista;
 
-        const idUsuario = (req.session && req.session.user && req.session.user.idusuario) 
-                        || (req.user && req.user.idusuario) 
+        const idUsuario = (req.session && req.session.user && req.session.user.idusuario)
+                        || (req.user && req.user.idusuario)
                         || null;
 
         if (!tipoLista) {
-            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
             return res.status(400).json({ error: 'Tipo de lista no válido o no especificado.' });
         }
 
-        await processWatchlistUpload(filePath, tipoLista, originalFileName, idUsuario);
+        await processWatchlistUpload(req.file.buffer, tipoLista, originalFileName, idUsuario);
 
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
         return res.status(200).json({ mensaje: `La lista ${tipoLista} se ha cargado exitosamente.` });
 
     } catch (e) {
         console.error("Error processing CSV:", e);
-        
-        if (req.file && req.file.path && fs.existsSync(req.file.path)) {
-            fs.unlinkSync(req.file.path);
-        }
-        
         return res.status(500).json({ error: 'Error interno al procesar el archivo CSV.' });
     }
 }

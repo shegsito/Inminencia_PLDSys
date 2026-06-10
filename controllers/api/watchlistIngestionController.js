@@ -1,9 +1,10 @@
 const pool = require('../../config/db');
 const fs = require('fs');
 const csv = require('csv-parser');
+const { Readable } = require('stream');
 const { normalizeText } = require('../../utils/normalizer');
 
-const processWatchlistUpload = async (localCsvPath, tipoLista, originalFileName, idUsuario = null) => {
+const processWatchlistUpload = async (source, tipoLista, originalFileName, idUsuario = null) => {
     const trackQuery = `
         INSERT INTO public.importacion_csv (idimportadopor, nombre_archivo, estatus)
         VALUES ($1, $2, 'procesando') 
@@ -15,7 +16,8 @@ const processWatchlistUpload = async (localCsvPath, tipoLista, originalFileName,
     try {
         const batchedRecords = await new Promise((resolve, reject) => {
             const records = [];
-            fs.createReadStream(localCsvPath)
+            const readStream = Buffer.isBuffer(source) ? Readable.from(source) : fs.createReadStream(source);
+            readStream
                 .pipe(csv())
                 .on('data', (row) => {
                     if (tipoLista === 'LPB') {
