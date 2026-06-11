@@ -44,9 +44,10 @@ exports.postPerfil = async (req, res) => {
         await pool.query(sql, [idcliente, idcontrato, monto_mensual_esperado, frecuencia_mensual_esperada]);
 
         // Log this action in the bitácora
-        if (idUsuario) {
+        const idusuario = req.session.idusuario;
+        if (idusuario) {
             await BitacoraModel.registrarAccion({
-                idusuario: idUsuario,
+                idusuario: idusuario,
                 accion: 'Actualizó perfil transaccional',
                 entidad_afect: 'perfil_transaccional',
                 id_entidad: idcontrato,
