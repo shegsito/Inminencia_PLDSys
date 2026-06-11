@@ -5,7 +5,7 @@
         <h1>Sistema de monitoreo</h1>
 
         <div class="buttons">
-        <% if (typeof buttonText !== 'undefined') { %>
+        <% if (typeof buttonText !== 'undefined' && !locals.readOnly) { %>
             <% if (typeof buttonLink !== 'undefined') { %>
                 <a href = "<%= buttonLink %>"> 
                     <button class = "top-right-button"><%= buttonText %>
@@ -23,7 +23,12 @@
     </div>
     
     <% if (typeof pageTitle !== 'undefined') { %>
-        <h2 class = "subtitle"><%= pageTitle %></h2>
+        <h2 class="subtitle">
+            <% if (typeof pageIcon !== 'undefined') { %>
+                <i data-lucide="<%= pageIcon %>" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"></i>
+            <% } %>
+            <%= pageTitle %>
+        </h2>
     <% } %>
 
 </header>

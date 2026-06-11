@@ -1,32 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-  
 <%- include('../partials/head') %>
-
-  <body>
-
-    <div class = "entire-container">
-
-        <%- include('../partials/sidebar') %>
-
-        <div class = "right-container">
-
-            <%- include('../partials/header') %>
-
-        <div class = "primary-content">
-
-            <div id = "test-table"></div>
-
-        </div>
-
-        <%- include('../partials/footer') %>
-        
-      </div>
-      
-    </div>
+<script src="/scripts/alertas-sse-oficial.js"></script>
+<body>
+  <div class="entire-container">
+    <%- include('../partials/sidebar') %>
     
-    <script src = "/scripts/alertas-script.js">
+    <div class="right-container">
+      <%- include('../partials/header') %>
       
-    </script>
+      <div class="primary-content">
+          
+          <div id="alertas-table"></div>
+      </div>
+          <%- include('../partials/footer') %>    
+    </div>
+
+  </div>
+
+  
+
+  <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+  <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+  
+  <script>window.isAuditor = <%- locals.readOnly ? 'true' : 'false' %>;</script>
+  <script src="/scripts/alertas-script.js"></script>
 </body>
 </html>

@@ -1,3 +1,3 @@
 exports.admin_index = (_req, res) => {
-    res.render('admin/dashboard', { pageTitle: 'Administrar' });
+    res.render('admin/dashboard', { pageTitle: 'Administrar', pageIcon: 'shield-check' });
 };

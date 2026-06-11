@@ -5,6 +5,14 @@
 
 <body>
 
+  <!-- Loading overlay -->
+  <div id="login-loading-overlay">
+    <div class="login-loading-box">
+      <div class="login-spinner"></div>
+      <span class="login-loading-text">INMINENCIA</span>
+    </div>
+  </div>
+
   <div class="login-split">
 
     <!-- Left: form panel -->
@@ -61,7 +69,7 @@
     <div class="login-deco">
       <div class="login-deco-content">
         <h1>Bienvenido.</h1>
-        <p>Sistema de Prevención de Lavado de Dinero</p>
+        <p>SVA LAW</p>
       </div>
     </div>
 
@@ -81,12 +89,15 @@
         lucide.createIcons();
       });
 
-      // Loading state on submit
-      var form = document.getElementById('loginForm');
-      var btn  = document.getElementById('loginBtn');
-      form.addEventListener('submit', function () {
+      // Loading overlay + submit
+      var form    = document.getElementById('loginForm');
+      var btn     = document.getElementById('loginBtn');
+      var overlay = document.getElementById('login-loading-overlay');
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
         btn.disabled = true;
-        btn.textContent = 'Cargando...';
+        overlay.classList.add('visible');
+        setTimeout(function () { form.submit(); }, 1000);
       });
     });
   </script>

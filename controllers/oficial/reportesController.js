@@ -6,7 +6,8 @@ const BUCKET = 'reportes';
 
 exports.index = (req, res) => {
     res.render('oficial/reportes', {
-        pageTitle: 'Reportes',
+        pageTitle: 'Reportes regulatorios',
+        pageIcon: 'bar-chart-2',
         buttonText: 'Generar reporte',
         buttonLink: '/oficial/reportes/generar'
     });
@@ -86,9 +87,11 @@ exports.dailyReport = async (req, res) => {
             });
         }
 
+        const cleanFile = fileContent.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
         const { error: uploadError } = await supabase.storage
             .from(BUCKET)
-            .upload(fileName, Buffer.from(fileContent, 'utf8'), {
+            .upload(fileName, Buffer.from(cleanFile, 'utf8'), {
                 contentType: 'text/plain',
                 upsert: true,
             });

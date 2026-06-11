@@ -1,8 +1,9 @@
 const model = require('../../models/operacionesModel');
 
 exports.index = (req, res) => {
-    res.render('operador/operaciones', { 
-        pageTitle: 'Operaciones', 
+    res.render('operador/operaciones', {
+        pageTitle: 'Operaciones',
+        pageIcon: 'arrow-right-left',
     });
 };
 

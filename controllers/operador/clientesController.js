@@ -11,6 +11,7 @@ exports.index = async (req, res) => {
 
         res.render('operador/clientes', {
             pageTitle: 'Clientes',
+            pageIcon: 'users',
             clientes,
             buttonText: '+ Nuevo cliente',
             buttonLink: '/operador/kyc',
@@ -45,6 +46,7 @@ exports.getCliente = async (req, res) => {
 
         res.render('oficial/forms/kyc-form', {
             pageTitle: 'Expediente Cliente',
+            pageIcon: 'user-round',
             cliente,
             expediente,
             documentos,

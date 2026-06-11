@@ -2,6 +2,8 @@ const pool = require('../../config/db');
 const supabase = require('../../config/supabase');
 const ClienteModel = require('../../models/clienteModel');
 const ExpedienteModel = require('../../models/expedienteModel');
+const { executeScreening } = require('../../services/screeningService');
+const { evaluateClientRisk } = require('../../utils/riskEngine');
 
 // -------------- Document viewer
 
@@ -38,6 +40,7 @@ exports.index = async (_req, res) => {
 
         res.render('oficial/clientes', {
             pageTitle: 'Clientes',
+            pageIcon: 'users',
             clientes,
             buttonText: '+ Nuevo cliente',
             buttonLink: '/oficial/kyc',
@@ -72,6 +75,7 @@ exports.getCliente = async (req, res) => {
 
         res.render('oficial/forms/kyc-form', {
             pageTitle: 'Expediente Cliente',
+            pageIcon: 'user-round',
             cliente,
             expediente,
             documentos,
@@ -173,6 +177,45 @@ exports.actualizarCliente = async (req, res) => {
         );
 
         await client.query('COMMIT');
+
+        // Execute Screening in background after successful update
+        try {
+            const resultClient = await pool.query('SELECT * FROM cliente WHERE idcliente = $1', [id]);
+            if (resultClient.rows.length > 0) {
+                const updatedClient = resultClient.rows[0];
+                const screeningResult = await executeScreening({
+                    idcliente: updatedClient.idcliente,
+                    nombre: updatedClient.nombre,
+                    apellido_paterno: updatedClient.apellido_paterno,
+                    apellido_materno: updatedClient.apellido_materno,
+                    curp: updatedClient.curp
+                });
+
+                // If screeningResult indicates a match with LPB list, automatically block the client and generate an alert
+                if (screeningResult.action === 'SILENT_HOLD') {
+                    await pool.query(`
+                        UPDATE public.cliente 
+                        SET bloqueado = true, estatus = 'suspendido' 
+                        WHERE idcliente = $1;
+                    `, [updatedClient.idcliente]);
+
+                    await pool.query(`
+                        INSERT INTO public.alerta (idcliente, motivo, regla_rota, prioridad)
+                        VALUES ($1, $2, 'Coincidencia con LPB', 'alta');
+                    `, [updatedClient.idcliente, 'El cliente ha hecho match con la Lista de Personas Bloqueadas (LPB). Se ha suspendido su cuenta automáticamente.']);
+                }
+            }
+        } catch (screeningErr) {
+            console.error("Screening en background falló, pero el cliente fue actualizado:", screeningErr);
+        }
+
+        // Recalculate risk profile after update
+        try {
+            await evaluateClientRisk(updatedClient.idcliente, null, "Actualización de perfil KYC");
+        } catch (riskErr) {
+            console.error("Error interno al recalcular la matriz de riesgo:", riskErr);
+        }
+
         res.status(200).json({ mensaje: 'Cliente actualizado con éxito' });
 
     } catch (e) {

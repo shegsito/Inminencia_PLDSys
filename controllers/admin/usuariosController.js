@@ -8,7 +8,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 exports.gestionar = async (_req, res) => {
     try{
         const usuarios = await UsuarioModel.getAll();
-        res.render('admin/gestionar', { pageTitle: 'Gestionar usuarios', usuarios});
+        res.render('admin/gestionar', { pageTitle: 'Gestionar usuarios', pageIcon: 'users-round', usuarios});
     } catch(e) {
         console.error('Error al obtener usuarios:', e);
         res.status(500).send('Error al obtener usuarios');

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const url = new URLSearch(window.location.search);
+    const url = new URLSearchParams(window.location.search);
         
     if (url.get('success') === 'true') {
         alert('Datos registrados exitosamente.');

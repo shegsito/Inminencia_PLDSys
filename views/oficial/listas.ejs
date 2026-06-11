@@ -1,59 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   
 <%- include('../partials/head') %>
+<script src="/scripts/alertas-sse-oficial.js"></script>
 
-  <body>
+<body>
 
-    <div class = "entire-container">
-
+    <div class="entire-container">
         <%- include('../partials/sidebar') %>
-
-        <div class = "right-container">
-
+    
+        <div class="right-container">
             <%- include('../partials/header') %>
+    
+            <div class="primary-content" style="max-width: 100%;">
+                 
+                 <div class="dashboard-cards-top" style="display: flex; flex-wrap: wrap; gap: 32px; width: 100%; margin-bottom: 32px;">
+                      
+                      <div style="flex: 1; min-width: 0;">
+                          <h2 style="font-size: 20px; font-weight: bold; color: #1f2937; margin-bottom: 12px;">Lista PEP</h2>
+                          <div id="listas-PEP" style="width: 100%; overflow-x: auto;"></div>
+                      </div>
 
-        <div class = "primary-content">
+                      <div style="flex: 1; min-width: 0;">
+                          <h2 style="font-size: 20px; font-weight: bold; color: #1f2937; margin-bottom: 12px;">Lista LPB</h2>
+                          <div id="listas-LPB" style="width: 100%; overflow-x: auto;"></div>
+                      </div>
 
-                <table class = "list-table">
-                    <tr>
-                        <th>LISTA PEP</th>
-                        <th>LISTA LPB</th>
-                    </tr>
+                 </div>
 
-                    <tr>
-                        <td>312 registrados cargados. Proxima validacion automatica en 6h.</td>
-                        <td>87 registros cargados. Ultima validacion hace 2h.</td>
-                    </tr>
-                </table>
+                 <div class="dashboard-cards-bottom" style="width: 100%;">
+                      
+                      <div style="width: 100%; min-width: 0;">
+                          <h2 style="font-size: 20px; font-weight: bold; color: #1f2937; margin-bottom: 12px;">Historial de Listas Cargadas</h2>
+                          <div id="historial-listas" style="width: 100%; overflow-x: auto;"></div>
+                      </div>
 
-                <table class = "dashboard-table">
-                    <tr>
-                        <th>LISTA</th>
-                        <th>TIPO</th>
-                        <th>DETECTADA</th>
-                        <th>DECISION</th>
-                    </tr>
+                 </div>
 
-                    <tr>
-                        <td>LPB</td>
-                        <td>Posible (score 78%)</td>
-                        <td>04/15/2026 08:30</td>
-                        <td>Pendiente</td>
-                    </tr>
-                    <tr>
-                        <td>PEP</td>
-                        <td>Confirmada</td>
-                        <td>03/04/2026 14:20</td>
-                        <td>Diligencia reforzada</td>
-                    </tr>
-                </table>
-
+            </div>
+            <%- include('../partials/footer') %>
         </div>
 
-        <%- include('../partials/footer') %>
-
-      </div>
+        <script src="/scripts/listas-script.js"></script>
 
     </div>
 

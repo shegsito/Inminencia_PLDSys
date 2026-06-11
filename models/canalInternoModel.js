@@ -37,10 +37,10 @@ exports.reporteInterno = async (queja_desc, evidencia, fecha_int, idasignadoa, i
         const idreporteInterno = reporte_int.idreporteint;
 
         //audit log register
-        const bitacora = `INSERT INTO bitacora (accion, entidad_afect, id_entidad, ip_origen, fecha)
-             VALUES ($1, $2, $3, $4, NOW())`
+        const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
+             VALUES ($1, $2, $3, $4, $5, NOW())`
 
-        await dbClient.query(bitacora, ['CREAR REPORTE INTERNO', 'reporte interno', idreporteInterno, ipOrigin]);
+        await dbClient.query(bitacora, [idasignadoa, 'Generó reporte interno', 'reporte interno', idreporteInterno, ipOrigin]);
 
         //DB change if all succeeds
         await dbClient.query('COMMIT');
@@ -82,16 +82,16 @@ exports.evaluateRI = async (idreporteint, estatus, resolucion, idusuario, ipOrig
                     ;
 
         const { rows } = await pool.query(sql, [estatus, resolucion, idreporteint]);
-        const eval = rows;
+        const resultado = rows;
 
          //extract internal report identifier
-        const idreporteInterno = eval.idreporteint;
+        const idreporteInterno = resultado[0]?.idreporteint;
 
         //audit log register
         const bitacora = `INSERT INTO bitacora (idusuario, accion, entidad_afect, id_entidad, ip_origen, fecha)
              VALUES ($1, $2, $3, $4, $5, NOW())`
 
-        await dbClient.query(bitacora, [idusuario, 'EVALUAR REPORTE INTERNO', 'reporte interno', idreporteInterno, ipOrigin]);
+        await dbClient.query(bitacora, [idusuario, 'Evaluó reporte interno', 'reporte interno', idreporteInterno, ipOrigin]);
 
         //DB change if all succeeds
         await dbClient.query('COMMIT');

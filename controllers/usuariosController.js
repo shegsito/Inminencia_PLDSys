@@ -46,6 +46,9 @@ module.exports.do_login = async (req, res) =>{
             case 'operador':
                 return res.redirect ('/operador/dashboard');
 
+            case 'auditor':
+                return res.redirect('/oficial/dashboard');
+
             case 'cliente':
                 return res.redirect('/cliente');
         }

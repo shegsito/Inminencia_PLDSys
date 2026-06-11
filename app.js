@@ -35,9 +35,20 @@ app.get('/', (req, res) => res.redirect('/usuarios/login'));
 
 app.use(require('./routes'));
 
+// 404
+app.use((_req, res) => res.status(404).send('No encontrado'));
+
+// Global error handler — prevents unhandled exceptions from crashing the serverless function
+app.use((err, _req, res, _next) => {
+    console.error(err);
+    res.status(500).send('Error interno del servidor');
+});
+
 module.exports = app;
 
 if (require.main === module) {
     const PORT = process.env.PORT || 3001;
     app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
 }
+
+//1

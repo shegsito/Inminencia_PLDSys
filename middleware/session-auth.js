@@ -10,6 +10,7 @@ const requireLogin = (req, res, next) => {
     req.usuario = { id: req.session.idusuario, rol: req.session.rol };
     // expose to all EJS templates without passing it manually from each controller
     res.locals.usuario = req.usuario;
+    res.locals.readOnly = req.session?.rol === 'auditor';
     next();
 };
 

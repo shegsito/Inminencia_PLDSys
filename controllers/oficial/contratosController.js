@@ -1,10 +1,11 @@
 const model = require('../../models/contratoModel');
 
 exports.index = (req, res) => {
-    res.render('oficial/contratos', { 
+    res.render('oficial/contratos', {
                 pageTitle: 'Contratos',
+                pageIcon: 'file-text',
                 buttonText: 'Nuevo contrato',
-                buttonLink: '/oficial/registrar-contrato' 
+                buttonLink: '/oficial/registrar-contrato'
             });
 };
 
@@ -40,7 +41,8 @@ exports.getRegistrarContrato = async (req, res) => {
 
         res.render('oficial/forms/nuevo-contrato-form', {
         pageTitle: 'Nuevo contrato',
-        clientes: cliente 
+        pageIcon: 'file-text',
+        clientes: cliente
     });
     } catch(e) {
         console.log(e);

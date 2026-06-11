@@ -2,6 +2,7 @@
 <html lang="en">
     
 <%- include('../partials/head') %>
+<script src="/scripts/alertas-sse-oficial.js"></script>
 
   <body>
 
@@ -17,12 +18,17 @@
 
           <div class = "dashboard-cards-top">
 
-              <div id = "alertas-recientes"></div>
+            <div class="dashboard-card-section">
+            <b><p class="table-title">Alertas recientes</p></b>
+              <div id = "alertas-recientes"></div></div>
 
-              <div id = "clientes-recientes"></div>
+              <div class="dashboard-card-section">
+              <b><p class="table-title">Clientes recientes</p></b>
+              <div id = "clientes-recientes"></div></div>
           </div>
 
           <div class = "dashboard-cards-bottom">
+            <b><p class="table-title">Operaciones recientes</p></b>
               <div id = "operaciones-recientes"></div>
           </div>
 

@@ -34,10 +34,26 @@
               <i data-lucide="users-round"></i><span>Gestionar usuarios</span>
             </a>
           </li>
+        </ul>
+      </li>
+      <% } %>
+      <!-- Sidebar for the auditor: only bitácora and gestionar (read-only) -->
+      <% if (usuario?.rol === 'auditor') { %>
+      <li class="sidebar-dropdown <%= currentPath?.startsWith('/admin') ? 'open' : '' %>">
+        <button class="sidebar-link sidebar-dropdown-toggle">
+          <i data-lucide="eye"></i>
+          <span>Auditoría</span>
+          <i data-lucide="chevron-down" class="sidebar-dropdown-arrow"></i>
+        </button>
+        <ul class="sidebar-dropdown-menu">
           <li>
-            <!-- Aplicar restriccion is disabled until the feature is ready, at the right side of that class {sidebar-sublink--disabled}-->
-            <a href="#" class="sidebar-link sidebar-sublink ">
-              <i data-lucide="shield-ban"></i><span>Aplicar restricción</span>
+            <a href="/admin/bitacora" class="sidebar-link sidebar-sublink <%= currentPath === '/admin/bitacora' ? 'sidebar-link--active' : '' %>">
+              <i data-lucide="scroll-text"></i><span>Bitácora</span>
+            </a>
+          </li>
+          <li>
+            <a href="/admin/gestionar" class="sidebar-link sidebar-sublink <%= currentPath === '/admin/gestionar' ? 'sidebar-link--active' : '' %>">
+              <i data-lucide="users-round"></i><span>Usuarios</span>
             </a>
           </li>
         </ul>

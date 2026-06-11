@@ -3,7 +3,14 @@
     gap: 30px;
 }
 
+.dashboard-card-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
 .dashboard-cards-bottom {
     margin-top: 70px;
-    flex-direction: column;    
+    flex-direction: column; 
 }
+

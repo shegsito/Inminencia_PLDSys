@@ -4,7 +4,7 @@ const testTable = document.getElementById("test-table");
 
 window.addEventListener("load", () => {
     gridTable = new gridjs.Grid({
-        columns: ["Folio", 
+        columns: [{ name: "Folio", formatter: (cell) => gridjs.html(`<span title="${cell}" style="font-family:Cambria,Cochin,Georgia,Times,'Times New Roman',serif;font-size:0.85em;color:#555;">${String(cell).substring(0,8)}...</span>`) },
             "Descripción", 
             "Fecha", 
             "Estatus", 

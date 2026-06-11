@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<%- include('../../partials/head') %>
+<body>
+  <div class="entire-container">
+    <%- include('../../partials/sidebar') %>
+    <div class="right-container">
+      <%- include('../../partials/header') %>
+      <div class="primary-content">
+
+        <%- include('../../partials/back-button') %>
+        
+        <form action="/oficial/evaluar-alerta" method="POST" id="new-form">
+          <input type="hidden" name="idalerta" value="<%= alerta.idalerta %>">
+
+          <div class="form-wrapper">
+            <div class="form-fields">
+              <p class="form-section-title">Evaluación de Alerta Transaccional (EBR)</p>
+
+              <div class="form-row" id="row-data" style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #4d0100;">
+                <div style="width: 100%;">
+                  <p style="margin-bottom: 5px;"><strong>Cliente Evaluado:</strong> <%= alerta.nombre %> <%= alerta.apellido_paterno %></p>
+                  <p style="margin-bottom: 5px;"><strong>Motivo Generador:</strong> <%= alerta.motivo %></p>
+                  <p style="margin-bottom: 0;"><strong>Prioridad:</strong> <span style="text-transform: uppercase; font-weight: bold; color: #4d0100;"><%= alerta.prioridad %></span></p>
+                </div>
+              </div>
+
+              <div class="form-row" id="row-data">
+                <div class="form-group">
+                  <label for="folio">Folio de Alerta</label>
+                  <input type="text" id="folio" name="folio" value="<%= alerta.idalerta.substring(0,8) %>..." readonly style="background-color: #e9ecef; cursor: not-allowed;">
+                </div>
+
+                <div class="form-group">
+                  <label for="estatus">Dictamen Final</label>
+                  <select id="estatus" name="estatus" required>
+                    <option value="" disabled selected>Seleccione el dictamen...</option>
+                    <option value="en_revision">En revisión / Investigando</option>
+                    <option value="cerrada">Cerrada - Riesgo justificado</option>
+                    <option value="falso_positivo">Falso Positivo - Coincidencia errónea</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row" id="row-data">
+                <div class="form-group" style="width: 100%;">
+                  <label for="resolucion">Notas de Resolución y Evidencia:</label>
+                  <textarea name="resolucion" id="resolucion" rows="4" placeholder="Describa el análisis realizado..." required style="width: 100%;"></textarea>
+                </div>
+              </div>
+
+              <div class="form-feedback" id="form-feedback"></div>
+              <button type="submit" class="form-submit-btn" id="form-submit">Guardar Dictamen</button>
+
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+<script src="/scripts/forms-script.js"></script>
+</body>
+</html>
