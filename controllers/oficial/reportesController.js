@@ -87,9 +87,11 @@ exports.dailyReport = async (req, res) => {
             });
         }
 
+        const cleanFile = fileContent.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
         const { error: uploadError } = await supabase.storage
             .from(BUCKET)
-            .upload(fileName, Buffer.from(fileContent, 'utf8'), {
+            .upload(fileName, Buffer.from(cleanFile, 'utf8'), {
                 contentType: 'text/plain',
                 upsert: true,
             });

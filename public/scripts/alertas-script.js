@@ -58,6 +58,11 @@ window.addEventListener("load", () => {
                 }
             ],
             search: { enabled: true },
+            language: {
+      search: {
+        placeholder: 'Buscar por nombre del cliente, prioridad, estado...'
+      }
+    },
             sort: true,
             pagination: { enabled: true, limit: 10 },
             server: {

@@ -36,7 +36,7 @@ window.addEventListener("load", () => {
         },
         language: {
             search: {
-                placeholder: 'Buscar por nombre del cliente'
+                placeholder: 'Buscar por nombre del cliente...'
             }
         },
         sort: false,
